@@ -229,6 +229,51 @@ main>*{max-width:1148px;margin-left:auto;margin-right:auto}
 .tab[aria-pressed="true"]{color:var(--yellow)}
 .tab:active{opacity:.7}
 
+
+/* ---------- кнопка помощи и обучение ---------- */
+.help{appearance:none;flex:0 0 auto;width:34px;height:34px;border-radius:50%;border:2px solid #fff;background:transparent;color:#fff;
+  font:900 italic 17px var(--font-display);cursor:pointer;padding:0;display:grid;place-items:center}
+.help:active{background:rgba(255,255,255,.2)}
+.guide{position:fixed;inset:0;z-index:80;background:var(--bg);display:flex;flex-direction:column}
+.guide[hidden]{display:none}
+.g-top{position:relative;background:var(--red);color:#fff;padding:14px 16px 16px;overflow:hidden;flex:0 0 auto}
+.g-top::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background-image:radial-gradient(var(--dots) 1.3px,transparent 1.6px);background-size:7px 7px;
+  -webkit-mask-image:linear-gradient(100deg,transparent 35%,#000 100%);mask-image:linear-gradient(100deg,transparent 35%,#000 100%)}
+.g-bar{position:relative;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.g-step{font:800 10.5px var(--font-body);letter-spacing:.14em;text-transform:uppercase;background:var(--yellow);color:#121417;
+  padding:3px 10px 4px;transform:rotate(-1.5deg)}
+.g-skip{appearance:none;border:0;background:transparent;color:#fff;font:700 13px var(--font-body);padding:6px 2px;cursor:pointer;opacity:.9}
+.g-title{position:relative;margin:14px 0 0;font:900 italic 27px/1 var(--font-display);text-transform:uppercase;letter-spacing:-.01em}
+.g-body{flex:1 1 auto;min-height:0;overflow-y:auto;padding:22px 20px 12px;display:flex;flex-direction:column;gap:20px;max-width:560px;width:100%;margin:0 auto}
+.g-text{margin:0;font-size:16px;line-height:1.5;color:var(--ink)}
+.g-text b{font-weight:700}
+.g-vis{background:var(--card);border:2px solid var(--ink);border-radius:14px;padding:16px}
+.g-row{display:flex;justify-content:space-around;gap:8px;text-align:center}
+.g-row .disc{margin:0 auto 8px;width:60px;height:60px;font-size:22px}
+.g-cap{font:700 11px var(--font-body);color:var(--ink2)}
+.g-note{font-size:13px;color:var(--ink2);margin:0}
+.g-tap{position:relative}
+.g-tap::after{content:"";position:absolute;right:18%;top:50%;width:34px;height:34px;margin-top:-17px;border-radius:50%;
+  border:3px solid var(--red);background:rgba(225,38,28,.18);animation:gtap 1.6s ease-out infinite}
+@keyframes gtap{0%{transform:scale(.6);opacity:1}100%{transform:scale(1.6);opacity:0}}
+.g-foot{flex:0 0 auto;display:flex;align-items:center;gap:14px;padding:12px 20px calc(16px + env(safe-area-inset-bottom,0px));max-width:560px;width:100%;margin:0 auto}
+.g-dots{display:flex;gap:6px;flex:1}
+.g-dots i{width:8px;height:8px;border-radius:50%;background:var(--hair)}
+.g-dots i.on{background:var(--red);width:22px;border-radius:4px}
+.g-next{appearance:none;border:2px solid var(--print);background:var(--yellow);color:#121417;border-radius:12px;
+  padding:13px 22px;font:900 italic 15px var(--font-display);text-transform:uppercase;cursor:pointer;box-shadow:3px 3px 0 var(--print)}
+.g-next:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--print)}
+.g-choice{display:flex;flex-direction:column;gap:12px}
+.g-pick{appearance:none;text-align:left;border:2px solid var(--ink);background:var(--card);border-radius:14px;padding:14px 16px;cursor:pointer;
+  display:flex;align-items:center;gap:14px;box-shadow:3px 3px 0 var(--print)}
+.g-pick:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--print)}
+.g-pick b{display:block;font:900 italic 16px var(--font-display);text-transform:uppercase}
+.g-pick span{font-size:13px;color:var(--ink2)}
+.g-pick .ic{flex:0 0 44px;height:44px;border-radius:50%;display:grid;place-items:center;font-size:20px;background:var(--yellow);border:2px solid var(--print)}
+.g-plain{appearance:none;border:0;background:transparent;color:var(--ink2);font:600 14px var(--font-body);padding:8px;cursor:pointer;text-decoration:underline}
+@media(prefers-reduced-motion:reduce){.g-tap::after{animation:none}}
+
 @media(min-width:860px){main{padding:24px 16px 28px}
   .split{display:grid;grid-template-columns:360px 1fr;gap:24px;align-items:start}
   .grid4{grid-template-columns:repeat(2,1fr)}}
@@ -240,7 +285,7 @@ main>*{max-width:1148px;margin-left:auto;margin-right:auto}
 <body>
 <div class="app">
   <header class="top"><div class="top-in">
-    <div class="trow"><button class="back" id="back" aria-label="Назад">‹</button><div class="ttl" id="ttl"></div></div>
+    <div class="trow"><button class="back" id="back" aria-label="Назад">‹</button><div class="ttl" id="ttl"></div><button class="help" id="help" aria-label="Как пользоваться">?</button></div>
     <div class="sub" id="subttl">Экстралига · альбом 26/27</div>
   </div></header>
   <main id="main"></main>
@@ -924,7 +969,9 @@ const store={
 
 const S={tab:'rank',view:'rank',metric:'pts',posf:'all',q:'',pid:null,aid:null,sc:{},
   role:store.get('role','player'), fav:store.get('fav',null), preds:store.get('preds',{})};
-const ME=(skaters().find(p=>p.name==='Ремезов Никита')||skaters()[0]).id;
+let ME=null;
+(()=>{const m=store.get('me',null);if(!m)return;const p=DB.find(x=>x.name===m.name&&x.team===m.team);ME=p?p.id:null;})();
+function setMe(id){const p=findP(id);ME=p?p.id:null;store.set('me',p?{name:p.name,team:p.team}:null);}
 const k=()=>S.view+':'+(S.pid||'')+(S.aid||'');
 const $=s=>document.querySelector(s);
 // Значок клуба: две буквы названия на цвете, постоянном для команды.
@@ -961,7 +1008,7 @@ const GK_METRICS=[
  {id:'gp',n:'Матчи',s:'И',f:p=>p.gp}];
 const metricsFor=pf=>pf==='Вратарь'?GK_METRICS:SK_METRICS;
 
-function head(){
+function drawHead(){
   const p=S.pid?findP(S.pid):null,a=S.aid?ach(S.aid):null;
   $('#ttl').textContent=S.view==='rank'?'Рейтинг':S.view==='league'?'Лига':S.view==='medals'?'Медали':S.view==='me'?'Профиль'
     :S.view==='player'?(p?p.name:'Игрок'):(a?(a.secret&&p&&!prog(p,a).tier?'Скрытая медаль':a.n):'Медаль');
@@ -974,15 +1021,15 @@ function head(){
   $('#back').className='back'+(canBack&&!native?' on':'');
   document.querySelectorAll('#tabs .tab').forEach(b=>b.setAttribute('aria-pressed',S.tab===b.dataset.tab));
 }
-function body(){
+function drawBody(){
   $('#main').innerHTML=S.view==='rank'?vRank():S.view==='league'?vLeague():S.view==='medals'?vCat():S.view==='me'?vMe()
     :S.view==='player'?vPlayer():vMedal();
 }
 // Перерисовка экрана. Содержимое — первым: если что-то в шапке или в связке с Telegram
 // сломается, экран всё равно сменится. Ошибки показываем внизу экрана, а не глотаем молча.
 function draw(){
-  try{body()}catch(e){showErr(e)}
-  try{head()}catch(e){showErr(e)}
+  try{drawBody()}catch(e){showErr(e)}
+  try{drawHead()}catch(e){showErr(e)}
   // iOS иногда не перерисовывает прокручиваемый блок после замены содержимого — подталкиваем.
   MAIN.style.display='none';void MAIN.offsetHeight;MAIN.style.display='';
 }
@@ -1079,6 +1126,7 @@ function roleSwitch(){
 function vMe(){
   if(S.role==='fan')return roleSwitch()+vFan();
   const p=findP(ME);
+  if(!p)return roleSwitch()+vPick();
   const near=CAT.filter(a=>eligible(p,a)&&counts(a)&&!a.secret).map(a=>({a,pr:prog(p,a)}))
     .filter(o=>o.pr.nx&&o.a.m!=='rank'&&!o.pr.pending).sort((x,y)=>y.pr.pct-x.pr.pct).slice(0,3);
   const goals=near.length?`<div class="h">Ближайшие цели</div><div class="list">${near.map(o=>{
@@ -1086,7 +1134,21 @@ function vMe(){
     return `<div class="step"><span class="sd">${o.a.i}</span><span class="sx"><b>${esc(t[2])}</b>
       <span>${o.pr.v} из ${t[1]} — осталось ${Math.round((t[1]-o.pr.v)*10)/10} ${esc(o.a.u)} · +${TIER_PTS[t[0]]} очков</span>
       <span class="bar"><i style="width:${Math.round(o.pr.pct*100)}%"></i></span></span></div>`;}).join('')}</div>`:'';
-  return roleSwitch()+card(p,goals);
+  return roleSwitch()+card(p,goals+`<p style="margin-top:14px"><button class="chip" data-unme="1">Это не я — выбрать другого игрока</button></p>`);
+}
+/* выбор «кто я» */
+function pickList(){
+  const q=(S.pq||'').trim().toLowerCase();
+  const pool=DB.filter(p=>!q||p.name.toLowerCase().includes(q)||p.team.toLowerCase().includes(q))
+    .sort((a,b)=>a.name.localeCompare(b.name,'ru')).slice(0,q?60:25);
+  return pool.length?`<div class="list">${pool.map(p=>`<button class="r" data-pick="${p.id}">${crest(p.team)}
+    <span class="who"><b>${esc(p.name)}</b><span>${esc(p.team)} · ${p.pos}</span></span><span class="val n">›</span></button>`).join('')}</div>`
+    :`<div class="note">Никого не нашли. Проверьте написание фамилии.</div>`;
+}
+function vPick(){
+  return `<div class="note"><b>Найдите себя в списке игроков Экстралиги.</b> После этого «Профиль» будет показывать ваш альбом медалей, а в рейтинге вы будете подсвечены.</div>
+    <input class="srch" id="pq" placeholder="Ваша фамилия или клуб" value="${esc(S.pq||'')}" autocomplete="off">
+    <div id="pl">${pickList()}</div>`;
 }
 
 /* ===== профиль болельщика ===== */
@@ -1198,7 +1260,7 @@ function vMedal(){
   return out;
 }
 function vLeague(){
-  const me=findP(ME), myTeam=me?me.team:null;
+  const me=findP(ME), myTeam=S.role==='fan'?S.fav:(me?me.team:null);
   const tbl=standings();
   const myRow=tbl.findIndex(r=>r.team===myTeam)+1;
 
@@ -1245,9 +1307,9 @@ function vLeague(){
   return head+table+matches;
 }
 function vCat(){
-  const me=findP(ME),c=collection(me),mp=medalPoints(me),lv=levelOf(mp);
+  const me=findP(ME);
   const rows=a=>{
-    const rar=rarityOf(a.id),mine=eligible(me,a)?prog(me,a):null;
+    const rar=rarityOf(a.id),mine=me&&eligible(me,a)?prog(me,a):null;
     if(a.needsProto)return `<button class="r" data-a="${a.id}"><span class="av">${a.i}</span>
       <span class="who"><b>${esc(a.n)}</b><span>Нужны протоколы матчей</span></span>
       <span class="val n">—<em>нет данных</em></span></button>`;
@@ -1259,10 +1321,15 @@ function vCat(){
        <span>${hidden?'Откроется при выполнении':esc(a.short)}</span></span>
      <span class="val n">${right}<em>${mine&&mine.tier?'у вас':'прогресс'}</em></span></button>`;
   };
-  return `<div class="note">Собрано <b>${c.got} из ${c.total}</b> · ${mp} очков · уровень ${lv.lv}.
-   Процент — доля игроков лиги, у которых медаль уже есть: чем меньше, тем ценнее.</div>
+  let top;
+  if(me){const c=collection(me),mp=medalPoints(me),lv=levelOf(mp);
+    top=`<div class="note">Собрано <b>${c.got} из ${c.total}</b> · ${mp} очков · уровень ${lv.lv}.
+     Процент — доля игроков лиги, у которых медаль уже есть: чем меньше, тем ценнее.</div>`;}
+  else top=`<div class="note">Все медали сезона. Процент — доля игроков лиги, у которых медаль уже есть: чем меньше, тем ценнее.
+     Чтобы видеть свой прогресс, выберите себя в «Профиле».</div>`;
+  return `${top}
    ${GROUPS.map(g=>{
-     const items=CAT.filter(a=>a.group===g.id&&eligible(me,a));
+     const items=CAT.filter(a=>a.group===g.id&&(!me||eligible(me,a)));
      if(!items.length)return '';
      return `<div class="h">${esc(g.n)}</div><div class="list">${items.map(rows).join('')}</div>`;
    }).join('')}
@@ -1281,9 +1348,12 @@ document.addEventListener('click',e=>{try{onTap(e)}catch(err){showErr(err)}});
 function onTap(e){
   const el=e.target&&e.target.nodeType===1?e.target:e.target&&e.target.parentElement;
   if(!el)return;
-  const t=el.closest('[data-m],[data-pf],[data-p],[data-a],[data-tab],[data-role],[data-fav],[data-pred],#back');
+  const t=el.closest('[data-m],[data-pf],[data-p],[data-a],[data-tab],[data-role],[data-fav],[data-pred],[data-pick],[data-unme],#back,#help');
   if(!t)return;const d=t.dataset;
   if(t.id==='back')return back();
+  if(t.id==='help')return openGuide(0);
+  if(d.pick){setMe(d.pick);S.pq='';S.pid=ME;haptic();draw();(MAIN.scrollTop=0);return;}
+  if(d.unme){setMe(null);draw();(MAIN.scrollTop=0);return;}
   if(d.role){if(d.role===S.role)return;S.role=d.role;store.set('role',S.role);draw();(MAIN.scrollTop=0);return;}
   if('fav' in d){S.fav=d.fav||null;store.set('fav',S.fav);draw();(MAIN.scrollTop=0);return;}
   if(d.pred){
@@ -1292,7 +1362,7 @@ function onTap(e){
     const y=MAIN.scrollTop;draw();requestAnimationFrame(()=>(MAIN.scrollTop=y));return;}
   if(d.tab){if(d.tab===S.tab&&['rank','league','medals','me'].includes(S.view))return;haptic();
     S.sc[k()]=MAIN.scrollTop;S.tab=d.tab;S.view=d.tab==='rank'?'rank':d.tab==='league'?'league':d.tab==='medals'?'medals':'me';
-    S.pid=(d.tab==='me'&&S.role==='player')?ME:null;draw();(MAIN.scrollTop=0);return;}
+    S.pid=(d.tab==='me'&&S.role==='player'&&ME)?ME:null;draw();(MAIN.scrollTop=0);return;}
   if(d.m){if(d.m===S.metric)return;S.metric=d.m;
     document.querySelectorAll('[data-m]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.m===S.metric));
     $('#rl').innerHTML=rankList();return;}
@@ -1305,8 +1375,71 @@ function onTap(e){
   if(d.p)return go('player',{pid:d.p});
   if(d.a)return go('medal',{aid:d.a,pid:d.owner||S.pid||ME});
 }
-document.addEventListener('input',e=>{if(e.target.id==='q'){S.q=e.target.value;$('#rl').innerHTML=rankList()}});
+document.addEventListener('input',e=>{if(e.target.id==='q'){S.q=e.target.value;$('#rl').innerHTML=rankList()}
+  if(e.target.id==='pq'){S.pq=e.target.value;$('#pl').innerHTML=pickList()}});
+
+/* ===== Обучение: показывается один раз при первом входе, потом — по кнопке «?» ===== */
+const GUIDE=[
+ {t:'Альбом медалей',h:'Добро пожаловать',
+  x:'Игроки Экстралиги получают <b>медали-наклейки</b> за настоящую статистику матчей: голы, передачи, победы, сухие матчи.',
+  v:()=>`<div class="g-vis"><div class="g-row">${[[1,'Бронза','🥅'],[2,'Серебро','🎯'],[3,'Золото','🏆'],[4,'Платина','💎']]
+    .map(([t,n,i])=>`<div><span class="disc d${t}" style="--rot:${t%2?-4:3}deg">${i}</span><span class="g-cap">${n}</span></div>`).join('')}</div></div>
+    <p class="g-note">Чем выше уровень медали, тем больше очков. Очки поднимают уровень игрока.</p>`},
+ {t:'Рейтинг',h:'Шаг 1',
+  x:'Найдите игрока или клуб через поиск. <b>Нажмите на фамилию</b> — откроется его альбом медалей.',
+  v:()=>{const p=skaters().slice().sort((a,b)=>b.pts-a.pts)[0];return p?`<div class="list g-tap"><div class="r"><span class="pos p1">1</span>${crest(p.team)}
+    <span class="who"><b>${esc(p.name)}</b><span>${esc(p.team)}</span></span><span class="val n">${p.pts}<em>о</em></span></div></div>`:''}},
+ {t:'Как читать альбом',h:'Шаг 2',
+  x:'Цветная наклейка — <b>медаль получена</b>. Пунктирный кружок — <b>ещё нет</b>, под ним видно, сколько осталось.',
+  v:()=>`<div class="g-vis"><div class="g-row">
+    <div><span class="disc d3" style="--rot:-3deg">🎯</span><span class="g-cap">получена</span></div>
+    <div class="med off" style="padding:0"><span class="disc">🥅</span><span class="g-cap">3 из 5</span></div>
+    <div class="med off" style="padding:0"><span class="disc">🏆</span><span class="g-cap">⏳ в конце сезона</span></div></div></div>
+    <p class="g-note">Процент под медалью — у скольких игроков лиги она уже есть. Меньше процент — реже медаль.</p>`},
+ {t:'Лига и прогнозы',h:'Шаг 3',
+  x:'Во вкладке <b>«Лига»</b> — турнирная таблица и результаты. Болельщики угадывают победителей матчей: <b>3 очка</b> за верный прогноз.',
+  v:()=>`<div class="list">${standings().slice(0,3).map((r,i)=>`<div class="r"><span class="pos po">${i+1}</span>${crest(r.team)}
+    <span class="who"><b>${esc(r.team)}</b></span><span class="val n">${r.pts}<em>очк.</em></span></div>`).join('')}</div>`},
+ {t:'Кто вы?',h:'Последний шаг',
+  x:'Выберите, и «Профиль» подстроится под вас. Поменять можно в любой момент.',
+  v:()=>`<div class="g-choice">
+    <button class="g-pick" data-g="player"><span class="ic">🏒</span><span><b>Я игрок</b><span>Найти себя и смотреть свой альбом</span></span></button>
+    <button class="g-pick" data-g="fan"><span class="ic">📣</span><span><b>Я болельщик</b><span>Выбрать клуб и делать прогнозы</span></span></button>
+    <button class="g-plain" data-g="look">Просто посмотреть</button></div>`}];
+let gi=0;
+function guideEl(){
+  let el=document.getElementById('guide');
+  if(!el){el=document.createElement('div');el.id='guide';el.className='guide';el.hidden=true;document.body.appendChild(el);
+    el.addEventListener('click',e=>{try{const b=e.target.closest('[data-g]');if(b)guideAct(b.dataset.g);}catch(err){showErr(err)}});
+    let x0=null;
+    el.addEventListener('touchstart',e=>{x0=e.touches[0].clientX},{passive:true});
+    el.addEventListener('touchend',e=>{if(x0===null)return;const dx=e.changedTouches[0].clientX-x0;x0=null;
+      if(dx<-60&&gi<GUIDE.length-1)guideGo(gi+1);else if(dx>60&&gi>0)guideGo(gi-1);},{passive:true});}
+  return el;
+}
+function guideGo(i){
+  gi=i;const g=GUIDE[i],last=i===GUIDE.length-1,el=guideEl();
+  el.innerHTML=`<div class="g-top"><div class="g-bar"><span class="g-step">${esc(g.h)}</span>
+      <button class="g-skip" data-g="close">${last?'Закрыть':'Пропустить'}</button></div>
+    <div class="g-title">${esc(g.t)}</div></div>
+   <div class="g-body"><p class="g-text">${g.x}</p>${g.v()}</div>
+   <div class="g-foot"><div class="g-dots">${GUIDE.map((_,k)=>`<i class="${k===i?'on':''}"></i>`).join('')}</div>
+     ${last?'':`<button class="g-next" data-g="next">Далее</button>`}</div>`;
+  el.hidden=false;
+}
+function openGuide(i){haptic();guideGo(i||0)}
+function closeGuide(){store.set('guided',1);guideEl().hidden=true}
+function guideAct(a){
+  if(a==='next'){haptic();return guideGo(gi+1)}
+  if(a==='close'||a==='look'){closeGuide();return}
+  if(a==='player'||a==='fan'){
+    closeGuide();S.role=a;store.set('role',a);
+    S.tab='me';S.view='me';S.pid=(a==='player'&&ME)?ME:null;draw();(MAIN.scrollTop=0);
+  }
+}
+
 draw();
+if(!store.get('guided',0))guideGo(0);
 </script>
 </body>
 </html>
