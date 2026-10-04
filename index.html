@@ -119,12 +119,14 @@ main>*{max-width:1148px;margin-left:auto;margin-right:auto}
 .pos.p1{background:var(--gold)}.pos.p2{background:#C9D1D8}.pos.p3{background:#D98B52}
 .pos.po{color:var(--red)}
 .crest{flex:0 0 34px;height:34px;border-radius:8px;display:grid;place-items:center;font:900 italic 12px var(--font-display);
-  color:#fff;background:hsl(var(--h) 62% 40%);text-transform:uppercase;
+  color:var(--cfg,#fff);background-color:var(--cbg,#555);text-transform:uppercase;
   background-image:linear-gradient(135deg,rgba(255,255,255,.18) 0 50%,transparent 50%)}
+.crest.num{font-size:15px;letter-spacing:-.02em}
 .av{flex:0 0 36px;height:36px;border-radius:8px;background:var(--sink);display:grid;place-items:center;font-size:18px;border:2px solid var(--ink)}
 .who{flex:1;min-width:0}
 .who b{display:block;font-size:15px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .who span{font-size:12.5px;color:var(--ink3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+.who b .rtag{display:inline-block;width:auto;overflow:visible}
 .val{font-family:var(--font-display);font-weight:900;font-style:italic;font-size:22px;line-height:1;text-align:right;min-width:48px;font-variant-numeric:tabular-nums}
 .val em{display:block;font:700 9.5px var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);font-style:normal;margin-top:3px}
 .me{background:var(--accent-soft)!important;box-shadow:inset 4px 0 0 var(--red)}
@@ -211,7 +213,7 @@ main>*{max-width:1148px;margin-left:auto;margin-right:auto}
   border:2px dashed var(--ink3);position:relative}
 .sd.d1,.sd.d2,.sd.d3,.sd.d4{border:3px solid var(--paper);color:#121417;box-shadow:2px 2px 0 var(--print)}
 .sx{flex:1;min-width:0}.sx b{display:block;font-size:14px}.sx span{font-size:12px;color:var(--ink3)}
-.bar{height:8px;border-radius:2px;background:var(--sink);overflow:hidden;margin-top:8px;border:1.5px solid var(--ink)}
+.bar{display:block;height:8px;border-radius:2px;background:var(--sink);overflow:hidden;margin-top:8px;border:1.5px solid var(--ink)}
 .bar i{display:block;height:100%;background:repeating-linear-gradient(-45deg,var(--red) 0 5px,#B81B12 5px 10px)}
 .rtag{display:inline-block;font:800 9.5px var(--font-body);letter-spacing:.04em;padding:2px 6px;border-radius:4px;margin-left:6px;vertical-align:1px}
 .rb0{background:var(--sink);color:var(--ink3)}.rb1{background:var(--blue-soft);color:var(--blue)}
@@ -698,14 +700,14 @@ RAW_SK.trim().split('\n').forEach((line,i)=>{
   DB.push({id:'s'+i,name:c[0],year:+c[1],team:c[2],pos:(c[3]==='З'||c[3]==='Защитник')?'Защитник':'Нападающий',
     gp:+c[4],g,a:+c[6],pts:+c[7],pm:+c[8],pim:+c[9],
     ppg:+c[10],ppa:+c[11],shg:+c[12],sha:+c[13],shots,
-    hat:+c[15]||0, streak:+c[16]||0, gwg:+c[17]||0,
+    hat:+c[15]||0, streak:+c[16]||0, gwg:+c[17]||0, num:c[18]||'',
     shotPct:shots?Math.round(g/shots*1000)/10:0});
 });
 RAW_GK.trim().split('\n').forEach((line,i)=>{
   const c=line.split('|');
   const sf=+c[6],ga=+c[7],toi=+c[8],est=+c[9]||0;
   DB.push({id:'g'+i,name:c[0],year:+c[1],team:c[2],pos:'Вратарь',
-    gp:+c[3],wins:+c[4],so:+c[5],est,
+    gp:+c[3],wins:+c[4],so:+c[5],est,num:c[10]||'',
     // sf=0 при сыгранных матчах = разбивка бросков по вратарям неизвестна вовсе
     sv: sf?Math.round((sf-ga)/sf*1000)/10:null,
     gaa: toi?Math.round(ga*60/toi*100)/100:0});
@@ -886,6 +888,8 @@ const locked=a=>(a.m==='rank'||a.m==='season')&&!seasonOver();
 // вратарский ценз ФХБ: не менее трети матчей команды
 const gkQualified=p=>p.gp>=Math.ceil(SEASON.total/3);
 
+// Медали, которые выдаются только после последнего тура (место в лиге, итоговые проценты).
+const finalMedal=a=>a.m==='rank'||a.m==='season';
 const MODE={cum:'Копится по ходу сезона.',season:'Считается по итогам сезона.',
  rank:'Место фиксируется после последнего тура.'};
 
@@ -974,18 +978,26 @@ let ME=null;
 function setMe(id){const p=findP(id);ME=p?p.id:null;store.set('me',p?{name:p.name,team:p.team}:null);}
 const k=()=>S.view+':'+(S.pid||'')+(S.aid||'');
 const $=s=>document.querySelector(s);
-// Значок клуба: две буквы названия на цвете, постоянном для команды.
-// Оттенки разнесены по кругу, чтобы соседние в таблице клубы не сливались.
-const CREST_HUE={'шахтер':28,'витебск':215,'славутич':4,'металлург':200,'брест':232,'молодечно':190,'гомель':350,
-  'лида':140,'могилев':268,'авиатор':178,'локомотив':12,'неман':110,'юность':300,'химик':50};
-function crest(team){
+// Значок: игровой номер (или буквы клуба, пока номер неизвестен) на цветах команды.
+// Цвета клубов — [фон, цвет цифр]; поправить можно здесь.
+const TEAM_COLORS={
+  'шахтер':['#F47B20','#111111'],  'витебск':['#1F4E9C','#FFFFFF'], 'славутич':['#0E2A5C','#E2231A'],
+  'металлург':['#0B4EA2','#F58220'],'брест':['#D7141A','#FFFFFF'],   'молодечно':['#123C8C','#FFFFFF'],
+  'гомель':['#C8102E','#FFD200'],   'лида':['#00843D','#FFFFFF'],     'могилев':['#00563F','#F2C500'],
+  'авиатор':['#2E86DE','#FFFFFF'],  'локомотив':['#9B111E','#FFFFFF'],'неман':['#C8102E','#FFFFFF'],
+  'юность':['#1B3F8B','#E31E24'],   'химик':['#0072BC','#FFD100']};
+function teamColors(team){
+  const k=String(team).toLowerCase().replace(/ё/g,'е');
+  const key=Object.keys(TEAM_COLORS).find(n=>k.includes(n));
+  if(key)return TEAM_COLORS[key];
+  let h=0;for(const ch of k)h=(h*31+ch.charCodeAt(0))%360;
+  return [`hsl(${h} 55% 38%)`,'#FFFFFF'];
+}
+function crest(team,num){
   const w=String(team).replace(/^ХК\s+/i,'').split(/[\s-]+/).filter(Boolean);
   const ab=(w.length>1?w[0][0]+w[1][0]:w[0].slice(0,2)).toUpperCase();
-  const k=String(team).toLowerCase().replace(/ё/g,'е');
-  const key=Object.keys(CREST_HUE).find(n=>k.includes(n));
-  let h=key!==undefined?CREST_HUE[key]:0;
-  if(key===undefined)for(const ch of k)h=(h*31+ch.charCodeAt(0))%360;
-  return `<span class="crest" style="--h:${h}" aria-hidden="true">${esc(ab)}</span>`;
+  const [bg,fg]=teamColors(team);
+  return `<span class="crest${num?' num':''}" style="--cbg:${bg};--cfg:${fg}" aria-hidden="true">${esc(num||ab)}</span>`;
 }
 const MAIN=document.getElementById('main');
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -1047,15 +1059,22 @@ function back(){
   else if(S.view==='player')S.view=S.tab==='medals'?'medals':S.tab==='me'?'me':'rank';
   draw();const y=S.sc[k()]||0;requestAnimationFrame(()=>(MAIN.scrollTop=y));
 }
+// Места с учётом равенства: 1, 2, 2, 4… (одинаковое значение — одно место).
+function placesOf(arr,val){
+  const out=[];let prev,place=0;
+  arr.forEach((x,i)=>{const v=val(x);if(i===0||v!==prev){place=i+1;prev=v;}out.push(place);});
+  return out;
+}
 function rankList(){
   const list=metricsFor(S.posf),m=list.find(x=>x.id===S.metric)||list[0],q=S.q.trim().toLowerCase();
   const pool=(S.posf==='Вратарь'?goalies():S.posf==='all'?skaters():skaters().filter(p=>p.pos===S.posf))
     .filter(p=>!q||p.name.toLowerCase().includes(q)||p.team.toLowerCase().includes(q))
     .filter(p=>m.f(p)!==null).sort((x,y)=>m.asc?m.f(x)-m.f(y):m.f(y)-m.f(x));
   if(!pool.length)return `<div class="note">Никто не подошёл под фильтр.</div>`;
+  const pl=placesOf(pool,m.f);
   return `<div class="list">${pool.map((p,i)=>{
-    const v=m.f(p),sg=m.sign&&v>0?'+':'',c=collection(p);
-    return `<button class="r${p.id===ME?' me':''}" data-p="${p.id}"><span class="pos${i<3?' p'+(i+1):''}">${i+1}</span>${crest(p.team)}
+    const v=m.f(p),sg=m.sign&&v>0?'+':'',c=collection(p),n=pl[i];
+    return `<button class="r${p.id===ME?' me':''}" data-p="${p.id}"><span class="pos${n<=3?' p'+n:''}">${n}</span>${crest(p.team,p.num)}
       <span class="who"><b>${esc(p.name)}</b><span>${esc(p.team)} · 🏅 ${c.got}/${c.total} · ${medalPoints(p)} очк.</span></span>
       <span class="val n">${sg}${v}<em>${m.s}</em></span></button>`;}).join('')}</div>`;
 }
@@ -1092,7 +1111,9 @@ function card(p,extra){
     ${p.pos==='Вратарь'&&p.est?`<p class="muted" style="margin-top:8px">* В ${p.est} матч${p.est===1?'е':'ах'} была замена вратаря внутри периода — броски и голы того периода разделены пропорционально времени на льду, а не взяты из протокола напрямую.</p>`:''}
     ${extra||''}</div>
    <div><div class="h">Альбом · ${c.got} из ${c.total}</div>
-    <div class="wall">${CAT.filter(a=>eligible(p,a)).map(a=>tile(p,a)).join('')}</div></div></div>`;
+    <div class="wall">${CAT.filter(a=>eligible(p,a)&&!finalMedal(a)).map(a=>tile(p,a)).join('')}</div>
+    ${CAT.some(a=>eligible(p,a)&&finalMedal(a))?`<div class="h">По итогам сезона</div>
+    <div class="wall">${CAT.filter(a=>eligible(p,a)&&finalMedal(a)).map(a=>tile(p,a)).join('')}</div>`:''}</div></div>`;
 }
 // Номер места в альбоме и небольшой наклон наклейки — постоянные для каждой медали.
 const slotNo=a=>'№ '+String(CAT.indexOf(a)+1).padStart(2,'0');
@@ -1118,15 +1139,9 @@ function tile(p,a){
    <span class="mt${pr.tier?' on':''}">${hidden?'':sub}</span>
    ${foot}</button>`;
 }
-function roleSwitch(){
-  return `<div class="chips sub2" style="margin-bottom:14px">
-    <button class="chip" aria-pressed="${S.role==='player'}" data-role="player">🏒 Игрок</button>
-    <button class="chip" aria-pressed="${S.role==='fan'}" data-role="fan">📣 Болельщик</button></div>`;
-}
 function vMe(){
-  if(S.role==='fan')return roleSwitch()+vFan();
   const p=findP(ME);
-  if(!p)return roleSwitch()+vPick();
+  if(!p)return vPick();
   const near=CAT.filter(a=>eligible(p,a)&&counts(a)&&!a.secret).map(a=>({a,pr:prog(p,a)}))
     .filter(o=>o.pr.nx&&o.a.m!=='rank'&&!o.pr.pending).sort((x,y)=>y.pr.pct-x.pr.pct).slice(0,3);
   const goals=near.length?`<div class="h">Ближайшие цели</div><div class="list">${near.map(o=>{
@@ -1134,14 +1149,14 @@ function vMe(){
     return `<div class="step"><span class="sd">${o.a.i}</span><span class="sx"><b>${esc(t[2])}</b>
       <span>${o.pr.v} из ${t[1]} — осталось ${Math.round((t[1]-o.pr.v)*10)/10} ${esc(o.a.u)} · +${TIER_PTS[t[0]]} очков</span>
       <span class="bar"><i style="width:${Math.round(o.pr.pct*100)}%"></i></span></span></div>`;}).join('')}</div>`:'';
-  return roleSwitch()+card(p,goals+`<p style="margin-top:14px"><button class="chip" data-unme="1">Это не я — выбрать другого игрока</button></p>`);
+  return card(p,goals+`<p style="margin-top:14px"><button class="chip" data-unme="1">Это не я — выбрать другого игрока</button></p>`);
 }
 /* выбор «кто я» */
 function pickList(){
   const q=(S.pq||'').trim().toLowerCase();
   const pool=DB.filter(p=>!q||p.name.toLowerCase().includes(q)||p.team.toLowerCase().includes(q))
     .sort((a,b)=>a.name.localeCompare(b.name,'ru')).slice(0,q?60:25);
-  return pool.length?`<div class="list">${pool.map(p=>`<button class="r" data-pick="${p.id}">${crest(p.team)}
+  return pool.length?`<div class="list">${pool.map(p=>`<button class="r" data-pick="${p.id}">${crest(p.team,p.num)}
     <span class="who"><b>${esc(p.name)}</b><span>${esc(p.team)} · ${p.pos}</span></span><span class="val n">›</span></button>`).join('')}</div>`
     :`<div class="note">Никого не нашли. Проверьте написание фамилии.</div>`;
 }
@@ -1151,82 +1166,6 @@ function vPick(){
     <div id="pl">${pickList()}</div>`;
 }
 
-/* ===== профиль болельщика ===== */
-function predScore(){
-  let right=0,total=0;
-  MATCHES.filter(played).forEach(m=>{
-    const p=S.preds[m.id]; if(!p)return;
-    total++; if(p===winnerOf(m))right++;
-  });
-  return {right,total,pts:right*3};
-}
-function vFan(){
-  if(!S.fav)return `<div class="note">Выберите клуб, за который болеете — приложение подстроится под него.</div>
-    <div class="chips" style="flex-wrap:wrap;gap:8px">${CLUBS.map(c=>
-      `<button class="chip" data-fav="${esc(c)}">${esc(c)}</button>`).join('')}</div>`;
-
-  const team=S.fav, sc=predScore();
-  const mine=MATCHES.filter(m=>m.home===team||m.away===team);
-  const last=mine.filter(played).slice(-1)[0];
-  const next=mine.filter(m=>!played(m))[0];
-  const roster=skaters().filter(p=>p.team===team);
-  const topSc=roster.slice().sort((a,b)=>b.pts-a.pts||b.g-a.g)[0];
-  // кто ближе всех к следующей медали
-  const close=roster.map(p=>{
-    const best=CAT.filter(a=>eligible(p,a)&&counts(a)&&!a.secret&&!prog(p,a).pending)
-      .map(a=>({a,pr:prog(p,a)})).filter(o=>o.pr.nx)
-      .sort((x,y)=>y.pr.pct-x.pr.pct)[0];
-    return best?{p,...best}:null;
-  }).filter(Boolean).sort((x,y)=>y.pr.pct-x.pr.pct).slice(0,3);
-
-  const upcoming=MATCHES.filter(m=>!played(m));
-  const resolved=MATCHES.filter(m=>played(m)&&S.preds[m.id]);
-
-  return `<div class="hero"><span class="ghost n">📣</span>
-      <h1>${esc(team)}</h1><p>Ваш клуб · сезон 2026/27</p>
-      <span class="pill">🎯 Прогнозы: ${sc.pts} очк. · угадано ${sc.right} из ${sc.total}</span></div>
-
-    <div class="grid4" style="grid-template-columns:repeat(2,1fr)">
-      <div class="box"><b class="n">${last?`${last.home===team?last.hs:last.as}:${last.home===team?last.as:last.hs}`:'—'}</b>
-        <span>${last?'с «'+esc(last.home===team?last.away:last.home)+'»':'матчей ещё не было'}</span></div>
-      <div class="box"><b class="n" style="font-size:16px">${next?esc(next.d):'—'}</b>
-        <span>${next?'с «'+esc(next.home===team?next.away:next.home)+'» в '+next.t:'календарь пуст'}</span></div>
-    </div>
-
-    <div class="h">Прогнозы на ближайшие матчи</div>
-    <div class="note">Выберите победителя. За угаданный исход — 3 очка. Результаты подводятся,
-      когда в приложение попадает протокол матча.</div>
-    <div class="list">${upcoming.map(m=>{
-      const p=S.preds[m.id];
-      return `<div class="step"><span class="sx">
-        <b>${esc(m.home)} — ${esc(m.away)}</b><span>${esc(m.d)} · ${m.t}</span></span>
-        <span style="display:flex;gap:6px;flex:0 0 auto">
-          <button class="chip" aria-pressed="${p==='home'}" data-pred="${m.id}" data-side="home">П1</button>
-          <button class="chip" aria-pressed="${p==='away'}" data-pred="${m.id}" data-side="away">П2</button>
-        </span></div>`;}).join('')}</div>
-
-    ${resolved.length?`<div class="h">Сыгранные прогнозы</div><div class="list">${resolved.map(m=>{
-      const ok=S.preds[m.id]===winnerOf(m);
-      return `<div class="step${ok?' done':''}"><span class="sd">${ok?'✓':'✗'}</span>
-        <span class="sx"><b>${esc(m.home)} ${m.hs}:${m.as} ${esc(m.away)}</b>
-        <span>ваш прогноз: ${S.preds[m.id]==='home'?esc(m.home):esc(m.away)} · ${ok?'+3 очка':'0'}</span></span></div>`;
-      }).join('')}</div>`:''}
-
-    <div class="h">Лидер клуба</div>
-    ${topSc?`<div class="list"><button class="r" data-p="${topSc.id}">
-      <span class="av">🏒</span><span class="who"><b>${esc(topSc.name)}</b>
-      <span>${topSc.g} г. + ${topSc.a} п. за ${topSc.gp} матч.</span></span>
-      <span class="val n">${topSc.pts}<em>О</em></span></button></div>`
-     :`<div class="note">У клуба пока нет сыгранных матчей.</div>`}
-
-    ${close.length?`<div class="h">Ближе всех к медали</div><div class="list">${close.map(o=>
-      `<button class="r" data-p="${o.p.id}"><span class="av">${o.a.i}</span>
-        <span class="who"><b>${esc(o.p.name)}</b><span>${esc(o.pr.nx[2])} — ${o.pr.v} из ${o.pr.nx[1]}</span></span>
-        <span class="val n">${Math.round(o.pr.pct*100)}<em>%</em></span></button>`).join('')}</div>`:''}
-
-    <p class="muted" style="margin-top:16px">
-      <button class="chip" data-fav="">Сменить клуб</button></p>`;
-}
 function vMedal(){
   const a=ach(S.aid),p=S.pid?findP(S.pid):null,rar=rarityOf(a.id);
   if(a.needsProto)return `<div class="note warn"><b>${esc(a.d)}.</b><br>
@@ -1252,15 +1191,16 @@ function vMedal(){
   const hs=DB.filter(x=>eligible(x,a)).map(x=>({p:x,pr:prog(x,a)})).filter(o=>o.pr.tier)
     .sort((x,y)=>y.pr.tier-x.pr.tier||(a.m==='rank'?x.pr.v-y.pr.v:(a.inv?x.pr.v-y.pr.v:y.pr.v-x.pr.v))).slice(0,15);
   out+=`<div class="h">Кто получил</div>`;
+  const hpl=placesOf(hs,o=>o.pr.tier*100000+(a.m==='rank'||a.inv?-o.pr.v:o.pr.v));
   out+=hs.length?`<div class="list">${hs.map((o,i)=>
-    `<button class="r${o.p.id===ME?' me':''}" data-p="${o.p.id}"><span class="pos">${i+1}</span>
+    `<button class="r${o.p.id===ME?' me':''}" data-p="${o.p.id}"><span class="pos">${hpl[i]}</span>${crest(o.p.team,o.p.num)}
       <span class="who"><b>${esc(o.p.name)}</b><span>${esc(o.p.team)} · ${'★'.repeat(o.pr.tier)}</span></span>
       <span class="val n">${a.m==='rank'?'#'+o.pr.v:o.pr.v}</span></button>`).join('')}</div>`
    :`<div class="note">Эту медаль пока никто не получил.</div>`;
   return out;
 }
 function vLeague(){
-  const me=findP(ME), myTeam=S.role==='fan'?S.fav:(me?me.team:null);
+  const me=findP(ME), myTeam=me?me.team:null;
   const tbl=standings();
   const myRow=tbl.findIndex(r=>r.team===myTeam)+1;
 
@@ -1321,18 +1261,13 @@ function vCat(){
        <span>${hidden?'Откроется при выполнении':esc(a.short)}</span></span>
      <span class="val n">${right}<em>${mine&&mine.tier?'у вас':'прогресс'}</em></span></button>`;
   };
-  let top;
-  if(me){const c=collection(me),mp=medalPoints(me),lv=levelOf(mp);
-    top=`<div class="note">Собрано <b>${c.got} из ${c.total}</b> · ${mp} очков · уровень ${lv.lv}.
-     Процент — доля игроков лиги, у которых медаль уже есть: чем меньше, тем ценнее.</div>`;}
-  else top=`<div class="note">Все медали сезона. Процент — доля игроков лиги, у которых медаль уже есть: чем меньше, тем ценнее.
-     Чтобы видеть свой прогресс, выберите себя в «Профиле».</div>`;
-  return `${top}
-   ${GROUPS.map(g=>{
-     const items=CAT.filter(a=>a.group===g.id&&(!me||eligible(me,a)));
+  const fin=CAT.filter(a=>finalMedal(a)&&(!me||eligible(me,a)));
+  return `${GROUPS.map(g=>{
+     const items=CAT.filter(a=>a.group===g.id&&!finalMedal(a)&&(!me||eligible(me,a)));
      if(!items.length)return '';
      return `<div class="h">${esc(g.n)}</div><div class="list">${items.map(rows).join('')}</div>`;
    }).join('')}
+   ${fin.length?`<div class="h">По итогам сезона</div><div class="list">${fin.map(rows).join('')}</div>`:''}
    <p class="muted" style="margin-top:16px">Статистика обновляется по протоколам матчей${HB&&HB.updated?' · обновлено '+esc(HB.updated):''}.</p>`;
 }
 const ICONS={
@@ -1348,21 +1283,15 @@ document.addEventListener('click',e=>{try{onTap(e)}catch(err){showErr(err)}});
 function onTap(e){
   const el=e.target&&e.target.nodeType===1?e.target:e.target&&e.target.parentElement;
   if(!el)return;
-  const t=el.closest('[data-m],[data-pf],[data-p],[data-a],[data-tab],[data-role],[data-fav],[data-pred],[data-pick],[data-unme],#back,#help');
+  const t=el.closest('[data-m],[data-pf],[data-p],[data-a],[data-tab],[data-pick],[data-unme],#back,#help');
   if(!t)return;const d=t.dataset;
   if(t.id==='back')return back();
   if(t.id==='help')return openGuide(0);
   if(d.pick){setMe(d.pick);S.pq='';S.pid=ME;haptic();draw();(MAIN.scrollTop=0);return;}
   if(d.unme){setMe(null);draw();(MAIN.scrollTop=0);return;}
-  if(d.role){if(d.role===S.role)return;S.role=d.role;store.set('role',S.role);draw();(MAIN.scrollTop=0);return;}
-  if('fav' in d){S.fav=d.fav||null;store.set('fav',S.fav);draw();(MAIN.scrollTop=0);return;}
-  if(d.pred){
-    if(S.preds[d.pred]===d.side)delete S.preds[d.pred]; else S.preds[d.pred]=d.side;
-    store.set('preds',S.preds);
-    const y=MAIN.scrollTop;draw();requestAnimationFrame(()=>(MAIN.scrollTop=y));return;}
   if(d.tab){if(d.tab===S.tab&&['rank','league','medals','me'].includes(S.view))return;haptic();
     S.sc[k()]=MAIN.scrollTop;S.tab=d.tab;S.view=d.tab==='rank'?'rank':d.tab==='league'?'league':d.tab==='medals'?'medals':'me';
-    S.pid=(d.tab==='me'&&S.role==='player'&&ME)?ME:null;draw();(MAIN.scrollTop=0);return;}
+    S.pid=(d.tab==='me'&&ME)?ME:null;draw();(MAIN.scrollTop=0);return;}
   if(d.m){if(d.m===S.metric)return;S.metric=d.m;
     document.querySelectorAll('[data-m]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.m===S.metric));
     $('#rl').innerHTML=rankList();return;}
@@ -1387,7 +1316,7 @@ const GUIDE=[
     <p class="g-note">Чем выше уровень медали, тем больше очков. Очки поднимают уровень игрока.</p>`},
  {t:'Рейтинг',h:'Шаг 1',
   x:'Найдите игрока или клуб через поиск. <b>Нажмите на фамилию</b> — откроется его альбом медалей.',
-  v:()=>{const p=skaters().slice().sort((a,b)=>b.pts-a.pts)[0];return p?`<div class="list g-tap"><div class="r"><span class="pos p1">1</span>${crest(p.team)}
+  v:()=>{const p=skaters().slice().sort((a,b)=>b.pts-a.pts)[0];return p?`<div class="list g-tap"><div class="r"><span class="pos p1">1</span>${crest(p.team,p.num)}
     <span class="who"><b>${esc(p.name)}</b><span>${esc(p.team)}</span></span><span class="val n">${p.pts}<em>о</em></span></div></div>`:''}},
  {t:'Как читать альбом',h:'Шаг 2',
   x:'Цветная наклейка — <b>медаль получена</b>. Пунктирный кружок — <b>ещё нет</b>, под ним видно, сколько осталось.',
@@ -1396,15 +1325,14 @@ const GUIDE=[
     <div class="med off" style="padding:0"><span class="disc">🥅</span><span class="g-cap">3 из 5</span></div>
     <div class="med off" style="padding:0"><span class="disc">🏆</span><span class="g-cap">⏳ в конце сезона</span></div></div></div>
     <p class="g-note">Процент под медалью — у скольких игроков лиги она уже есть. Меньше процент — реже медаль.</p>`},
- {t:'Лига и прогнозы',h:'Шаг 3',
-  x:'Во вкладке <b>«Лига»</b> — турнирная таблица и результаты. Болельщики угадывают победителей матчей: <b>3 очка</b> за верный прогноз.',
+ {t:'Лига',h:'Шаг 3',
+  x:'Во вкладке <b>«Лига»</b> — турнирная таблица и результаты всех матчей. Статистика обновляется после каждого игрового дня.',
   v:()=>`<div class="list">${standings().slice(0,3).map((r,i)=>`<div class="r"><span class="pos po">${i+1}</span>${crest(r.team)}
     <span class="who"><b>${esc(r.team)}</b></span><span class="val n">${r.pts}<em>очк.</em></span></div>`).join('')}</div>`},
- {t:'Кто вы?',h:'Последний шаг',
-  x:'Выберите, и «Профиль» подстроится под вас. Поменять можно в любой момент.',
+ {t:'Ваш альбом',h:'Последний шаг',
+  x:'Играете в Экстралиге? Найдите себя — во вкладке <b>«Профиль»</b> будет ваш альбом и ближайшие медали.',
   v:()=>`<div class="g-choice">
-    <button class="g-pick" data-g="player"><span class="ic">🏒</span><span><b>Я игрок</b><span>Найти себя и смотреть свой альбом</span></span></button>
-    <button class="g-pick" data-g="fan"><span class="ic">📣</span><span><b>Я болельщик</b><span>Выбрать клуб и делать прогнозы</span></span></button>
+    <button class="g-pick" data-g="player"><span class="ic">🏒</span><span><b>Найти себя</b><span>Выбрать свою фамилию из списка игроков</span></span></button>
     <button class="g-plain" data-g="look">Просто посмотреть</button></div>`}];
 let gi=0;
 function guideEl(){
@@ -1432,9 +1360,8 @@ function closeGuide(){store.set('guided',1);guideEl().hidden=true}
 function guideAct(a){
   if(a==='next'){haptic();return guideGo(gi+1)}
   if(a==='close'||a==='look'){closeGuide();return}
-  if(a==='player'||a==='fan'){
-    closeGuide();S.role=a;store.set('role',a);
-    S.tab='me';S.view='me';S.pid=(a==='player'&&ME)?ME:null;draw();(MAIN.scrollTop=0);
+  if(a==='player'){
+    closeGuide();S.tab='me';S.view='me';S.pid=ME||null;draw();(MAIN.scrollTop=0);
   }
 }
 
