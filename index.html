@@ -285,7 +285,7 @@ main>*{max-width:1148px;margin-left:auto;margin-right:auto}
 .cta:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--print)}
 .cta.ghost{background:var(--card);color:var(--ink);border-color:var(--ink);box-shadow:none}
 .cta.done{background:var(--plat);color:#06232A}
-.crest.logo{background:var(--paper);padding:3px;border:1px solid var(--hair)}
+.crest.logo{background:#141A26;padding:3px}
 .crest.logo img{width:100%;height:100%;object-fit:contain;display:block}
 .crest.big{flex:0 0 56px;width:56px;height:56px;border-radius:14px;font-size:18px}
 .thero{display:flex;align-items:center;gap:14px;padding:4px 0 2px}
@@ -303,6 +303,45 @@ main>*{max-width:1148px;margin-left:auto;margin-right:auto}
 .goal.h{box-shadow:inset 4px 0 0 var(--red)}.goal.a{box-shadow:inset 4px 0 0 var(--blue)}
 .tbl.two{grid-template-columns:1fr 1fr}
 
+/* ---------- заставка ---------- */
+.splash{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;background:var(--red);color:#fff;overflow:hidden;
+  transition:opacity .4s,transform .4s}
+.splash::before{content:"";position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(var(--dots) 1.4px,transparent 1.7px);
+  background-size:8px 8px;-webkit-mask-image:radial-gradient(130% 80% at 100% 0%,#000,transparent 70%);mask-image:radial-gradient(130% 80% at 100% 0%,#000,transparent 70%)}
+.splash.out{opacity:0;transform:scale(1.04);pointer-events:none}
+.sp-top{position:relative;padding:calc(36px + env(safe-area-inset-top,0px)) 24px 0}
+.sp-title{font:900 italic 46px/.92 var(--font-display);text-transform:uppercase;letter-spacing:-.02em}
+.sp-tape{display:inline-block;margin-top:14px;background:var(--yellow);color:#121417;font:800 12px var(--font-body);letter-spacing:.14em;
+  text-transform:uppercase;padding:4px 12px 5px;transform:rotate(-2deg);box-shadow:3px 3px 0 rgba(0,0,0,.25)}
+.sp-rink{position:relative;flex:1;margin:24px 20px 0;border:3px solid rgba(255,255,255,.9);border-bottom:0;border-radius:120px 120px 0 0;
+  background:rgba(255,255,255,.06);cursor:pointer;touch-action:manipulation;overflow:hidden;min-height:220px}
+.sp-line{position:absolute;left:0;right:0;bottom:22%;height:4px;background:rgba(255,255,255,.85)}
+.sp-goal{position:absolute;top:14%;left:50%;width:46%;max-width:180px;aspect-ratio:2/1;transform:translateX(-50%);
+  border:4px solid #fff;border-bottom:0;border-radius:10px 10px 0 0;
+  background:repeating-linear-gradient(45deg,rgba(255,255,255,.35) 0 2px,transparent 2px 10px),repeating-linear-gradient(-45deg,rgba(255,255,255,.35) 0 2px,transparent 2px 10px)}
+.sp-goal.hit{animation:net .35s ease-out}
+@keyframes net{0%{transform:translateX(-50%) scale(1)}40%{transform:translateX(-50%) scale(1.08,1.12)}100%{transform:translateX(-50%) scale(1)}}
+.sp-puck{position:absolute;left:50%;bottom:10%;width:46px;height:20px;margin-left:-23px;border-radius:50%;background:#121417;
+  box-shadow:0 5px 0 #000,0 0 0 3px rgba(255,255,255,.9);transition:transform .38s cubic-bezier(.2,.7,.3,1),opacity .3s}
+.sp-puck.fly{transform:translate(var(--dx,0),-330%) scale(.55)}
+.sp-msg{position:absolute;top:44%;left:0;right:0;text-align:center;font:900 italic 40px var(--font-display);color:var(--yellow);
+  text-shadow:3px 3px 0 #121417;opacity:0;transform:scale(.6);transition:all .2s}
+.sp-msg.on{opacity:1;transform:scale(1) rotate(-4deg)}
+.sp-foot{position:relative;display:grid;grid-template-columns:1fr auto;grid-template-rows:auto auto;gap:2px 12px;align-items:end;
+  padding:14px 24px calc(22px + env(safe-area-inset-bottom,0px));background:#121417}
+.sp-foot span{font:700 14px var(--font-body)}
+.sp-foot .sp-hint{grid-column:1;font:500 12px var(--font-body);color:#9AA3AB}
+.sp-foot b{grid-column:2;grid-row:1/3;font:900 italic 38px var(--font-display);color:var(--yellow)}
+@media(prefers-reduced-motion:reduce){.sp-puck,.sp-msg,.splash{transition:none}.sp-goal.hit{animation:none}}
+.swipe-back{transition:transform .2s ease-out}
+.pv-badge{display:inline-block;margin-left:8px;background:#121417;color:var(--yellow);font:800 10px var(--font-body);letter-spacing:.12em;
+  padding:3px 8px;border-radius:4px;vertical-align:2px}
+.mh{display:block;font-size:11.5px;color:var(--ink2);margin-top:3px}
+.mh button{appearance:none;border:0;background:transparent;padding:0;text-align:left;color:var(--blue);font:700 11.5px var(--font-body);cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+.hero .hlogo{position:absolute;right:14px;top:14px;width:58px;height:58px;border-radius:14px;background:#141A26;padding:5px;z-index:1;
+  box-shadow:2px 2px 0 var(--print)}
+.hero .hlogo img{width:100%;height:100%;object-fit:contain;display:block}
+
 @media(min-width:860px){main{padding:24px 16px 28px}
   .split{display:grid;grid-template-columns:360px 1fr;gap:24px;align-items:start}
   .grid4{grid-template-columns:repeat(2,1fr)}}
@@ -312,6 +351,20 @@ main>*{max-width:1148px;margin-left:auto;margin-right:auto}
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
+<div class="splash" id="splash" aria-live="polite">
+  <div class="sp-top">
+    <div class="sp-title">Альбом<br>медалей</div>
+    <div class="sp-tape">Экстралига · 26/27</div>
+  </div>
+  <div class="sp-rink" id="sp-rink" role="button" aria-label="Бросить шайбу">
+    <div class="sp-goal" id="sp-goal"><i></i></div>
+    <div class="sp-msg" id="sp-msg">ГОЛ!</div>
+    <div class="sp-puck" id="sp-puck"></div>
+    <div class="sp-line"></div>
+  </div>
+  <div class="sp-foot"><span id="sp-status">Загружаю статистику…</span><span class="sp-hint" id="sp-hint">Пока ждёте — коснитесь, чтобы бросить по воротам</span>
+    <b id="sp-score">0</b></div>
+</div>
 <div class="app">
   <header class="top"><div class="top-in">
     <div class="trow"><button class="back" id="back" aria-label="Назад">‹</button><div class="ttl" id="ttl"></div><button class="help" id="help" aria-label="Как пользоваться">?</button></div>
@@ -320,6 +373,36 @@ main>*{max-width:1148px;margin-left:auto;margin-right:auto}
   <main id="main"></main>
   <nav class="tabs"><div class="tabs-in" id="tabs"></div></nav>
 </div>
+<script>
+/* Интерактивная заставка: пока грузятся данные, можно бросать шайбу по воротам. */
+(function(){
+  var rink=document.getElementById('sp-rink'),puck=document.getElementById('sp-puck'),goal=document.getElementById('sp-goal'),
+      msg=document.getElementById('sp-msg'),score=document.getElementById('sp-score'),status=document.getElementById('sp-status'),
+      splash=document.getElementById('splash'),t0=Date.now(),busy=false,n=0,ready=false,closed=false;
+  function shoot(e){
+    if(busy||closed)return;busy=true;
+    var r=rink.getBoundingClientRect(),x=(e&&e.clientX?e.clientX-r.left:r.width/2)-r.width/2;
+    var off=Math.max(-1,Math.min(1,x/(r.width/2)));                 // куда целились: -1 … 1
+    var miss=Math.abs(off)>0.55;
+    puck.style.setProperty('--dx',(off*42)+'%');puck.classList.add('fly');
+    try{window.Telegram&&Telegram.WebApp.HapticFeedback.impactOccurred(miss?'light':'medium');}catch(_){}
+    setTimeout(function(){
+      if(!miss){n++;score.textContent=n;goal.classList.add('hit');msg.textContent=n%5===0?'ХЕТ-ТРИК+!':'ГОЛ!';msg.classList.add('on');}
+      else{msg.textContent='МИМО';msg.classList.add('on');}
+    },360);
+    setTimeout(function(){puck.classList.remove('fly');goal.classList.remove('hit');msg.classList.remove('on');busy=false;if(ready)close();},1000);
+  }
+  rink.addEventListener('pointerdown',shoot);
+  function close(){
+    if(closed)return;closed=true;splash.classList.add('out');setTimeout(function(){splash.remove()},450);
+  }
+  window.hbReady=function(){
+    ready=true;status.textContent='Готово!';
+    var wait=Math.max(0,1400-(Date.now()-t0));                       // не мелькать: минимум ~1,4 с
+    setTimeout(function(){if(!busy)close();},wait);
+  };
+})();
+</script>
 <script>
 /* Telegram Mini App: если открыто внутри Telegram — разворачиваемся на весь
    экран и берём цвета текущей темы пользователя. Вне Telegram (обычный
@@ -344,14 +427,8 @@ if (IN_TG) {
 }
 const haptic = () => { try { IN_TG && tg.HapticFeedback && tg.HapticFeedback.selectionChanged(); } catch (e) {} };
 </script>
-<script>
-/* Свежие данные: бот кладёт data.js рядом с этой страницей после каждого
-   загруженного протокола. Параметр v меняется раз в минуту, чтобы Telegram
-   не показывал старую копию. Если data.js не загрузился, используются
-   данные, встроенные ниже. */
-document.write('<script src="data.js?v='+Math.floor(Date.now()/60000)+'"><\/script>');
-</script>
-<script>
+
+<script type="text/hb" id="hb-app">
 /*ENGINE:BEGIN — эта часть без DOM; бот запускает её у себя, чтобы знать, кто получил медаль*/
 const HB=window.HB_DATA||null;
 /* ============================================================
@@ -1134,7 +1211,7 @@ function card(p,extra){
     :[['+/-',(p.pm>0?'+':'')+p.pm],['Штраф',p.pim],['Броски',p.shots],['Реализация',p.shots&&p.shots>=p.g?p.shotPct+'%':'—'],
       ['Больш. (О)',p.ppg+p.ppa],['Меньш. (О)',p.shg+p.sha],...(p.year?[['Год рождения',p.year]]:[])];
   return `<div class="split"><div>
-    <div class="hero"><span class="ghost n">${p.pos==='Вратарь'?'🥅':(p.pts||'🏒')}</span>
+    <div class="hero">${logoOf(p.team)?`<span class="hlogo"><img src="${esc(logoOf(p.team))}" alt=""></span>`:''}<span class="ghost n">${p.pos==='Вратарь'?'🥅':(p.pts||'🏒')}</span>
       <h1>${esc(p.name)}</h1><p>${esc(p.team)} · ${p.pos}</p>
       <div class="lvl"><div class="lvlbadge"><b class="n">${lv.lv}</b><span>УР.</span></div>
         <div class="lvlbar"><div class="t"><span>${mp} очков медалей</span>
@@ -1230,6 +1307,7 @@ function vMedal(){
       return `<div class="step${done?' done':''}"><span class="sd${done?' d'+t[0]:''}">${done?'✓':t[0]}</span>
         <span class="sx"><b>${esc(t[2])}</b><span>${a.m==='rank'?'место '+t[1]+' или выше'
           :(a.inv?'не выше ':'нужно ')+t[1]+' '+esc(a.u)} · +${TIER_PTS[t[0]]} очков</span>
+          ${done?earnedLine(p,a,t):''}
         ${nx?`<span class="bar"><i style="width:${Math.round(pr.pct*100)}%"></i></span>`:''}</span>
         <span class="val n">${a.m==='rank'?(pr.v?'#'+pr.v:'—'):pr.v}</span></div>`;}).join('')}</div>`;
   }
@@ -1399,8 +1477,12 @@ const LOGO_KEYS={'шахтер':'shakhter','витебск':'vitebsk','слав�
 function logoOf(team){
   const k=String(team).toLowerCase().replace(/ё/g,'е');
   const key=Object.keys(LOGO_KEYS).find(n=>k.includes(n));
-  return key&&HB&&HB.logos&&HB.logos[LOGO_KEYS[key]]||null;
+  const src=key&&HB&&HB.logos&&HB.logos[LOGO_KEYS[key]];
+  return src?SITE_ROOT+src:null;
 }
+// Предпросмотр лежит в /preview/, а эмблемы — в корне сайта.
+const IS_PREVIEW=/\/preview\//.test(location.pathname);
+const SITE_ROOT=IS_PREVIEW?'../':'';
 function teamBadge(team,big){
   const src=logoOf(team);
   if(src)return `<span class="crest logo${big?' big':''}" aria-hidden="true"><img src="${esc(src)}" alt="" loading="lazy"></span>`;
@@ -1462,6 +1544,67 @@ function vMatch(){
   return out;
 }
 
+/* ===== в каком матче получена медаль ===== */
+let histState=window.HB_HIST?'ok':'idle';
+function loadHist(){
+  if(histState!=='idle')return;histState='loading';
+  const s=document.createElement('script');s.src='hist.js?v='+Math.floor(Date.now()/60000);
+  s.onload=()=>{histState=window.HB_HIST?'ok':'none';if(S.view==='medal')draw();};
+  s.onerror=()=>{histState='none';if(S.view==='medal')draw();};
+  document.head.appendChild(s);
+}
+const SK_H=['gp','g','a','pm','pim','ppg','ppa','shg','sha','shots','gwg'], GK_H=['gp','wins','so'];
+function fmtBase(){const d=(HB&&HB.base)||'';return d?d.split('-').reverse().slice(0,2).join('.'):'';}
+// Для каждого уровня: 'base' (набран ещё в сводной статистике) или id матча, в котором порог был пройден.
+function earnedWhere(p,a){
+  if(a.m!=='cum')return null;
+  const rows=(window.HB_HIST&&window.HB_HIST[p.key])||[];
+  const keys=p.pos==='Вратарь'?GK_H:SK_H;
+  const q={...p};
+  for(const r of rows)keys.forEach((k,i)=>{q[k]-=r[i+1]||0;});
+  if(p.pos!=='Вратарь'){q.pts=q.g+q.a;q.hat=p.hat-rows.filter(r=>r[2]>=3).length;}
+  const res={};const thr=t=>a.f(q)>=t;
+  a.t.forEach(t=>{if(thr(t[1]))res[t[0]]='base';});
+  for(const r of rows){
+    keys.forEach((k,i)=>{q[k]+=r[i+1]||0;});
+    if(p.pos!=='Вратарь'){q.pts=q.g+q.a;if(r[2]>=3)q.hat++;}
+    a.t.forEach(t=>{if(!res[t[0]]&&thr(t[1]))res[t[0]]=r[0];});
+  }
+  return res;
+}
+function earnedLine(p,a,t){
+  if(a.m!=='cum')return '';
+  if(histState==='idle'){loadHist();return '<span class="mh">ищу матч…</span>';}
+  if(histState==='loading')return '<span class="mh">ищу матч…</span>';
+  const w=earnedWhere(p,a);const g=w&&w[t[0]];
+  if(!g)return '';
+  if(g==='base')return `<span class="mh">получена до ${fmtBase()||'начала учёта протоколов'} · по сводной статистике</span>`;
+  const m=MATCHES.find(x=>x.id===g);
+  return m?`<span class="mh">получена в матче <button data-match="${esc(m.id)}">${esc(m.d)} · ${esc(m.home)} — ${esc(m.away)} ${m.hs}:${m.as}</button></span>`:'';
+}
+
+/* ===== возврат свайпом вправо ===== */
+(function(){
+  let x0=null,y0=0,t0=0,dragging=false;
+  MAIN.addEventListener('touchstart',e=>{
+    if(!S.hist.length||e.touches.length!==1||e.target.closest('.chips'))return x0=null;
+    x0=e.touches[0].clientX;y0=e.touches[0].clientY;t0=Date.now();dragging=false;
+  },{passive:true});
+  MAIN.addEventListener('touchmove',e=>{
+    if(x0===null)return;
+    const dx=e.touches[0].clientX-x0,dy=e.touches[0].clientY-y0;
+    if(!dragging&&Math.abs(dy)>Math.abs(dx))return x0=null;           // вертикальная прокрутка — не мешаем
+    if(dx>8){dragging=true;MAIN.style.transform=`translateX(${Math.min(dx*.5,120)}px)`;}
+  },{passive:true});
+  MAIN.addEventListener('touchend',e=>{
+    if(x0===null)return;
+    const dx=e.changedTouches[0].clientX-x0;x0=null;
+    MAIN.classList.add('swipe-back');MAIN.style.transform='';
+    setTimeout(()=>MAIN.classList.remove('swipe-back'),220);
+    if(dragging&&dx>80&&Date.now()-t0<900){haptic();back();}
+  },{passive:true});
+})();
+
 /* ===== Обучение: показывается один раз при первом входе, потом — по кнопке «?» ===== */
 const GUIDE=[
  {t:'Альбом медалей',h:'Добро пожаловать',
@@ -1521,8 +1664,26 @@ function guideAct(a){
 }
 
 const deep=openStartParam();
+if(IS_PREVIEW)document.getElementById('subttl').insertAdjacentHTML('afterend','<span class="pv-badge">ПРЕДПРОСМОТР</span>');
 draw();
 if(!deep&&!store.get('guided',0))guideGo(0);
+window.hbReady&&window.hbReady();
+</script>
+<script>
+/* Загрузка: data.js (свежая статистика) подгружается в фоне, пока показана заставка.
+   Как только он пришёл (или через 8 секунд, если сеть совсем плохая), запускаем приложение;
+   без data.js приложение покажет встроенные данные. */
+(function(){
+  var started=false;
+  function boot(){
+    if(started)return;started=true;
+    var src=document.getElementById('hb-app'),n=document.createElement('script');
+    n.textContent=src.textContent;document.body.appendChild(n);
+  }
+  var d=document.createElement('script');
+  d.src='data.js?v='+Math.floor(Date.now()/60000);d.onload=boot;d.onerror=boot;
+  document.head.appendChild(d);setTimeout(boot,8000);
+})();
 </script>
 </body>
 </html>
