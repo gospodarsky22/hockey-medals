@@ -1,0 +1,1680 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Медали — Экстралига</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&family=Rubik:ital,wght@1,800;1,900&display=swap" rel="stylesheet">
+<style>
+/* «Альбом наклеек»: медали собираются как наклейки в сезонный альбом.
+   Печатная графика: плотная чёрная краска, красная «голевая» плашка с растром,
+   жёлтая лента-скотч; жёсткие сдвинутые тени вместо мягких; пустые места
+   в альбоме пронумерованы. Светлая тема — бумага альбома, тёмная — чёрный картон. */
+:root{
+  --font-display:"Rubik","Onest",system-ui,sans-serif;
+  --font-body:"Onest",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --bg:#E4E9ED; --card:#FFFFFF; --sink:#EEF2F5; --raise:#FFFFFF;
+  --ink:#121417; --ink2:#454D55; --ink3:#838C95; --hair:#CDD5DC;
+  --print:#121417;           /* краска контуров и теней — в обеих темах тёмная */
+  --paper:#FFFFFF;           /* белая кайма наклеек */
+  --red:#E1261C; --red-ink:#FFFFFF;
+  --yellow:#FFC21A;
+  --accent:#E1261C; --accent-soft:rgba(225,38,28,.09);
+  --blue:#1E58D6; --blue-soft:rgba(30,88,214,.10);
+  --gold:#F2B600; --gold2:#FFF1C7; --silver:#9AA6B1; --silver2:#EEF1F4;
+  --bronze:#C26A2C; --bronze2:#F8E6D8; --plat:#18A9C4; --plat2:#DDF4F8;
+  --legend:#8A3CC2; --legend2:#F2E6FA;
+  --navy:#121417; --navy2:#121417;
+  --bar:#121417; --bar-ink:#8B939B;
+  --dots:rgba(0,0,0,.16);
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0E0F11; --card:#1A1C20; --sink:#141619; --raise:#22252A;
+  --ink:#F3F4F5; --ink2:#B7BDC3; --ink3:#7C848C; --hair:#2B2F35;
+  --print:#000000; --paper:#F3F4F5;
+  --red:#F0322A; --yellow:#FFC93A;
+  --accent:#FF4B40; --accent-soft:rgba(255,75,64,.13);
+  --blue:#6A97FF; --blue-soft:rgba(106,151,255,.14);
+  --gold:#FFC93A; --gold2:rgba(255,201,58,.15); --silver:#B6C0CA; --silver2:rgba(182,192,202,.13);
+  --bronze:#DA8547; --bronze2:rgba(218,133,71,.15); --plat:#4FCDE3; --plat2:rgba(79,205,227,.13);
+  --legend:#B67CFF; --legend2:rgba(182,124,255,.15);
+  --bar:#000000; --bar-ink:#7C848C; --dots:rgba(0,0,0,.22); color-scheme:dark;}}
+:root[data-theme="dark"]{
+  --bg:#0E0F11; --card:#1A1C20; --sink:#141619; --raise:#22252A;
+  --ink:#F3F4F5; --ink2:#B7BDC3; --ink3:#7C848C; --hair:#2B2F35;
+  --print:#000000; --paper:#F3F4F5;
+  --red:#F0322A; --yellow:#FFC93A;
+  --accent:#FF4B40; --accent-soft:rgba(255,75,64,.13);
+  --blue:#6A97FF; --blue-soft:rgba(106,151,255,.14);
+  --gold:#FFC93A; --gold2:rgba(255,201,58,.15); --silver:#B6C0CA; --silver2:rgba(182,192,202,.13);
+  --bronze:#DA8547; --bronze2:rgba(218,133,71,.15); --plat:#4FCDE3; --plat2:rgba(79,205,227,.13);
+  --legend:#B67CFF; --legend2:rgba(182,124,255,.15);
+  --bar:#000000; --bar-ink:#7C848C; --dots:rgba(0,0,0,.22); color-scheme:dark;}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:15px;line-height:1.45;
+  -webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+.n{font-family:var(--font-display);font-weight:800;font-style:italic;font-variant-numeric:tabular-nums}
+button{font:inherit;color:inherit;touch-action:manipulation}
+button:focus-visible,input:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.app{width:100%;height:100%;display:flex;flex-direction:column}
+.err{position:fixed;left:12px;right:12px;bottom:84px;z-index:99;background:#121417;color:#fff;border:2px solid #E1261C;
+  border-radius:10px;padding:10px 12px;font:500 12.5px var(--font-body)}
+
+/* ---------- шапка: красная плашка с растром ---------- */
+.top{flex:0 0 auto;position:relative;color:#fff;background:var(--red);overflow:hidden}
+.top::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background-image:radial-gradient(var(--dots) 1.3px,transparent 1.6px);background-size:7px 7px;
+  -webkit-mask-image:linear-gradient(100deg,transparent 35%,#000 100%);mask-image:linear-gradient(100deg,transparent 35%,#000 100%)}
+.top-in{position:relative;max-width:1180px;margin:0 auto;padding:12px 16px 14px}
+.trow{display:flex;align-items:center;gap:10px;min-height:38px}
+.back{appearance:none;border:2px solid #fff;background:transparent;border-radius:50%;width:34px;height:34px;
+  cursor:pointer;font-size:20px;line-height:1;color:#fff;display:none;place-items:center;flex:0 0 auto;padding:0 0 2px}
+.back.on{display:grid}.back:active{background:rgba(255,255,255,.2)}
+.ttl{font-family:var(--font-display);font-weight:900;font-style:italic;text-transform:uppercase;font-size:25px;line-height:1;
+  letter-spacing:-.01em;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-right:4px}
+/* жёлтая лента-скотч с названием турнира */
+.sub{display:inline-block;margin:8px 0 0;padding:3px 10px 4px;background:var(--yellow);color:#121417;
+  font:800 10.5px var(--font-body);letter-spacing:.14em;text-transform:uppercase;transform:rotate(-1.5deg);
+  box-shadow:2px 2px 0 rgba(0,0,0,.25)}
+
+main{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y;padding:18px 16px 28px}
+main>*{max-width:1148px;margin-left:auto;margin-right:auto}
+.h{display:flex;align-items:center;gap:10px;font-family:var(--font-display);font-weight:800;font-style:italic;
+  text-transform:uppercase;font-size:15px;letter-spacing:.01em;margin:28px 0 12px}
+.h::after{content:"";flex:1;height:2px;background:var(--ink);opacity:.85}
+.h:first-child{margin-top:0}
+.muted{color:var(--ink3);font-size:12.5px}
+
+/* ---------- фильтры ---------- */
+.chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:2px 2px 4px}
+.chips::-webkit-scrollbar{display:none}
+.chip{appearance:none;border:2px solid var(--ink);background:transparent;border-radius:999px;padding:6px 13px;
+  font:700 12.5px var(--font-body);color:var(--ink);cursor:pointer;white-space:nowrap}
+.chip:active{transform:translate(1px,1px)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.chips.sub2{gap:0;border:2px solid var(--ink);border-radius:10px;padding:0;overflow:hidden}
+.chips.sub2 .chip{border:0;border-left:2px solid var(--ink);border-radius:0;flex:1 0 auto;padding:8px 10px}
+.chips.sub2 .chip:first-child{border-left:0}
+.srch{width:100%;padding:12px 14px 12px 42px;border:2px solid var(--ink);border-radius:10px;background:var(--card);
+  color:var(--ink);font:500 15px var(--font-body);margin-bottom:12px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' fill='none' stroke='%23838C95' stroke-width='2.4' stroke-linecap='round'%3E%3Ccircle cx='8' cy='8' r='6'/%3E%3Cpath d='m13 13 4 4'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:14px 50%}
+.srch::placeholder{color:var(--ink3)}
+.srch:focus{outline:3px solid var(--yellow);outline-offset:0}
+
+/* ---------- списки ---------- */
+.list{background:var(--card);border:2px solid var(--ink);border-radius:12px;overflow:hidden}
+.r{display:flex;align-items:center;gap:12px;padding:11px 14px;border:0;border-top:1px solid var(--hair);
+  cursor:pointer;background:transparent;width:100%;text-align:left}
+.list .r:first-child{border-top:0}
+.r:active{background:var(--sink)}
+@media (hover:hover){.r:hover{background:var(--sink)}}
+.pos{flex:0 0 28px;font-family:var(--font-display);font-weight:900;font-style:italic;font-size:17px;color:var(--ink3);
+  text-align:center;font-variant-numeric:tabular-nums;line-height:28px;height:28px;border-radius:6px}
+.pos.p1,.pos.p2,.pos.p3{color:#121417;font-size:15px;box-shadow:2px 2px 0 var(--print);transform:rotate(-4deg)}
+.pos.p1{background:var(--gold)}.pos.p2{background:#C9D1D8}.pos.p3{background:#D98B52}
+.pos.po{color:var(--red)}
+.crest{flex:0 0 34px;height:34px;border-radius:8px;display:grid;place-items:center;font:900 italic 12px var(--font-display);
+  color:var(--cfg,#fff);background-color:var(--cbg,#555);text-transform:uppercase;position:relative;
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.14);
+  background-image:linear-gradient(135deg,transparent 0 76%,var(--cac,transparent) 76% 86%,transparent 86%),
+    linear-gradient(180deg,rgba(255,255,255,.14),transparent 55%)}
+.crest.num{font-size:15px;letter-spacing:-.02em}
+.av{flex:0 0 36px;height:36px;border-radius:8px;background:var(--sink);display:grid;place-items:center;font-size:18px;border:2px solid var(--ink)}
+.who{flex:1;min-width:0}
+.who b{display:block;font-size:15px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.who span{font-size:12.5px;color:var(--ink3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+.who b .rtag{display:inline-block;width:auto;overflow:visible}
+.val{font-family:var(--font-display);font-weight:900;font-style:italic;font-size:22px;line-height:1;text-align:right;min-width:48px;font-variant-numeric:tabular-nums}
+.val em{display:block;font:700 9.5px var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);font-style:normal;margin-top:3px}
+.me{background:var(--accent-soft)!important;box-shadow:inset 4px 0 0 var(--red)}
+
+/* ---------- карточка игрока: как коллекционная карточка ---------- */
+.hero{position:relative;overflow:hidden;border-radius:14px;padding:18px 18px 16px;color:#fff;background:var(--red);
+  border:2px solid var(--print);box-shadow:5px 5px 0 var(--print)}
+.hero::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background-image:radial-gradient(var(--dots) 1.4px,transparent 1.7px);background-size:8px 8px;
+  -webkit-mask-image:radial-gradient(120% 90% at 100% 0%,#000 0%,transparent 70%);mask-image:radial-gradient(120% 90% at 100% 0%,#000 0%,transparent 70%)}
+.hero .ghost{position:absolute;right:10px;top:-6px;font-size:110px;line-height:1;color:rgba(0,0,0,.16);pointer-events:none}
+.hero h1{margin:0;font-family:var(--font-display);font-size:27px;font-weight:900;font-style:italic;text-transform:uppercase;
+  line-height:.98;letter-spacing:-.01em;position:relative;max-width:85%}
+.hero p{margin:8px 0 0;font:700 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.85);position:relative}
+.pill{position:relative;display:inline-block;margin-top:12px;font:800 11px var(--font-body);letter-spacing:.06em;text-transform:uppercase;
+  padding:4px 10px;background:var(--yellow);color:#121417;transform:rotate(-1deg)}
+.lvl{display:flex;align-items:center;gap:14px;margin-top:16px;position:relative;background:var(--paper);color:#121417;
+  border-radius:10px;padding:10px 12px;border:2px solid var(--print)}
+.lvlbadge{width:50px;height:50px;border-radius:50%;display:grid;place-items:center;flex:0 0 auto;background:var(--yellow);color:#121417;
+  font-family:var(--font-display);line-height:1;border:2px solid #121417;box-shadow:2px 2px 0 #121417;transform:rotate(-6deg)}
+.lvlbadge b{font-size:22px;font-weight:900;font-style:italic}.lvlbadge span{font:800 8px var(--font-body);letter-spacing:.08em}
+.lvlbar{flex:1;min-width:0}
+.lvlbar .t{display:flex;justify-content:space-between;gap:8px;font:700 11.5px var(--font-body);color:#454D55;margin-bottom:6px}
+.lvlbar .track{height:10px;border-radius:2px;background:#E4E9ED;overflow:hidden;border:2px solid #121417}
+.lvlbar .track i{display:block;height:100%;background:repeating-linear-gradient(-45deg,#E1261C 0 6px,#C81E15 6px 12px)}
+.platinum{margin-top:14px;border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:14px;
+  border:2px dashed var(--ink3);background:transparent}
+.platinum:not(.locked){border:2px solid var(--print);background:var(--plat);color:#06232A;box-shadow:4px 4px 0 var(--print)}
+.platinum .pi{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-size:19px;background:var(--card);
+  border:2px dashed var(--ink3);flex:0 0 auto}
+.platinum b{display:block;font:800 italic 15px var(--font-display);text-transform:uppercase}
+.platinum span{font-size:12.5px;color:var(--ink2)}
+.platinum:not(.locked) span{color:#06232A}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px}
+.box{background:var(--card);border:2px solid var(--ink);border-radius:10px;padding:10px 6px 8px;text-align:center}
+.box b{display:block;font-family:var(--font-display);font-weight:900;font-style:italic;font-size:24px;line-height:1.05;font-variant-numeric:tabular-nums}
+.box span{font:700 10px var(--font-body);letter-spacing:.06em;text-transform:uppercase;color:var(--ink3)}
+.tbl{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:0;margin-top:8px;border-top:2px solid var(--ink)}
+.tbl div{padding:9px 4px 9px 0;border-bottom:1px solid var(--hair)}
+.tbl b{display:block;font-family:var(--font-display);font-weight:800;font-style:italic;font-size:16px;font-variant-numeric:tabular-nums}
+.tbl span{font-size:11px;color:var(--ink3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+
+/* ---------- страница альбома: наклейки-медали ---------- */
+.wall{display:grid;grid-template-columns:repeat(auto-fill,minmax(102px,1fr));gap:14px 10px}
+.med{background:transparent;border:0;padding:4px 2px 0;text-align:center;cursor:pointer;position:relative}
+.med:active .disc{transform:rotate(var(--rot,0deg)) scale(.96)}
+.slot{display:block;font:700 9px var(--font-body);letter-spacing:.12em;color:var(--ink3);margin-bottom:6px}
+.disc{width:70px;height:70px;border-radius:50%;margin:0 auto 9px;display:grid;place-items:center;font-size:26px;position:relative;
+  transform:rotate(var(--rot,0deg))}
+/* пустое место в альбоме */
+.med.off .disc,.med.na .disc{border:2px dashed var(--ink3);background:transparent}
+.med.off .disc>*,.med.off .disc{color:var(--ink3)}
+.med.off .disc{filter:grayscale(1);opacity:.7}
+.med.na{opacity:.45}
+/* наклеенная наклейка: белая кайма, плоская краска с растром, жёсткая тень */
+.d1,.d2,.d3,.d4{border:4px solid var(--paper);box-shadow:3px 3px 0 var(--print),0 0 0 1px rgba(0,0,0,.25)}
+.d1,.d2,.d3,.d4{background-image:radial-gradient(rgba(255,255,255,.28) 1.2px,transparent 1.5px);background-size:6px 6px}
+.d1{background-color:var(--bronze)}.d2{background-color:var(--silver)}.d3{background-color:var(--gold)}.d4{background-color:var(--plat)}
+.mn{display:block;font-size:11.5px;font-weight:700;line-height:1.2;min-height:28px}
+.med.off .mn{color:var(--ink2);font-weight:600}
+.mt{display:block;font:800 italic 12px var(--font-display);color:var(--ink3);margin-top:3px;font-variant-numeric:tabular-nums}
+.mt.on{color:var(--red);letter-spacing:.12em}
+.rar{display:block;font-size:9.5px;font-weight:700;margin-top:3px}
+.rc0{color:var(--ink3)}.rc1{color:var(--blue)}.rc2{color:var(--plat)}.rc3{color:var(--gold)}.rc4{color:var(--legend)}
+.pts{position:absolute;top:22px;right:calc(50% - 46px);z-index:2;font:900 italic 10px var(--font-display);color:#121417;
+  background:var(--yellow);border:2px solid var(--print);border-radius:999px;padding:1px 5px;transform:rotate(8deg)}
+.pts:empty{display:none}
+.lock{position:absolute;top:22px;left:calc(50% - 44px);z-index:2;font-size:11px}
+
+/* ---------- заметки, шаги, теги ---------- */
+.note{background:var(--card);border:2px solid var(--ink);border-radius:10px;padding:12px 14px;font-size:13px;color:var(--ink2);margin-bottom:14px}
+.note b{color:var(--ink)}
+.note.warn{background:var(--gold2)}
+.disclose{margin-bottom:16px}
+.disclose summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px;
+  font:700 13px var(--font-body);color:var(--red);padding:8px 2px;user-select:none}
+.disclose summary::-webkit-details-marker{display:none}
+.disclose summary::before{content:"+";font:900 16px var(--font-display)}.disclose[open] summary::before{content:"–"}
+.howto{margin-top:6px;background:var(--sink);border-radius:10px;padding:12px 14px;font-size:13px;color:var(--ink2)}
+.step{display:flex;align-items:center;gap:12px;padding:13px 14px;border-top:1px solid var(--hair)}
+.list .step:first-child{border-top:0}
+.step.done{background:var(--sink)}
+.sd{flex:0 0 36px;height:36px;border-radius:50%;display:grid;place-items:center;font:900 italic 13px var(--font-display);
+  border:2px dashed var(--ink3);position:relative}
+.sd.d1,.sd.d2,.sd.d3,.sd.d4{border:3px solid var(--paper);color:#121417;box-shadow:2px 2px 0 var(--print)}
+.sx{flex:1;min-width:0}.sx b{display:block;font-size:14px}.sx span{font-size:12px;color:var(--ink3)}
+.bar{display:block;height:8px;border-radius:2px;background:var(--sink);overflow:hidden;margin-top:8px;border:1.5px solid var(--ink)}
+.bar i{display:block;height:100%;background:repeating-linear-gradient(-45deg,var(--red) 0 5px,#B81B12 5px 10px)}
+.rtag{display:inline-block;font:800 9.5px var(--font-body);letter-spacing:.04em;padding:2px 6px;border-radius:4px;margin-left:6px;vertical-align:1px}
+.rb0{background:var(--sink);color:var(--ink3)}.rb1{background:var(--blue-soft);color:var(--blue)}
+.rb2{background:var(--plat2);color:var(--plat)}.rb3{background:var(--gold2);color:var(--ink)}
+.rb4{background:var(--legend2);color:var(--legend)}
+
+/* ---------- нижняя панель: чёрная, активная вкладка — жёлтым ---------- */
+.tabs{flex:0 0 auto;position:relative;z-index:30;background:var(--bar);
+  display:flex;padding-bottom:max(env(safe-area-inset-bottom,0px),var(--tg-safe-area-inset-bottom,0px),var(--tg-content-safe-area-inset-bottom,0px))}
+.tabs-in{max-width:1180px;margin:0 auto;display:flex;width:100%}
+.tab{flex:1;appearance:none;border:0;background:transparent;padding:9px 4px 10px;cursor:pointer;
+  color:var(--bar-ink);font:700 10.5px var(--font-body);letter-spacing:.04em;text-transform:uppercase;
+  display:flex;flex-direction:column;align-items:center;gap:4px}
+.tab svg{width:24px;height:24px;display:block}
+.tab[aria-pressed="true"]{color:var(--yellow)}
+.tab:active{opacity:.7}
+
+
+/* ---------- кнопка помощи и обучение ---------- */
+.help{appearance:none;flex:0 0 auto;width:34px;height:34px;border-radius:50%;border:2px solid #fff;background:transparent;color:#fff;
+  font:900 italic 17px var(--font-display);cursor:pointer;padding:0;display:grid;place-items:center}
+.help:active{background:rgba(255,255,255,.2)}
+.guide{position:fixed;inset:0;z-index:80;background:var(--bg);display:flex;flex-direction:column}
+.guide[hidden]{display:none}
+.g-top{position:relative;background:var(--red);color:#fff;padding:14px 16px 16px;overflow:hidden;flex:0 0 auto}
+.g-top::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background-image:radial-gradient(var(--dots) 1.3px,transparent 1.6px);background-size:7px 7px;
+  -webkit-mask-image:linear-gradient(100deg,transparent 35%,#000 100%);mask-image:linear-gradient(100deg,transparent 35%,#000 100%)}
+.g-bar{position:relative;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.g-step{font:800 10.5px var(--font-body);letter-spacing:.14em;text-transform:uppercase;background:var(--yellow);color:#121417;
+  padding:3px 10px 4px;transform:rotate(-1.5deg)}
+.g-skip{appearance:none;border:0;background:transparent;color:#fff;font:700 13px var(--font-body);padding:6px 2px;cursor:pointer;opacity:.9}
+.g-title{position:relative;margin:14px 0 0;font:900 italic 27px/1 var(--font-display);text-transform:uppercase;letter-spacing:-.01em}
+.g-body{flex:1 1 auto;min-height:0;overflow-y:auto;padding:22px 20px 12px;display:flex;flex-direction:column;gap:20px;max-width:560px;width:100%;margin:0 auto}
+.g-text{margin:0;font-size:16px;line-height:1.5;color:var(--ink)}
+.g-text b{font-weight:700}
+.g-vis{background:var(--card);border:2px solid var(--ink);border-radius:14px;padding:16px}
+.g-row{display:flex;justify-content:space-around;gap:8px;text-align:center}
+.g-row .disc{margin:0 auto 8px;width:60px;height:60px;font-size:22px}
+.g-cap{font:700 11px var(--font-body);color:var(--ink2)}
+.g-note{font-size:13px;color:var(--ink2);margin:0}
+.g-tap{position:relative}
+.g-tap::after{content:"";position:absolute;right:18%;top:50%;width:34px;height:34px;margin-top:-17px;border-radius:50%;
+  border:3px solid var(--red);background:rgba(225,38,28,.18);animation:gtap 1.6s ease-out infinite}
+@keyframes gtap{0%{transform:scale(.6);opacity:1}100%{transform:scale(1.6);opacity:0}}
+.g-foot{flex:0 0 auto;display:flex;align-items:center;gap:14px;padding:12px 20px calc(16px + env(safe-area-inset-bottom,0px));max-width:560px;width:100%;margin:0 auto}
+.g-dots{display:flex;gap:6px;flex:1}
+.g-dots i{width:8px;height:8px;border-radius:50%;background:var(--hair)}
+.g-dots i.on{background:var(--red);width:22px;border-radius:4px}
+.g-next{appearance:none;border:2px solid var(--print);background:var(--yellow);color:#121417;border-radius:12px;
+  padding:13px 22px;font:900 italic 15px var(--font-display);text-transform:uppercase;cursor:pointer;box-shadow:3px 3px 0 var(--print)}
+.g-next:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--print)}
+.g-choice{display:flex;flex-direction:column;gap:12px}
+.g-pick{appearance:none;text-align:left;border:2px solid var(--ink);background:var(--card);border-radius:14px;padding:14px 16px;cursor:pointer;
+  display:flex;align-items:center;gap:14px;box-shadow:3px 3px 0 var(--print)}
+.g-pick:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--print)}
+.g-pick b{display:block;font:900 italic 16px var(--font-display);text-transform:uppercase}
+.g-pick span{font-size:13px;color:var(--ink2)}
+.g-pick .ic{flex:0 0 44px;height:44px;border-radius:50%;display:grid;place-items:center;font-size:20px;background:var(--yellow);border:2px solid var(--print)}
+.g-plain{appearance:none;border:0;background:transparent;color:var(--ink2);font:600 14px var(--font-body);padding:8px;cursor:pointer;text-decoration:underline}
+@media(prefers-reduced-motion:reduce){.g-tap::after{animation:none}}
+
+/* ---------- кнопки действий, команда, матч ---------- */
+.acts{display:flex;flex-direction:column;gap:10px;margin-top:16px}
+.cta{appearance:none;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;border:2px solid var(--print);
+  background:var(--yellow);color:#121417;border-radius:12px;padding:12px 14px;font:800 14px var(--font-body);cursor:pointer;
+  box-shadow:3px 3px 0 var(--print);margin-top:12px}
+.acts .cta{margin-top:0}
+.cta:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--print)}
+.cta.ghost{background:var(--card);color:var(--ink);border-color:var(--ink);box-shadow:none}
+.cta.done{background:var(--plat);color:#06232A}
+.crest.logo{background:#141A26;padding:3px}
+.crest.logo img{width:100%;height:100%;object-fit:contain;display:block}
+.crest.big{flex:0 0 56px;width:56px;height:56px;border-radius:14px;font-size:18px}
+.thero{display:flex;align-items:center;gap:14px;padding:4px 0 2px}
+.thero h1{margin:0;font:900 italic 24px/1.05 var(--font-display);text-transform:uppercase}
+.thero p{margin:6px 0 0;font:700 12px var(--font-body);letter-spacing:.06em;text-transform:uppercase;color:var(--ink3)}
+.lead .box em{display:block;font:600 10.5px var(--font-body);font-style:normal;color:var(--ink2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.score{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;background:var(--card);border:2px solid var(--ink);
+  border-radius:14px;padding:16px 10px;margin-bottom:6px}
+.sc-team{appearance:none;border:0;background:transparent;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;min-width:0;padding:0}
+.sc-team b{font:800 12.5px var(--font-body);text-align:center;line-height:1.2}
+.sc-mid{text-align:center;display:flex;flex-direction:column;gap:2px}
+.sc-num{font-size:34px;line-height:1}.sc-num i{font-style:normal;color:var(--ink3);margin:0 2px}
+.sc-mid span{font:700 10.5px var(--font-body);letter-spacing:.06em;text-transform:uppercase;color:var(--ink3)}
+.goal .gt{flex:0 0 46px;font-size:13px;color:var(--ink3)}
+.goal.h{box-shadow:inset 4px 0 0 var(--red)}.goal.a{box-shadow:inset 4px 0 0 var(--blue)}
+.tbl.two{grid-template-columns:1fr 1fr}
+
+/* ---------- заставка ---------- */
+.splash{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
+  background:var(--red);color:#fff;overflow:hidden;transition:opacity .4s,transform .4s}
+.splash::before{content:"";position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(var(--dots) 1.4px,transparent 1.7px);
+  background-size:8px 8px;-webkit-mask-image:radial-gradient(90% 70% at 50% 40%,#000,transparent 75%);mask-image:radial-gradient(90% 70% at 50% 40%,#000,transparent 75%)}
+.splash.out{opacity:0;transform:scale(1.05);pointer-events:none}
+.sp-logo{position:relative;display:flex;flex-direction:column;align-items:center}
+.sp-logo svg{display:block;animation:hop 1s cubic-bezier(.3,.7,.4,1) infinite;transform-origin:50% 100%}
+.sp-shadow{display:block;width:96px;height:12px;margin-top:4px;border-radius:50%;background:rgba(0,0,0,.28);animation:hopShadow 1s cubic-bezier(.3,.7,.4,1) infinite}
+@keyframes hop{0%,100%{transform:translateY(0) scale(1.04,.96)}12%{transform:translateY(0) scale(1)}45%{transform:translateY(-26px) rotate(-3deg)}70%{transform:translateY(0) rotate(0)}}
+@keyframes hopShadow{0%,100%,70%{transform:scale(1);opacity:1}45%{transform:scale(.7);opacity:.5}}
+.sp-name{position:relative;font:900 italic 34px/1 var(--font-display);text-transform:uppercase;letter-spacing:-.01em;margin-top:6px}
+.sp-tape{position:relative;background:var(--yellow);color:#121417;font:800 11.5px var(--font-body);letter-spacing:.14em;text-transform:uppercase;
+  padding:4px 12px 5px;transform:rotate(-2deg);box-shadow:3px 3px 0 rgba(0,0,0,.25)}
+@media(prefers-reduced-motion:reduce){.sp-logo svg,.sp-shadow{animation:none}.splash{transition:none}}
+.swipe-back{transition:transform .2s ease-out}
+.pv-badge{display:inline-block;margin-left:8px;background:#121417;color:var(--yellow);font:800 10px var(--font-body);letter-spacing:.12em;
+  padding:3px 8px;border-radius:4px;vertical-align:2px}
+.mh{display:block;font-size:11.5px;color:var(--ink2);margin-top:3px}
+.mh button{appearance:none;border:0;background:transparent;padding:0;text-align:left;color:var(--blue);font:700 11.5px var(--font-body);cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+.hero .hlogo{position:absolute;right:14px;top:14px;width:58px;height:58px;border-radius:14px;background:#141A26;padding:5px;z-index:1;
+  box-shadow:2px 2px 0 var(--print)}
+.hero .hlogo img{width:100%;height:100%;object-fit:contain;display:block}
+
+@media(min-width:860px){main{padding:24px 16px 28px}
+  .split{display:grid;grid-template-columns:360px 1fr;gap:24px;align-items:start}
+  .grid4{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:360px){.grid4{grid-template-columns:repeat(2,1fr)}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+<div class="splash" id="splash" aria-label="Загрузка">
+  <div class="sp-logo" aria-hidden="true">
+    <svg viewBox="0 0 200 230" width="150" height="172">
+      <defs><pattern id="dots" width="7" height="7" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.3" fill="#fff"/></pattern></defs>
+      <path d="M62 8h34l18 70H80z" fill="#E1261C" stroke="#fff" stroke-width="5" stroke-linejoin="round"/>
+      <path d="M138 8h-34l-18 70h34z" fill="#121417" stroke="#fff" stroke-width="5" stroke-linejoin="round"/>
+      <circle cx="105" cy="141" r="80" fill="#121417"/>
+      <circle cx="100" cy="136" r="80" fill="#fff"/>
+      <circle cx="100" cy="136" r="70" fill="#FFC21A"/>
+      <circle cx="100" cy="136" r="70" fill="url(#dots)" opacity=".35"/>
+      <circle cx="100" cy="136" r="54" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="3"/>
+    </svg>
+    <i class="sp-shadow"></i>
+  </div>
+  <div class="sp-name">Hockey Medal</div>
+  <div class="sp-tape">Экстралига · 26/27</div>
+</div>
+<div class="app">
+  <header class="top"><div class="top-in">
+    <div class="trow"><button class="back" id="back" aria-label="Назад">‹</button><div class="ttl" id="ttl"></div><button class="help" id="help" aria-label="Как пользоваться">?</button></div>
+    <div class="sub" id="subttl">Экстралига · альбом 26/27</div>
+  </div></header>
+  <main id="main"></main>
+  <nav class="tabs"><div class="tabs-in" id="tabs"></div></nav>
+</div>
+<script>
+/* Заставка: логотип подпрыгивает ~2 секунды, за это время подгружаются данные и эмблемы клубов. */
+(function(){
+  var splash=document.getElementById('splash'),t0=Date.now(),closed=false;
+  function close(){if(closed)return;closed=true;splash.classList.add('out');setTimeout(function(){splash.remove()},450);}
+  window.hbReady=function(logos){
+    var urls=(logos||[]),left=urls.length,done=false;
+    function finish(){if(done)return;done=true;setTimeout(close,Math.max(0,2000-(Date.now()-t0)));}
+    if(!left)return finish();
+    urls.forEach(function(u){var im=new Image();im.onload=im.onerror=function(){if(--left<=0)finish();};im.src=u;});
+    setTimeout(finish,4000);                                   // эмблемы не успели — не держим дольше 4 с
+  };
+  setTimeout(close,10000);                                       // страховка
+})();
+</script>
+<script>
+/* Telegram Mini App: если открыто внутри Telegram — разворачиваемся на весь
+   экран и берём цвета текущей темы пользователя. Вне Telegram (обычный
+   браузер) tg будет undefined, весь блок просто не выполнится. */
+const tg = window.Telegram?.WebApp;
+// Внутри Telegram platform известна; в обычном браузере скрипт тоже создаёт WebApp, но с platform 'unknown'.
+const IN_TG = !!(tg && tg.platform && tg.platform !== 'unknown');
+function tgPaint(){
+  if (!IN_TG) return;
+  document.documentElement.dataset.theme = tg.colorScheme === 'light' ? 'light' : 'dark';
+  const cs = getComputedStyle(document.documentElement);
+  const v = n => cs.getPropertyValue(n).trim();
+  try { tg.setHeaderColor('#0E1826'); } catch (e) {}
+  try { tg.setBackgroundColor(v('--bg')); } catch (e) {}
+  try { tg.setBottomBarColor && tg.setBottomBarColor(v('--card')); } catch (e) {}
+}
+if (IN_TG) {
+  try{tg.ready();tg.expand();}catch(e){}
+  try { tg.disableVerticalSwipes && tg.disableVerticalSwipes(); } catch (e) {}
+  tgPaint();
+  try{tg.onEvent('themeChanged', tgPaint);}catch(e){}
+}
+const haptic = () => { try { IN_TG && tg.HapticFeedback && tg.HapticFeedback.selectionChanged(); } catch (e) {} };
+</script>
+
+<script type="text/hb" id="hb-app">
+/*ENGINE:BEGIN — эта часть без DOM; бот запускает её у себя, чтобы знать, кто получил медаль*/
+// Номер версии приложения: по нему бот показывает архив версий и откат.
+const APP_VERSION='2026.10.08';
+const HB=window.HB_DATA||null;
+/* ============================================================
+   РЕАЛЬНЫЕ ДАННЫЕ. Полевые игроки — таблица «Бомбардиры»
+   Экстралиги с hockey.by (division=27). Вратари — опубликованные
+   ФХБ показатели сезона 2024/25.
+   Формат: фамилия|г.р.|команда|позиция|И|Г|А|О|+/-|Штр|ГБ|ПБ|ГМ|ПМ|Броски
+   ============================================================ */
+const RAW_SK=HB?HB.sk.join('\n'):`Ремезов Никита|1990|Лида|Нападающий|7|2|6|8|6|2|0|2|0|0|0|0|3|0
+Жидких Александр|1984|Химик|Нападающий|7|0|3|3|-9|4|0|1|0|0|0|0|1|0
+Крикуненко Роман|1997|Металлург|Нападающий|4|0|1|1|1|0|0|0|0|0|0|0|1|0
+Кислый Артём|1989|Лида|Нападающий|7|1|6|7|5|2|1|2|0|0|0|0|3|0
+Колготин Дмитрий|1994|Могилев|Нападающий|5|2|2|4|4|4|0|0|0|0|0|0|1|0
+Боярчук Павел|1990|Лида|Нападающий|7|2|3|5|2|25|0|0|0|0|0|0|3|1
+Соломонов Евгений|1990|Могилев|Нападающий|4|1|2|3|1|31|0|0|0|0|0|0|1|0
+Камбович Илья|1989|Витебск|Нападающий|6|1|1|2|5|2|0|0|0|0|0|0|1|0
+Нестеров Герман|1991|Шахтер|Нападающий|5|2|2|4|3|0|1|1|0|0|0|0|2|0
+Кучкин Станислав|1993|Брест|Нападающий|5|2|8|10|4|2|2|1|0|0|0|0|3|0
+Дрозд Сергей|1990|Динамо-Молодечно|Нападающий|7|1|2|3|1|0|0|0|0|0|0|0|2|1
+Левко Александр|1992|Витебск|Нападающий|6|2|4|6|7|0|0|1|0|0|0|0|3|1
+Станкевич Сергей|1995|Динамо-Молодечно|Защитник|7|0|4|4|2|0|0|1|0|0|0|0|2|0
+Степанов Егор|1990|Витебск|Защитник|5|1|2|3|3|2|1|0|0|0|0|0|1|0
+Субхи Нассер|2001|Гомель|Нападающий|7|1|2|3|3|0|0|0|0|0|0|0|2|0
+Жуковский Илья|1997|Гомель|Нападающий|4|0|0|0|0|4|0|0|0|0|0|0|0|0
+Летов Илья|1995|Лида|Защитник|7|1|3|4|4|0|0|0|0|0|0|0|1|1
+Рядченко Владислав|1998|Шахтер|Нападающий|5|4|0|4|6|0|0|0|0|0|0|0|2|2
+Иванов Егор|1996|Могилев|Защитник|5|0|2|2|1|6|0|0|0|0|0|0|1|0
+Астанков Евгений|1997|Витебск|Нападающий|6|1|4|5|3|2|0|0|0|0|0|0|1|1
+Стефанович Михаил|1989|Динамо-Молодечно|Нападающий|6|1|0|1|-2|2|1|0|0|0|0|0|1|0
+Андреев Глеб|1999|Динамо-Молодечно|Нападающий|7|0|0|0|-2|2|0|0|0|0|0|0|0|0
+Бовбель Виктор|1998|Металлург|Нападающий|5|1|4|5|1|2|1|0|0|0|0|0|1|0
+Грецкий Вячеслав|1996|Неман|Нападающий|7|0|1|1|-3|5|0|1|0|0|0|0|1|0
+Мохорев Антон|1992|Динамо-Молодечно|Нападающий|6|0|0|0|0|2|0|0|0|0|0|0|0|0
+Ерохо Вадим|1991|Локомотив|Защитник|6|0|2|2|-7|4|0|1|0|0|0|0|1|0
+Достанко Роман|1994|Юность|Защитник|2|0|0|0|-2|2|0|0|0|0|0|0|0|0
+Бовин Кирилл|1998|Локомотив|Нападающий|2|0|0|0|-1|0|0|0|0|0|0|0|0|0
+Игнатов Кирилл|2000|Металлург|Нападающий|4|0|1|1|-1|2|0|0|0|0|0|0|1|0
+Хоромандо Михаил|1991|Гомель|Защитник|3|0|0|0|-1|0|0|0|0|0|0|0|0|0
+Геращенко Андрей|1995|Металлург|Защитник|3|1|0|1|0|4|0|0|0|0|0|0|1|1
+Иванчиков Дмитрий|1999|Гомель|Защитник|7|0|0|0|1|0|0|0|0|0|0|0|0|0
+Соколовский Владислав|1998|Неман|Защитник|7|0|0|0|-3|4|0|0|0|0|0|0|0|0
+Ажгирей Павел|2000|Шахтер|Нападающий|4|1|2|3|4|0|0|0|0|0|0|0|2|0
+Буйницкий Артур|1995|Локомотив|Нападающий|4|0|2|2|-1|0|0|1|0|0|0|0|1|0
+Землянкин Артем|1993|Химик|Нападающий|7|1|2|3|-8|4|0|2|0|0|0|0|2|0
+Щечин Вадим|2000|Витебск|Защитник|6|1|4|5|4|0|0|0|0|0|0|0|3|0
+Павленко Андрей|2000|Юность|Нападающий|4|0|1|1|0|2|0|0|0|0|0|0|1|0
+Гостев Андрей|1998|Гомель|Защитник|7|0|3|3|5|0|0|2|0|0|0|0|1|0
+Калин Егор|1999|Авиатор|Защитник|5|0|0|0|-4|0|0|0|0|0|0|0|0|0
+Никитин Максим|1999|Шахтер|Защитник|5|0|0|0|4|4|0|0|0|0|0|0|0|0
+Романович Сергей|1997|Металлург|Защитник|6|0|2|2|3|4|0|0|0|0|0|0|1|0
+Каменьков Максим|1992|Локомотив|Защитник|7|0|3|3|-3|2|0|1|0|0|0|0|2|0
+Попков Александр|2000|Могилев|Нападающий|5|1|0|1|-1|2|0|0|0|0|0|0|1|0
+Волченков Артем|2001|Металлург|Защитник|5|0|3|3|2|0|0|2|0|0|0|0|2|0
+Чубуков Максим|2000|Лида|Нападающий|7|3|1|4|4|2|1|0|0|0|0|0|3|1
+Иванковский Антон|1999|Лида|Нападающий|7|1|1|2|-3|0|0|0|0|0|0|0|1|0
+Спешилов Игорь|0|Локомотив|Нападающий|7|1|2|3|-2|0|0|2|0|0|0|0|1|0
+Райцын Вячеслав|0|Локомотив|Защитник|2|0|0|0|-1|0|0|0|0|0|0|0|0|0
+Гаврилович Тимур|0|Локомотив|Защитник|6|0|0|0|-5|10|0|0|0|0|0|0|0|0
+Ноздрачев Евгений|0|Локомотив|Нападающий|6|2|1|3|-1|7|0|0|0|0|0|0|2|0
+Развадовский Павел|0|Локомотив|Нападающий|7|2|0|2|-9|6|1|0|0|0|0|0|1|1
+Борозна Тихон|0|Локомотив|Нападающий|6|2|3|5|-4|4|2|1|0|0|0|0|1|0
+Литвин Николай|0|Локомотив|Нападающий|5|1|0|1|-1|2|0|0|0|0|0|0|1|0
+Толопило Максим|0|Локомотив|Защитник|6|2|1|3|-3|2|1|0|0|0|0|0|1|0
+Макаров Валентин|0|Локомотив|Нападающий|7|1|0|1|-5|0|0|0|0|0|0|0|1|0
+Собко Даниил|0|Локомотив|Нападающий|3|0|0|0|-3|2|0|0|0|0|0|0|0|0
+Петручик Роман|0|Локомотив|Защитник|5|0|0|0|-3|4|0|0|0|0|0|0|0|0
+Качан Федор|0|Локомотив|Нападающий|5|0|2|2|-1|6|0|1|0|0|0|0|1|0
+Матюшенко Матвей|0|Локомотив|Нападающий|7|0|3|3|-4|20|0|0|0|0|0|0|1|0
+Стахов Станислав|0|Локомотив|Нападающий|2|0|0|0|-1|0|0|0|0|0|0|0|0|0
+Гордейчик Марат|0|Локомотив|Защитник|6|0|1|1|-2|0|0|0|0|0|0|0|1|0
+Саглаев Иван|0|Локомотив|Нападающий|3|0|0|0|0|2|0|0|0|0|0|0|0|0
+Мисюль Даниил|0|Юность|Защитник|2|0|0|0|0|2|0|0|0|0|0|0|0|0
+Буяльский Егор|0|Юность|Нападающий|5|1|2|3|-1|0|0|1|0|0|0|0|2|0
+Нечаев Артем|0|Юность|Нападающий|5|3|1|4|-1|0|2|0|0|0|0|0|2|0
+Горолёв Матвей|0|Юность|Нападающий|1|0|0|0|0|0|0|0|0|0|0|0|0|0
+Бобровских Кирилл|0|Юность|Нападающий|3|1|1|2|0|2|0|0|0|0|0|0|1|0
+Симонов Андрей|0|Юность|Нападающий|5|2|0|2|0|6|0|0|0|0|0|0|1|0
+Парфенюк Никита|0|Юность|Защитник|5|0|1|1|-3|0|0|0|0|0|0|0|1|0
+Шидловский Матвей|0|Юность|Нападающий|5|0|0|0|-6|0|0|0|0|0|0|0|0|0
+Остринский Алексей|0|Юность|Нападающий|4|0|0|0|-1|0|0|0|0|0|0|0|0|0
+Невера Дмитрий|0|Юность|Защитник|5|0|0|0|-2|2|0|0|0|0|0|0|0|0
+Назаров Илья|0|Юность|Нападающий|5|0|1|1|-2|29|0|0|0|0|0|0|1|0
+Пономарёв Савелий|0|Юность|Защитник|5|1|1|2|0|0|0|0|0|0|0|0|2|0
+Метелев Василий|0|Юность|Нападающий|1|0|0|0|0|0|0|0|0|0|0|0|0|0
+Хобян Дмитрий|0|Юность|Нападающий|4|1|0|1|-1|0|0|0|0|0|0|0|1|0
+Шкапцов Глеб|0|Юность|Нападающий|3|0|0|0|0|0|0|0|0|0|0|0|0|0
+Малышев Марк-Эмиль|0|Юность|Защитник|5|1|2|3|-1|4|1|1|0|0|0|0|2|1
+Ровба Владимир|0|Юность|Нападающий|5|0|1|1|-1|8|0|0|0|0|0|0|1|0
+Назаров Дмитрий|0|Юность|Нападающий|5|1|1|2|-3|29|0|0|0|0|0|0|2|0
+Антоновский Иван|0|Славутич|Защитник|2|0|0|0|-1|2|0|0|0|0|0|0|0|0
+Квон Герман|0|Славутич|Защитник|5|2|2|4|6|0|0|0|0|0|0|0|2|1
+Ракитин Даниил|0|Славутич|Нападающий|5|1|1|2|0|2|0|0|0|0|0|0|1|0
+Носков Дмитрий|0|Славутич|Нападающий|5|3|4|7|4|2|0|1|0|0|0|0|2|0
+Еркин Денис|0|Славутич|Нападающий|5|2|5|7|-1|2|1|0|0|0|0|0|1|1
+Шевченко Александр|0|Славутич|Нападающий|5|2|4|6|1|2|0|0|0|0|0|0|2|0
+Филиппов Владислав|0|Славутич|Нападающий|5|3|3|6|5|4|1|0|0|0|0|0|2|0
+Курков Данила|0|Славутич|Нападающий|4|1|1|2|-1|0|0|0|0|0|0|0|1|0
+Егоров Артур|0|Славутич|Нападающий|2|0|0|0|-2|2|0|0|0|0|0|0|0|0
+Шуйдин Никита|0|Славутич|Нападающий|2|0|1|1|-2|0|0|0|0|0|0|0|1|0
+Мамонов Фёдор|0|Славутич|Нападающий|2|1|0|1|0|0|0|0|0|0|0|0|1|0
+Масандилов Амир|0|Славутич|Нападающий|4|0|0|0|1|0|0|0|0|0|0|0|0|0
+Авраменко Максим|0|Славутич|Нападающий|3|0|2|2|4|0|0|0|0|0|0|0|1|0
+Полькин Максим|0|Славутич|Нападающий|5|0|5|5|0|0|0|0|0|0|0|0|2|0
+Курдин Иван|0|Славутич|Нападающий|4|2|3|5|1|2|0|0|0|0|0|0|1|0
+Шапенков Кирилл|0|Славутич|Защитник|5|1|0|1|-1|2|0|0|0|0|0|0|0|0
+Антонов Дмитрий|0|Славутич|Нападающий|5|2|1|3|2|0|1|0|0|0|0|0|2|0
+Сушинский Иван|0|Славутич|Защитник|5|2|2|4|5|6|0|1|0|0|0|0|1|0
+Татарников Кирилл|0|Славутич|Защитник|5|2|1|3|1|6|0|0|0|0|0|0|1|1
+Мужиков Дмитрий|0|Славутич|Защитник|5|0|1|1|3|0|0|0|0|0|0|0|1|0
+Тимирев Александр|0|Металлург|Нападающий|6|3|3|6|5|2|0|1|0|0|0|0|3|0
+Павлов Илья|0|Металлург|Нападающий|4|0|2|2|3|4|0|0|0|0|0|0|1|0
+Бодиловский Ростислав|0|Металлург|Нападающий|6|3|2|5|3|0|0|0|0|0|0|0|2|1
+Веремеенко Юрий|0|Металлург|Нападающий|6|8|2|10|5|2|1|0|1|0|0|0|3|1
+Поповский Богдан|0|Металлург|Защитник|5|1|1|2|5|2|0|0|0|0|0|0|1|0
+Грамович Вячеслав|0|Металлург|Защитник|6|2|1|3|7|0|0|0|0|0|0|0|1|0
+Спат Илья|0|Металлург|Нападающий|4|1|1|2|2|0|1|0|0|0|0|0|1|0
+Наумов Владислав|0|Металлург|Защитник|5|0|0|0|2|2|0|0|0|0|0|0|0|0
+Ершов Владимир|0|Металлург|Защитник|4|0|1|1|3|0|0|0|0|0|0|0|1|0
+Литвинов Тимур|0|Металлург|Нападающий|5|2|1|3|3|0|0|0|0|0|0|0|1|1
+Кузнецов Роман|0|Металлург|Нападающий|5|2|2|4|6|6|0|0|0|0|0|0|1|0
+Бякин Михаил|0|Металлург|Нападающий|4|0|6|6|1|2|0|1|0|0|0|0|1|0
+Кузьменко Егор|0|Металлург|Нападающий|5|2|5|7|3|2|0|0|0|0|0|0|2|1
+Брютов Никита|0|Шахтер|Нападающий|2|1|0|1|-1|0|0|0|0|0|0|0|1|1
+Гуменюк Артём|0|Шахтер|Нападающий|5|2|2|4|7|2|0|0|0|0|0|0|2|0
+Григоркевич Денис|0|Шахтер|Защитник|5|0|3|3|6|2|0|0|0|0|0|0|1|0
+Ярута Кирилл|0|Шахтер|Защитник|5|1|5|6|8|4|0|1|0|0|0|0|3|0
+Лой Данил|0|Шахтер|Нападающий|5|1|3|4|4|0|1|1|0|0|0|0|2|0
+Ярута Марк|0|Шахтер|Нападающий|5|1|3|4|5|2|1|0|0|0|0|0|3|0
+Пожиган Олег|0|Брест|Защитник|7|2|3|5|4|0|0|1|0|0|0|0|3|0
+Жук Ян|0|Шахтер|Нападающий|3|1|0|1|2|0|0|0|0|0|0|0|1|0
+Буйко Владислав|0|Шахтер|Нападающий|4|1|1|2|0|4|0|0|0|0|0|0|2|0
+Веренич Никита|0|Шахтер|Нападающий|5|8|3|11|10|0|1|0|0|0|0|1|3|0
+Ладутько Матвей|0|Шахтер|Нападающий|5|2|1|3|5|5|0|0|0|0|0|0|1|0
+Любчич Александр|0|Шахтер|Защитник|5|0|5|5|7|0|0|0|0|0|0|0|2|0
+Пышкайло Федор|0|Шахтер|Нападающий|1|0|0|0|0|0|0|0|0|0|0|0|0|0
+Коробов Дмитрий|0|Шахтер|Защитник|5|0|6|6|11|0|0|0|0|0|0|0|1|0
+Сергеев Алексей|0|Шахтер|Нападающий|5|3|3|6|9|0|0|0|0|0|0|0|3|1
+Аксенов Вячеслав|0|Химик|Нападающий|6|0|0|0|-3|2|0|0|0|0|0|0|0|0
+Котеловский Алексей|0|Химик|Нападающий|7|1|0|1|-9|0|1|0|0|0|0|0|1|0
+Фазлеев Радель|0|Химик|Нападающий|7|0|2|2|-5|2|0|0|0|0|0|0|1|0
+Кокшаров Артем|0|Химик|Нападающий|7|1|1|2|-1|0|0|0|0|0|0|0|2|0
+Апанасевич Вадим|0|Химик|Нападающий|3|0|0|0|-3|2|0|0|0|0|0|0|0|0
+Засько Иван|0|Химик|Нападающий|6|0|1|1|-3|4|0|0|0|0|0|0|1|0
+Кормилов Дмитрий|0|Химик|Нападающий|7|0|2|2|-2|4|0|0|0|0|0|0|1|0
+Марецкий Денис|0|Химик|Защитник|7|1|0|1|-6|2|0|0|0|0|0|0|1|0
+Мурзин Айрат|0|Химик|Нападающий|5|1|0|1|-5|2|0|0|0|0|0|0|1|0
+Мурзов Владислав|0|Химик|Нападающий|1|0|0|0|0|0|0|0|0|0|0|0|0|0
+Садовик Алексей|0|Химик|Защитник|7|0|2|2|-7|6|0|0|0|0|0|0|1|0
+Гуськов Иван|0|Химик|Нападающий|7|3|0|3|-8|0|0|0|0|0|0|0|2|0
+Исаев Александр|0|Химик|Защитник|6|0|0|0|-1|2|0|0|0|0|0|0|0|0
+Новик Михей|0|Химик|Нападающий|7|1|0|1|-9|6|1|0|0|0|0|0|1|0
+Буровцев Дмитрий|0|Химик|Защитник|4|0|0|0|-2|0|0|0|0|0|0|0|0|0
+Левша Евгений|0|Химик|Нападающий|6|0|1|1|0|0|0|0|0|0|0|0|1|0
+Храповицкий Алексей|0|Химик|Защитник|7|1|2|3|-4|2|0|1|0|0|0|0|2|0
+Чуканов Максим|0|Химик|Защитник|7|0|0|0|-6|2|0|0|0|0|0|0|0|0
+Сазанович Арсений|0|Авиатор|Защитник|5|2|3|5|-4|4|0|2|0|0|0|0|3|0
+Рогач Даниил|0|Авиатор|Защитник|5|0|3|3|-4|2|0|0|0|0|0|0|3|0
+Асташевич Антон|0|Авиатор|Нападающий|5|2|2|4|-1|6|0|0|0|0|0|0|2|0
+Шило Владислав|0|Авиатор|Нападающий|5|1|2|3|-8|22|0|0|0|0|0|0|2|0
+Боурош Даниил|0|Авиатор|Нападающий|3|2|1|3|-6|0|2|0|0|0|0|0|2|0
+Паранин Илья|0|Авиатор|Нападающий|4|0|1|1|-6|2|0|1|0|0|0|0|1|0
+Мартынец Даниил|0|Авиатор|Нападающий|5|1|2|3|-3|2|0|0|0|0|0|0|1|0
+Вертинский Алексей|0|Авиатор|Нападающий|2|0|1|1|1|0|0|0|0|0|0|0|1|0
+Матерухин Матвей|0|Авиатор|Нападающий|4|0|0|0|-2|0|0|0|0|0|0|0|0|0
+Климов Даниил|0|Авиатор|Нападающий|3|0|0|0|-5|2|0|0|0|0|0|0|0|0
+Матлахов Арсений|0|Авиатор|Нападающий|2|0|0|0|-2|2|0|0|0|0|0|0|0|0
+Юхневич Иван|0|Авиатор|Защитник|5|0|0|0|-4|6|0|0|0|0|0|0|0|0
+Козич Арсений|0|Авиатор|Защитник|5|0|0|0|0|2|0|0|0|0|0|0|0|0
+Лупачев Владислав|0|Авиатор|Защитник|3|0|0|0|-5|0|0|0|0|0|0|0|0|0
+Крейн Тимофей|0|Авиатор|Нападающий|5|3|2|5|-2|2|0|0|0|0|0|0|2|0
+Костко Иван|0|Авиатор|Защитник|4|1|1|2|-5|0|0|0|0|0|0|0|1|0
+Середа Артем|0|Авиатор|Нападающий|4|2|0|2|-5|4|0|0|0|0|0|0|2|0
+Сергушкин Денис|0|Могилев|Нападающий|5|2|1|3|1|0|0|0|0|0|0|0|2|1
+Прохоренко Максим|0|Могилев|Защитник|5|1|1|2|6|0|0|0|0|0|0|0|2|0
+Силаев Иван|0|Могилев|Нападающий|5|0|2|2|2|2|0|1|0|0|0|0|1|0
+Климин Владислав|0|Могилев|Нападающий|4|0|0|0|-3|0|0|0|0|0|0|0|0|0
+Станкевич Иван|0|Могилев|Нападающий|2|0|0|0|0|2|0|0|0|0|0|0|0|0
+Шапиро Илья|0|Могилев|Нападающий|5|2|1|3|1|2|0|0|0|0|0|0|2|0
+Дудко Ян|0|Могилев|Защитник|4|0|0|0|-2|2|0|0|0|0|0|0|0|0
+Ермоленко Александр|0|Могилев|Нападающий|5|1|3|4|1|4|1|1|0|0|0|0|3|0
+Малюченко Арсений|0|Могилев|Нападающий|5|3|4|7|4|2|0|1|0|0|0|0|3|0
+Шиафотдинов Камиль|0|Могилев|Нападающий|5|2|5|7|4|2|0|0|0|0|0|0|3|0
+Валеев Артем|0|Могилев|Нападающий|5|3|3|6|5|0|0|0|0|0|0|0|2|2
+Можаев Сергей|0|Могилев|Защитник|5|0|1|1|0|2|0|1|0|0|0|0|1|0
+Желдаков Григорий|0|Могилев|Защитник|5|0|3|3|3|0|0|0|0|0|0|0|1|0
+Знахаренко Дмитрий|0|Могилев|Защитник|5|1|1|2|2|6|1|0|0|0|0|0|1|0
+Бобряшов Никита|0|Витебск|Защитник|6|1|2|3|2|4|0|0|0|0|0|0|3|1
+Васютович Павел|0|Витебск|Нападающий|4|1|3|4|5|2|0|0|0|0|0|0|2|0
+Когалев Александр|0|Витебск|Нападающий|5|2|3|5|6|0|0|0|0|0|0|0|3|1
+Озеров Максим|0|Витебск|Защитник|6|1|0|1|0|0|0|0|0|0|0|0|1|0
+Богрунов Матвей|0|Витебск|Нападающий|2|0|0|0|0|0|0|0|0|0|0|0|0|0
+Дерибо Арсений|0|Витебск|Нападающий|3|0|0|0|-2|4|0|0|0|0|0|0|0|0
+Рубец Кирилл|0|Витебск|Защитник|1|0|0|0|0|0|0|0|0|0|0|0|0|0
+Купчихин Павел|0|Витебск|Защитник|6|0|1|1|2|0|0|0|0|0|0|0|1|0
+Листопадов Михаил|0|Витебск|Защитник|6|2|1|3|7|0|0|0|1|0|0|0|2|0
+Лемешевский Максим|0|Витебск|Нападающий|6|4|1|5|7|0|0|0|0|0|0|0|3|1
+Лапин Александр|0|Витебск|Нападающий|2|0|0|0|1|0|0|0|0|0|0|0|0|0
+Сапожников Валерий|0|Витебск|Нападающий|6|2|0|2|0|2|0|0|0|0|0|0|1|0
+Пироговский Герман|0|Витебск|Нападающий|6|0|0|0|-1|0|0|0|0|0|0|0|0|0
+Сачков Данила|0|Витебск|Нападающий|5|2|2|4|-1|6|0|0|0|0|0|0|1|0
+Кравчук Андрей|0|Брест|Защитник|7|0|0|0|3|4|0|0|0|0|0|0|0|0
+Ходорович Никита|0|Брест|Нападающий|6|2|0|2|-2|0|0|0|0|0|0|0|1|0
+Тютчев Даниил|0|Брест|Нападающий|6|2|4|6|6|0|0|0|0|0|0|0|2|0
+Мартынюк Владислав|0|Брест|Защитник|3|0|0|0|-2|2|0|0|0|0|0|0|0|0
+Мельников Максим|0|Брест|Нападающий|6|2|3|5|0|0|0|0|0|0|0|0|2|1
+Клавдиев Егор|0|Брест|Нападающий|7|1|1|2|-2|0|1|0|0|0|0|0|2|0
+Герасимов Станислав|0|Брест|Нападающий|6|0|0|0|-3|6|0|0|0|0|0|0|0|0
+Жигалов Валерий|0|Брест|Нападающий|5|0|0|0|-2|2|0|0|0|0|0|0|0|0
+Чемеринский Антон|0|Брест|Нападающий|6|0|2|2|2|0|0|0|0|0|0|0|1|0
+Сергиевский Ярослав|0|Брест|Нападающий|7|1|2|3|-1|0|0|2|0|0|0|0|1|0
+Смирнов Артем|0|Брест|Защитник|7|0|1|1|-3|0|0|0|0|0|0|0|1|0
+Цыбин Максим|0|Брест|Нападающий|7|9|2|11|4|2|1|1|0|0|0|1|3|4
+Шикуть Андрей|0|Брест|Защитник|7|0|4|4|6|2|0|1|0|0|0|0|1|0
+Лазаревич Глеб|0|Брест|Нападающий|6|0|1|1|0|0|0|0|0|0|0|0|1|0
+Никитич Артем|0|Брест|Нападающий|7|0|2|2|0|2|0|1|0|0|0|0|1|0
+Парамонов Данил|0|Брест|Нападающий|7|3|1|4|-1|4|0|0|0|0|0|0|2|0
+Солдатов Роман|0|Брест|Защитник|6|0|2|2|-1|4|0|0|0|0|0|0|1|0
+Саврицкий Дмитрий|0|Брест|Защитник|2|0|0|0|-3|0|0|0|0|0|0|0|0|0
+Самченко Владислав|0|Брест|Защитник|6|0|3|3|-1|2|0|0|0|0|0|0|2|0
+Шатило Иван|0|Гомель|Защитник|6|0|2|2|-1|2|0|0|0|0|0|0|1|0
+Кравченко Вадим|0|Гомель|Нападающий|7|4|2|6|5|2|2|1|0|0|0|0|3|0
+Сапельников Евгений|0|Гомель|Нападающий|7|3|5|8|6|4|0|2|0|0|0|0|3|0
+Секерин Иван|0|Гомель|Нападающий|7|1|1|2|4|2|0|0|0|0|0|0|2|0
+Колышкин Дмитрий|0|Гомель|Нападающий|6|0|1|1|-1|2|0|0|0|0|0|0|1|0
+Войтович Максим|0|Гомель|Нападающий|4|1|0|1|1|4|0|0|0|0|0|0|1|1
+Архипцев Арсений|0|Гомель|Защитник|7|0|1|1|4|0|0|0|0|0|0|0|1|0
+Гайдамак Всеволод|0|Гомель|Нападающий|7|2|1|3|1|0|1|1|0|0|0|0|1|0
+Анохин Никита|0|Гомель|Защитник|7|2|2|4|4|2|2|0|0|0|0|0|2|0
+Титов Никита|0|Гомель|Нападающий|7|1|3|4|4|4|0|0|0|0|0|0|2|0
+Гаврилович Павел|0|Гомель|Нападающий|6|0|0|0|-1|0|0|0|0|0|0|0|0|0
+Липский Даниил|0|Гомель|Защитник|7|0|1|1|3|0|0|0|0|0|0|0|1|0
+Кунишников Максим|0|Гомель|Нападающий|7|2|4|6|4|0|0|1|0|0|0|0|4|2
+Головач Александр|0|Гомель|Нападающий|3|0|0|0|0|2|0|0|0|0|0|0|0|0
+Авраменко Евгений|0|Неман|Нападающий|6|1|0|1|-3|0|0|0|0|0|0|0|1|0
+Елисеев Арсений|0|Неман|Защитник|6|0|0|0|-3|4|0|0|0|0|0|0|0|0
+Шапурко Семён|0|Неман|Нападающий|7|0|0|0|-1|0|0|0|0|0|0|0|0|0
+Шарапов Данила|0|Неман|Нападающий|6|1|1|2|-4|0|0|0|0|0|0|0|1|0
+Усс Игорь|0|Неман|Защитник|3|0|0|0|-1|2|0|0|0|0|0|0|0|0
+Куль Даниил|0|Неман|Защитник|6|0|0|0|-1|0|0|0|0|0|0|0|0|0
+Макеев Никита|0|Неман|Защитник|6|1|0|1|-5|0|0|0|0|0|0|0|1|0
+Лисовец Евгений|0|Неман|Защитник|7|0|3|3|-5|6|0|1|0|0|0|0|2|0
+Газдевич Максим|0|Неман|Нападающий|6|2|0|2|1|0|0|0|0|0|0|0|1|1
+Кулиев Владислав|0|Неман|Нападающий|7|2|0|2|-3|0|2|0|0|0|0|0|1|0
+Усков Максим|0|Неман|Нападающий|6|0|1|1|-4|0|0|0|0|0|0|0|1|0
+Бояркин Евгений|0|Неман|Защитник|5|0|0|0|-3|2|0|0|0|0|0|0|0|0
+Мельниченко Кирилл|0|Неман|Нападающий|7|0|3|3|-4|2|0|1|0|0|0|0|2|0
+Бастрыкин Никита|0|Неман|Нападающий|6|0|0|0|-1|2|0|0|0|0|0|0|0|0
+Яковлев Егор|0|Неман|Нападающий|4|1|1|2|-1|0|1|0|0|0|0|0|1|0
+Капустин Артем|0|Неман|Нападающий|7|0|1|1|1|4|0|0|0|0|0|0|1|0
+Поддубный Герман|0|Неман|Нападающий|2|0|0|0|0|0|0|0|0|0|0|0|0|0
+Жилюк Кирилл|0|Неман|Нападающий|7|0|3|3|-2|2|0|1|0|0|0|0|1|0
+Залитов Егор|0|Лида|Защитник|7|0|2|2|0|4|0|0|0|0|0|0|1|0
+Курганович Алексей|0|Лида|Защитник|7|0|1|1|-2|0|0|0|0|0|0|0|1|0
+Макаревич Александр|0|Лида|Защитник|7|3|3|6|6|6|0|0|0|0|0|1|3|0
+Онуфриюк Владимир|0|Лида|Нападающий|7|1|0|1|-4|0|0|0|0|0|0|0|1|0
+Пархомчик Артур|0|Лида|Нападающий|7|2|1|3|0|2|0|0|0|0|0|0|1|0
+Тофт Матвей|0|Лида|Нападающий|7|2|0|2|-1|2|0|0|0|0|0|0|1|0
+Косинский Геннадий|0|Лида|Защитник|6|0|1|1|-1|0|0|0|0|0|0|0|1|0
+Гончаров Артем|0|Лида|Защитник|7|0|1|1|4|0|0|0|0|0|0|0|1|0
+Якунин Максим|0|Лида|Нападающий|7|0|1|1|-1|2|0|0|0|0|0|0|1|0
+Ивуть Марк|0|Лида|Нападающий|6|0|0|0|0|0|0|0|0|0|0|0|0|0
+Ипатов Вячеслав|0|Лида|Нападающий|7|2|6|8|7|0|1|0|0|0|0|0|3|0
+Клочков Алексей|0|Лида|Нападающий|7|2|2|4|3|4|0|0|0|0|0|0|3|1
+Мойсевич Алексей|0|Лида|Защитник|3|0|0|0|1|0|0|0|0|0|0|0|0|0
+Мисюль Ян|0|Динамо-Молодечно|Защитник|5|0|0|0|0|0|0|0|0|0|0|0|0|0
+Сурков Владислав|0|Динамо-Молодечно|Защитник|7|0|1|1|2|2|0|0|0|0|0|0|1|0
+Калетник Владислав|0|Динамо-Молодечно|Нападающий|7|1|1|2|1|4|0|1|0|0|0|0|1|1
+Цулыгин Кирилл|0|Динамо-Молодечно|Защитник|5|1|0|1|-1|2|0|0|0|0|0|0|1|0
+Кукуля Иван|0|Динамо-Молодечно|Защитник|3|0|0|0|-4|0|0|0|0|0|0|0|0|0
+Вахильчук Кирилл|0|Динамо-Молодечно|Нападающий|6|2|0|2|-2|6|0|0|0|0|0|0|1|0
+Комаров Виктор|0|Динамо-Молодечно|Нападающий|7|3|2|5|-2|2|2|0|0|0|0|0|2|0
+Юкевич Майк|0|Динамо-Молодечно|Нападающий|5|0|1|1|1|2|0|0|0|0|0|0|1|0
+Гайдукевич Иван|0|Динамо-Молодечно|Нападающий|7|0|0|0|-1|0|0|0|0|0|0|0|0|0
+Валицкий Исаак|0|Динамо-Молодечно|Нападающий|7|0|1|1|-2|0|0|0|0|0|0|0|1|0
+Луговяк Семен|0|Динамо-Молодечно|Защитник|7|0|1|1|-2|2|0|0|0|0|0|0|1|0
+Буйнич Кирилл|0|Динамо-Молодечно|Защитник|6|0|1|1|-2|0|0|0|0|0|0|0|1|0
+Зенюк Максим|0|Динамо-Молодечно|Нападающий|2|0|0|0|0|0|0|0|0|0|0|0|0|0
+Масилевич Виктор|0|Динамо-Молодечно|Нападающий|7|1|3|4|-1|5|0|1|1|0|0|0|1|1
+Аношко Иван|0|Динамо-Молодечно|Нападающий|7|1|2|3|1|0|0|1|0|0|0|0|2|0
+Акулов Степан|0|Химик|Нападающий|1|0|0|0|-1|0|0|0|0|0|0|0|0|0
+Гусаров Кирилл|0|Химик|Защитник|4|0|0|0|-2|2|0|0|0|0|0|0|0|0
+Савченко Никита|0|Локомотив|Нападающий|6|1|2|3|-3|2|0|0|0|0|0|0|1|0
+Калмыков Даниил|0|Локомотив|Нападающий|6|2|2|4|-7|2|0|1|0|0|0|0|1|0
+Воробьев Кирилл|0|Могилев|Защитник|2|0|0|0|0|0|0|0|0|0|0|0|0|0
+Панамаренко Олег|0|Могилев|Нападающий|2|0|0|0|-1|0|0|0|0|0|0|0|0|0
+Проскурин Максим|0|Славутич|Нападающий|4|0|2|2|3|6|0|0|0|0|0|0|1|0
+Иванов Артем|0|Славутич|Нападающий|4|2|1|3|4|0|0|0|0|0|0|0|1|0
+Гришков Кирилл|0|Металлург|Защитник|3|0|0|0|2|4|0|0|0|0|0|0|0|0
+Иванов Илья|0|Металлург|Нападающий|1|0|0|0|0|0|0|0|0|0|0|0|0|0
+Горин Данила|0|Брест|Защитник|4|0|0|0|-1|0|0|0|0|0|0|0|0|0
+Шумский Иван|0|Лида|Нападающий|1|0|0|0|0|0|0|0|0|0|0|0|0|0
+Зайцев Глеб|0|Гомель|Нападающий|5|2|1|3|0|2|0|0|0|0|0|0|2|0
+Криштофик Даниил|0|Неман|Защитник|6|1|1|2|-3|0|0|0|0|0|0|0|1|0
+Бурак Евгений|0|Динамо-Молодечно|Защитник|5|0|0|0|-1|2|0|0|0|0|0|0|0|0
+Роговский Илья|0|Динамо-Молодечно|Нападающий|5|2|0|2|-2|2|0|0|0|0|0|0|1|0
+Идиатуллин Александр|0|Лида|Нападающий|3|0|0|0|-2|0|0|0|0|0|0|0|0|0
+Игнацкий Арсений|0|Локомотив|Защитник|4|0|0|0|-4|0|0|0|0|0|0|0|0|0
+Шуринов Илья|0|Локомотив|Нападающий|2|0|0|0|-1|0|0|0|0|0|0|0|0|0
+Березовский Ярослав|0|Шахтер|Защитник|3|0|0|0|2|0|0|0|0|0|0|0|0|0
+Белько Савелий|0|Шахтер|Защитник|1|0|0|0|0|0|0|0|0|0|0|0|0|0
+Чижиков Егор|0|Шахтер|Нападающий|2|2|1|3|1|0|1|0|0|0|0|0|1|1
+Корзун Глеб|0|Шахтер|Нападающий|1|0|2|2|2|0|0|0|0|0|0|0|1|0
+Козинов Александр|0|Могилев|Нападающий|3|0|0|0|-1|0|0|0|0|0|0|0|0|0
+Сиротин Никита|0|Юность|Защитник|3|0|0|0|3|4|0|0|0|0|0|0|0|0
+Маманович Тимофей|0|Юность|Защитник|3|0|2|2|-1|0|0|1|0|0|0|0|2|0
+Салыго Николай|0|Юность|Нападающий|3|1|3|4|1|2|0|0|0|0|0|0|2|0
+Головко Иван|0|Авиатор|Защитник|3|0|0|0|-4|4|0|0|0|0|0|0|0|0
+Кошевой Павел|0|Авиатор|Защитник|1|0|0|0|0|0|0|0|0|0|0|0|0|0
+Викулов Никита|0|Авиатор|Нападающий|1|0|0|0|-1|0|0|0|0|0|0|0|0|0
+Мельников Михаил|0|Славутич|Защитник|3|0|1|1|4|0|0|0|0|0|0|0|1|0
+Хлебков Григорий|0|Славутич|Защитник|2|0|0|0|0|2|0|0|0|0|0|0|0|0
+Вороно Павел|0|Лида|Защитник|4|0|0|0|-2|2|0|0|0|0|0|0|0|0
+Шендрик Андрей|0|Лида|Нападающий|1|0|0|0|-1|0|0|0|0|0|0|0|0|0
+Волочко Константин|0|Динамо-Молодечно|Защитник|3|0|0|0|0|4|0|0|0|0|0|0|0|0
+Кулинкович Данила|0|Гомель|Нападающий|1|0|0|0|-1|0|0|0|0|0|0|0|0|0
+Пономарцев Иван|0|Гомель|Нападающий|4|3|0|3|3|0|0|0|0|0|0|0|2|0
+Лазаренко Антон|0|Химик|Нападающий|4|0|1|1|-5|0|0|0|0|0|0|0|1|0
+Дубинич Никита|0|Могилев|Защитник|1|0|0|0|-1|0|0|0|0|0|0|0|0|0
+Татаренко Константин|0|Могилев|Защитник|1|0|0|0|0|0|0|0|0|0|0|0|0|0
+Тукач Дмитрий|0|Металлург|Нападающий|2|0|0|0|0|2|0|0|0|0|0|0|0|0
+Гречный Илья|0|Брест|Нападающий|1|0|0|0|-1|0|0|0|0|0|0|0|0|0
+Кудин Егор|0|Гомель|Защитник|3|1|1|2|3|0|0|0|0|0|0|0|1|0
+Дегтеров Данила|0|Гомель|Нападающий|2|0|1|1|1|0|0|0|0|0|0|0|1|0
+Качеловский Олег|0|Гомель|Нападающий|3|0|2|2|1|0|0|0|0|0|0|0|1|0
+Омелюсик Даниил|0|Неман|Нападающий|3|0|0|0|-2|2|0|0|0|0|0|0|0|0
+Козячий Игорь|0|Неман|Нападающий|3|0|0|0|-4|0|0|0|0|0|0|0|0|0
+Плаксин Артем|0|Неман|Нападающий|1|0|0|0|0|0|0|0|0|0|0|0|0|0
+Зозон Богдан|0|Локомотив|Защитник|3|0|0|0|-2|4|0|0|0|0|0|0|0|0
+Ясюкевич Павел|0|Витебск|Нападающий|1|0|0|0|0|0|0|0|0|0|0|0|0|0
+Михалев Мирослав|0|Динамо-Молодечно|Нападающий|1|0|0|0|0|0|0|0|0|0|0|0|0|0
+Бобрик Константин|0|Металлург|Защитник|1|0|0|0|-1|2|0|0|0|0|0|0|0|0`;
+
+/* Вратари: И|Победы|Шатауты|Броски_по_воротам|Пропущено|Время_на_льду(мин)
+   Считаем сырыми счётчиками, а не готовым %ОБ/КН — иначе следующую игру
+   нельзя честно прибавить: процент не складывается, только числитель/знаменатель. */
+const RAW_GK=HB?HB.gk.join('\n'):`Роман Бобарико|1993|Витебск|4|4|0|109|7|243.2|0
+Сергей Степанов|1993|Могилев|2|1|0|68|7|118.83|0
+Максим Лубский|2001|Гомель|7|4|2|170|14|430.2|0
+Алексей Снытко|2002|Шахтер|2|2|0|55|4|120|0
+Михаил Карнаухов|1996|Неман|5|1|0|144|14|297.51|0
+Андрей Макаров|1993|Динамо-Молодечно|2|2|0|79|2|124.63|0
+Артур Малков|0|Локомотив|4|2|1|132|12|204|0
+Ростислав Зиновенко|0|Юность|2|0|0|61|7|125|0
+Владлен Кибо|0|Славутич|1|0|0|29|6|44.77|1
+Денис Синягин|0|Славутич|4|2|0|86|12|193.35|1
+Матвей Мацкевич|0|Металлург|2|1|0|65|5|90.72|1
+Иван Лущик|0|Металлург|4|4|0|136|7|213.95|1
+Павел Рудович|0|Шахтер|2|2|1|56|2|119.83|0
+Георгий Анаркулов|0|Химик|2|0|0|61|8|99.65|0
+Вадим Вашкевич|0|Химик|6|0|0|214|24|321.42|0
+Никита Семенцов|0|Авиатор|5|0|0|142|26|301.35|0
+Илья Румянцев|0|Брест|5|3|0|102|11|268.77|0
+Александр Осипков|0|Неман|2|0|0|55|6|100|0
+Сергей Бронников|0|Лида|4|2|0|91|13|240|0
+Дмитрий Кропова|0|Могилев|3|2|0|117|10|179.48|0
+Тихон Чайка|0|Динамо-Молодечно|5|2|2|116|10|256.15|0
+Константин Козловский|0|Брест|3|2|1|49|7|153.61|0
+Илья Братушкин|0|Лида|3|2|1|74|7|179.45|0
+Владислав Карачун|0|Локомотив|3|0|0|101|10|158.77|0
+Антон Круповец|0|Шахтер|1|1|0|21|1|60|0
+Иван Коляда|0|Юность|2|1|0|47|7|116.42|0
+Никита Киверов|0|Авиатор|1|0|0|0|2|2.5|0
+Егор Громовик|0|Металлург|1|1|0|34|2|62.93|0
+Михаил Бурунов|0|Локомотив|1|0|0|37|7|60|0
+Клим Гульковский|0|Славутич|1|1|1|30|0|60|0
+Евгений Прохоров|0|Юность|1|0|0|45|5|58.92|0
+Владислав Окоряк|0|Витебск|2|1|1|51|4|123.48|0
+Вячеслав Липский|0|Динамо-Молодечно|1|0|0|5|0|27.35|0`;
+
+const DB=[];
+RAW_SK.trim().split('\n').forEach((line,i)=>{
+  const c=line.split('|');
+  const g=+c[5],shots=+c[14];
+  DB.push({id:'s'+i,name:c[0],year:+c[1],team:c[2],pos:(c[3]==='З'||c[3]==='Защитник')?'Защитник':'Нападающий',
+    gp:+c[4],g,a:+c[6],pts:+c[7],pm:+c[8],pim:+c[9],
+    ppg:+c[10],ppa:+c[11],shg:+c[12],sha:+c[13],shots,
+    hat:+c[15]||0, streak:+c[16]||0, gwg:+c[17]||0, num:c[18]||'',
+    shotPct:shots?Math.round(g/shots*1000)/10:0});
+});
+RAW_GK.trim().split('\n').forEach((line,i)=>{
+  const c=line.split('|');
+  const sf=+c[6],ga=+c[7],toi=+c[8],est=+c[9]||0;
+  DB.push({id:'g'+i,name:c[0],year:+c[1],team:c[2],pos:'Вратарь',
+    gp:+c[3],wins:+c[4],so:+c[5],est,num:c[10]||'',
+    // sf=0 при сыгранных матчах = разбивка бросков по вратарям неизвестна вовсе
+    sv: sf?Math.round((sf-ga)/sf*1000)/10:null,
+    gaa: toi?Math.round(ga*60/toi*100)/100:0});
+});
+const IDX={};DB.forEach(p=>IDX[p.id]=p);
+const findP=id=>IDX[id]||null;
+const skaters=()=>DB.filter(p=>p.pos!=='Вратарь');
+const goalies=()=>DB.filter(p=>p.pos==='Вратарь');
+
+/* ============ каталог ============
+   needsProto — данных нет в этом срезе: таблица «Бомбардиры» даёт только
+   суммы за сезон, поматчевые события лежат в протоколах. Такие медали
+   показываем, но НЕ считаем в коллекции и очках, чтобы цифры были честными. */
+const TIER_PTS=[0,15,30,60,120];
+const CAT=[
+ {id:'points',i:'🎯',n:'Клуб очков',role:'sk',group:'scoring',m:'cum',f:p=>p.pts,u:'очк.',
+  d:'Голы плюс передачи за сезон',short:'Сумма голов и передач',
+  t:[[1,10,'Клуб 10 очков'],[2,20,'Клуб 20 очков'],[3,35,'Клуб 35 очков'],[4,50,'Клуб 50 очков']]},
+ {id:'goals',i:'🥅',n:'Снайпер',role:'sk',group:'scoring',m:'cum',f:p=>p.g,u:'гол.',
+  d:'Заброшенные шайбы за сезон',short:'Заброшенные шайбы',
+  t:[[1,5,'Снайпер I'],[2,10,'Снайпер II'],[3,15,'Снайпер III'],[4,20,'Снайпер IV']]},
+ {id:'assists',i:'🧊',n:'Диспетчер',role:'sk',group:'scoring',m:'cum',f:p=>p.a,u:'пас.',
+  d:'Голевые передачи за сезон',short:'Голевые передачи',
+  t:[[1,5,'Диспетчер I'],[2,12,'Диспетчер II'],[3,20,'Диспетчер III'],[4,30,'Диспетчер IV']]},
+ {id:'shots',i:'💥',n:'Обстрел',role:'sk',group:'scoring',m:'cum',f:p=>p.shots,u:'брос.',
+  d:'Броски в створ за сезон',short:'Броски в створ',
+  t:[[1,40,'Обстрел I'],[2,70,'Обстрел II'],[3,110,'Обстрел III']]},
+ {id:'acc',i:'📐',n:'Точность',role:'sk',group:'scoring',m:'season',f:p=>p.shots>=40?p.shotPct:0,u:'%',
+  d:'Процент реализации бросков, от 40 бросков за сезон',short:'Процент реализации',
+  t:[[1,12,'Точность I'],[2,16,'Точность II'],[3,20,'Точность III']]},
+ {id:'pp',i:'⚡',n:'Спецбригада',role:'sk',group:'scoring',m:'cum',f:p=>p.ppg+p.ppa,u:'очк.',
+  d:'Очки, набранные в большинстве',short:'Очки в большинстве',
+  t:[[1,3,'Спецбригада I'],[2,8,'Спецбригада II'],[3,15,'Спецбригада III']]},
+ {id:'sh',i:'🛡️',n:'Меньшинство',role:'sk',group:'scoring',m:'cum',f:p=>p.shg+p.sha,u:'очк.',
+  d:'Очки, набранные в меньшинстве',short:'Очки в меньшинстве',
+  t:[[1,1,'Меньшинство I'],[2,2,'Меньшинство II'],[3,3,'Меньшинство III']]},
+ {id:'pm',i:'📈',n:'Полезность',role:'sk',group:'stability',m:'season',f:p=>p.pm,u:'',
+  d:'Показатель плюс-минус по итогам сезона',short:'Плюс-минус',
+  t:[[1,5,'Полезность +5'],[2,12,'Полезность +12'],[3,20,'Полезность +20']]},
+ {id:'iron',i:'🔩',n:'Железный человек',role:'sk',group:'stability',m:'cum',f:p=>p.gp,u:'матч.',
+  d:'Сыгранные матчи за сезон',short:'Сыгранные матчи',
+  t:[[1,20,'Железный человек I'],[2,35,'Железный человек II'],[3,48,'Железный человек III']]},
+ {id:'topP',i:'🏆',n:'Топ по очкам',role:'sk',group:'season',m:'rank',rank:'pts',u:'',
+  d:'Место в списке бомбардиров лиги',short:'Место в лиге по очкам',
+  t:[[1,10,'Топ-10 по очкам'],[2,5,'Топ-5 по очкам'],[3,3,'Топ-3 по очкам']]},
+ {id:'topA',i:'🎖️',n:'Топ по передачам',role:'sk',group:'season',m:'rank',rank:'a',u:'',
+  d:'Место в лиге по голевым передачам',short:'Место в лиге по передачам',
+  t:[[1,10,'Топ-10 по передачам'],[2,5,'Топ-5 по передачам'],[3,3,'Топ-3 по передачам']]},
+ {id:'topD',i:'🧱',n:'Лучший защитник',role:'sk',group:'season',m:'rank',rank:'pts',only:'Защитник',u:'',
+  d:'Место по очкам среди защитников',short:'Место среди защитников',
+  t:[[1,8,'Топ-8 защитников'],[2,5,'Топ-5 защитников'],[3,3,'Топ-3 защитников']]},
+ {id:'complete',i:'🃏',n:'Полный комплект',role:'sk',group:'secret',m:'cum',secret:1,
+  f:p=>(p.ppg+p.ppa>0&&p.shg+p.sha>0)?1:0,u:'',
+  d:'Очко в большинстве и очко в меньшинстве в одном сезоне',short:'Скрытая медаль',
+  t:[[3,1,'Полный комплект']]},
+ {id:'twoway',i:'♟️',n:'Обе стороны льда',role:'sk',group:'secret',m:'cum',secret:1,
+  f:p=>(p.g>=12&&p.a>=20)?1:0,u:'',
+  d:'12 голов и 20 передач в одном сезоне',short:'Скрытая медаль',
+  t:[[3,1,'Обе стороны льда']]},
+ {id:'hat',i:'🎩',n:'Хет-трик',role:'sk',group:'moments',m:'cum',f:p=>p.hat,u:'раз',game:1,
+  d:'Матчи, в которых заброшено три и более шайб',short:'Три шайбы за матч',
+  t:[[1,1,'Хет-трик'],[2,3,'Хет-трик ×3'],[3,5,'Хет-трик ×5']]},
+ {id:'streak',i:'🔥',n:'Серия',role:'sk',group:'moments',m:'peak',f:p=>p.streak,u:'матч.',game:1,
+  d:'Матчи подряд с набранным очком',short:'Матчи подряд с очком',
+  t:[[1,3,'Серия 3 матча'],[2,5,'Серия 5 матчей'],[3,8,'Серия 8 матчей']]},
+ {id:'gwg',i:'🏁',n:'Автор победных',role:'sk',group:'moments',m:'cum',f:p=>p.gwg,u:'шайб.',game:1,
+  d:'Заброшенные победные шайбы — гол, после которого команда уже не упускала победу',
+  short:'Победные шайбы',
+  t:[[1,2,'Автор победных I'],[2,5,'Автор победных II'],[3,10,'Автор победных III']]},
+ {id:'fortress',i:'🧊',n:'Крепость',role:'gk',group:'goalie',m:'season',f:p=>p.sv||0,u:'%',
+  d:'Процент отражённых бросков',short:'Процент отражённых',
+  t:[[1,91,'Крепость I'],[2,92.5,'Крепость II'],[3,93.5,'Крепость III']]},
+ {id:'gaa',i:'🎚️',n:'Надёжность',role:'gk',group:'goalie',m:'season',inv:1,base:3.2,f:p=>p.gaa,u:'КН',
+  d:'Коэффициент надёжности: меньше — лучше',short:'Коэффициент надёжности',
+  t:[[1,2.2,'Надёжность I'],[2,1.95,'Надёжность II'],[3,1.8,'Надёжность III']]},
+ {id:'shutout',i:'🥇',n:'Сухая игра',role:'gk',group:'goalie',m:'cum',f:p=>p.so,u:'матч.',
+  d:'Матчи, сыгранные на ноль',short:'Матчи на ноль',
+  t:[[1,1,'Сухая игра'],[2,3,'Сухая игра ×3'],[3,5,'Сухая игра ×5']]},
+ {id:'gwins',i:'🛡️',n:'Победная стена',role:'gk',group:'goalie',m:'cum',f:p=>p.wins,u:'побед',
+  d:'Победы, одержанные в воротах',short:'Победы в воротах',
+  t:[[1,8,'Победная стена I'],[2,13,'Победная стена II'],[3,18,'Победная стена III']]},
+ {id:'topSV',i:'👑',n:'Первый номер',role:'gk',group:'goalie',m:'rank',rank:'sv',u:'',
+  d:'Место среди вратарей лиги по проценту отражённых',short:'Место среди вратарей',
+  t:[[1,6,'Топ-6 вратарей'],[2,3,'Топ-3 вратарей'],[3,1,'Первый номер лиги']]}];
+const GROUPS=[{id:'scoring',n:'Результативность'},{id:'stability',n:'Стабильность'},
+ {id:'season',n:'Итоги сезона'},{id:'secret',n:'Скрытые'},
+ {id:'moments',n:'Особые матчи'},{id:'goalie',n:'Вратари'}];
+const ach=id=>CAT.find(a=>a.id===id);
+const visible=(p,a)=>a.role==='gk'?p.pos==='Вратарь':p.pos!=='Вратарь';
+const eligible=(p,a)=>visible(p,a)&&(!a.only||p.pos===a.only);
+const counts=a=>!a.needsProto;   // медали без данных не участвуют в подсчётах
+
+/* ===== состояние сезона =====
+   Регулярка Экстралиги — 60 туров. Медали за место в таблице и за итоговые
+   проценты (реализация, % отражённых, коэффициент надёжности) НЕ выдаются
+   по ходу сезона: после первого тура «Топ-3 по очкам» за два очка — бессмыслица.
+   До конца сезона они показываются как предварительные, без звёзд и очков. */
+/* ===== календарь и результаты (вносятся вручную вместе с протоколами) ===== */
+const MATCHES=HB?HB.matches:[
+ {id:'m1',d:'Ср 09.09',t:'20:15',home:'Локомотив',away:'Юность',hs:4,as:0},
+ {id:'m2',d:'Ср 09.09',t:'19:05',home:'Славутич',away:'Металлург',hs:6,as:9},
+ {id:'m3',d:'Ср 09.09',t:'18:35',home:'Шахтер',away:'Химик',hs:5,as:2},
+ {id:'m4',d:'Ср 09.09',t:'19:05',home:'Авиатор',away:'Могилев',hs:4,as:5},
+ {id:'m5',d:'Чт 10.09',t:'19:00',home:'Лида',away:'Динамо-Молодечно',hs:1,as:4},
+ {id:'m6',d:'Чт 10.09',t:'19:00',home:'Витебск',away:'Брест',hs:3,as:4,ot:'ot'},
+ {id:'m7',d:'Чт 10.09',t:'19:00',home:'Гомель',away:'Неман',hs:3,as:0},
+ {id:'m8',d:'Пт 11.09',t:'18:30',home:'Шахтер',away:'Химик',hs:7,as:3},
+ {id:'m9',d:'Пт 11.09',t:'18:30',home:'Локомотив',away:'Юность',hs:4,as:3,ot:'so'},
+ {id:'m10',d:'Пт 11.09',t:'19:00',home:'Славутич',away:'Металлург',hs:1,as:2},
+ {id:'m11',d:'Пт 11.09',t:'19:00',home:'Авиатор',away:'Могилев',hs:4,as:7},
+ {id:'m12',d:'Сб 12.09',t:'13:00',home:'Витебск',away:'Брест',hs:4,as:2},
+ {id:'m13',d:'Сб 12.09',t:'14:05',home:'Лида',away:'Динамо-Молодечно',hs:4,as:2},
+ {id:'m14',d:'Сб 12.09',t:'13:05',home:'Гомель',away:'Неман',hs:3,as:4,ot:'ot'},
+ {id:'m15',d:'Вт 15.09',t:'19:05',home:'Динамо-Молодечно',away:'Гомель',hs:2,as:1,ot:'so'},
+ {id:'m16',d:'Вт 15.09',t:'19:00',home:'Неман',away:'Металлург',hs:2,as:6},
+ {id:'m17',d:'Вт 15.09',t:'19:05',home:'Брест',away:'Лида',hs:3,as:0},
+ {id:'m18',d:'Ср 16.09',t:'18:00',home:'Локомотив',away:'Шахтер',hs:1,as:8},
+ {id:'m19',d:'Ср 16.09',t:'18:35',home:'Могилев',away:'Юность',hs:2,as:3},
+ {id:'m20',d:'Ср 16.09',t:'19:05',home:'Авиатор',away:'Славутич',hs:4,as:8},
+ {id:'m21',d:'Ср 16.09',t:'19:05',home:'Витебск',away:'Химик',hs:3,as:2,ot:'ot'},
+ {id:'m22',d:'Чт 17.09',t:'20:15',home:'Динамо-Молодечно',away:'Гомель',hs:3,as:4,ot:'so'},
+ {id:'m23',d:'Чт 17.09',t:'18:00',home:'Неман',away:'Металлург',hs:2,as:3,ot:'ot'},
+ {id:'m24',d:'Чт 17.09',t:'19:05',home:'Брест',away:'Лида',hs:6,as:3},
+ {id:'m25',d:'Пт 18.09',t:'18:35',home:'Локомотив',away:'Шахтер',hs:1,as:7},
+ {id:'m26',d:'Пт 18.09',t:'18:35',home:'Могилев',away:'Юность',hs:5,as:3},
+ {id:'m27',d:'Пт 18.09',t:'19:05',home:'Авиатор',away:'Славутич',hs:0,as:6},
+ {id:'m28',d:'Пт 18.09',t:'19:05',home:'Витебск',away:'Химик',hs:4,as:2},
+ {id:'m29',d:'Пн 21.09',t:'18:00',home:'Шахтер',away:'Могилев',hs:3,as:0},
+ {id:'m30',d:'Пн 21.09',t:'19:05',home:'Авиатор',away:'Металлург',hs:2,as:3,ot:'so'},
+ {id:'m31',d:'Пн 21.09',t:'20:17',home:'Юность',away:'Славутич',hs:3,as:5},
+ {id:'m32',d:'Вт 22.09',t:'19:05',home:'Лида',away:'Химик',hs:5,as:1},
+ {id:'m33',d:'Вт 22.09',t:'18:00',home:'Брест',away:'Гомель',hs:4,as:7},
+ {id:'m34',d:'Вт 22.09',t:'20:15',home:'Неман',away:'Динамо-Молодечно',hs:0,as:1},
+ {id:'m35',d:'Вт 22.09',t:'19:05',home:'Витебск',away:'Локомотив',hs:3,as:0},
+ {id:'m39',d:'Чт 24.09',t:'19:05',home:'Лида',away:'Химик',hs:4,as:0},
+ {id:'m40',d:'Чт 24.09',t:'19:05',home:'Брест',away:'Гомель',hs:2,as:1},
+ {id:'m41',d:'Чт 24.09',t:'19:05',home:'Неман',away:'Динамо-Молодечно',hs:0,as:1},
+ {id:'m42',d:'Чт 24.09',t:'19:05',home:'Витебск',away:'Локомотив',hs:4,as:1},
+ {id:'m43',d:'Вс 27.09',t:'13:05',home:'Локомотив',away:'Лида',hs:4,as:5},
+ {id:'m45',d:'Вс 27.09',t:'13:05',home:'Химик',away:'Гомель',hs:0,as:5},
+ {id:'m44',d:'Вс 27.09',t:'16:00',home:'Брест',away:'Неман',hs:3,as:1},
+ {id:'m46',d:'Вс 27.09',t:'18:30',home:'Динамо-Молодечно',away:'Металлург',hs:1,as:4}];
+
+// Считается автоматически по календарю: сколько игровых дней уже сыграно.
+// Раньше число задавалось вручную и отставало от реальности.
+// Регламент Экстралиги: регулярка — 52 матча на команду (4 круга).
+// rounds = максимум сыгранных матчей среди команд, считается по календарю.
+const SEASON={
+  get rounds(){
+    if(OFFICIAL_TABLE)return Math.max(0,...OFFICIAL_TABLE.map(r=>+r.gp||0));
+    const c={};
+    MATCHES.filter(m=>m.hs!==undefined).forEach(m=>{c[m.home]=(c[m.home]||0)+1;c[m.away]=(c[m.away]||0)+1;});
+    return Math.max(0,...Object.values(c));
+  },
+  total:52
+};
+
+/* ===== турнирная таблица =====
+   Двухочковая система (как в КХЛ/НХЛ): любая победа — 2 очка,
+   поражение в овертайме или по буллитам — 1, поражение в основное — 0. */
+// Официальная таблица с hockey.by (бот сверяется с ней), иначе — считаем по известным матчам.
+const OFFICIAL_TABLE=HB&&Array.isArray(HB.table)&&HB.table.length>=10?HB.table:null;
+function standings(){
+  if(OFFICIAL_TABLE)return OFFICIAL_TABLE.map(r=>({team:r.team,gp:+r.gp||0,w:+r.w||0,wo:+r.wo||0,wb:+r.wb||0,l:+r.l||0,lo:+r.lo||0,lb:+r.lb||0,gf:+r.gf||0,ga:+r.ga||0,pts:+r.pts||0}))
+    .sort((a,b)=>b.pts-a.pts||(b.gf-b.ga)-(a.gf-a.ga)||b.gf-a.gf||a.team.localeCompare(b.team));
+  const t={};
+  const row=n=>t[n]||(t[n]={team:n,gp:0,w:0,wo:0,wb:0,l:0,lo:0,lb:0,gf:0,ga:0,pts:0});
+  MATCHES.filter(m=>m.hs!==undefined).forEach(m=>{
+    const H=row(m.home), A=row(m.away);
+    H.gp++; A.gp++;
+    H.gf+=m.hs; H.ga+=m.as; A.gf+=m.as; A.ga+=m.hs;
+    const homeWon=m.hs>m.as;
+    const W=homeWon?H:A, L=homeWon?A:H;
+    if(m.ot==='so'){ W.wb++; W.pts+=2; L.lb++; L.pts+=1; }
+    else if(m.ot==='ot'){ W.wo++; W.pts+=2; L.lo++; L.pts+=1; }
+    else { W.w++; W.pts+=2; L.l++; }
+  });
+  return Object.values(t).sort((a,b)=>
+    b.pts-a.pts || (b.gf-b.ga)-(a.gf-a.ga) || b.gf-a.gf || a.team.localeCompare(b.team));
+}
+const seasonOver=()=>SEASON.rounds>=SEASON.total;
+const locked=a=>(a.m==='rank'||a.m==='season')&&!seasonOver();
+// вратарский ценз ФХБ: не менее трети матчей команды
+const gkQualified=p=>p.gp>=Math.ceil(SEASON.total/3);
+
+// Медали, которые выдаются только после последнего тура (место в лиге, итоговые проценты).
+const finalMedal=a=>a.m==='rank'||a.m==='season';
+const MODE={cum:'Копится по ходу сезона.',season:'Считается по итогам сезона.',
+ rank:'Место фиксируется после последнего тура.'};
+
+const RANKS={},PROG={};
+function rankIn(p,a){
+  if(!RANKS[a.id]){
+    let arr=a.role==='gk'?goalies():skaters();
+    if(a.only)arr=arr.filter(x=>x.pos===a.only);
+    const m={};
+    arr.slice().sort((x,y)=>a.inv?x[a.rank]-y[a.rank]:y[a.rank]-x[a.rank]).forEach((q,i)=>m[q.id]=i+1);
+    RANKS[a.id]=m;
+  }
+  return RANKS[a.id][p.id]||null;
+}
+function prog(p,a){
+  if(a.needsProto)return{v:null,tier:0,nx:null,na:1,pct:0};
+  const key=p.id+'|'+a.id;if(PROG[key])return PROG[key];
+  let out;
+  if(a.m==='rank'){
+    const raw=p[a.rank]||0;
+    if(!raw){out={v:null,tier:0,nx:a.t[0],rank:1,pct:0};}
+    else{
+      const r=rankIn(p,a);
+      let tier=0;a.t.forEach(t=>{if(r&&r<=t[1])tier=t[0]});
+      const nx=a.t.find(t=>t[0]>tier);
+      out={v:r,tier,nx,rank:1,pct:nx&&r?Math.max(0,Math.min(1,(a.t[0][1]-r+1)/(a.t[0][1]-nx[1]+1))):0};
+    }
+  }else{
+    const v=a.f(p);let tier=0;
+    a.t.forEach(t=>{if(a.inv?(v<=t[1]&&v>0):v>=t[1])tier=t[0]});
+    const nx=a.t.find(t=>t[0]>tier);
+    const from=tier?a.t.find(t=>t[0]===tier)[1]:(a.inv?(a.base||4):0);
+    out={v,tier,nx,rank:0,
+      pct:nx?Math.max(0,Math.min(1,a.inv?(from-v)/(from-nx[1]):(v-from)/(nx[1]-from))):1};
+  }
+  // Сезон не доигран — место/итоговый процент показываем как предварительные,
+  // но уровень не присваиваем и очки не начисляем.
+  if(locked(a)) out={...out,tier:0,pending:1};
+  // Вратарский ценз: без трети матчей команды медаль не считается даже в конце сезона
+  if(a.role==='gk'&&(a.id==='fortress'||a.id==='gaa')&&!gkQualified(p)) out={...out,tier:0,pending:1};
+  return PROG[key]=out;
+}
+const RARITY={};
+CAT.forEach(a=>{
+  if(!counts(a)||locked(a)){RARITY[a.id]=null;return;}
+  const pool=DB.filter(p=>eligible(p,a));
+  RARITY[a.id]=pool.length?pool.filter(p=>prog(p,a).tier>0).length/pool.length*100:0;
+});
+const RAR_LABEL=[[50,'Обычная',0],[20,'Необычная',1],[8,'Редкая',2],[2,'Очень редкая',3],[0,'Легендарная',4]];
+function rarityOf(id){
+  const pc=RARITY[id];if(pc===null)return null;
+  for(const[min,name,cls]of RAR_LABEL)if(pc>=min)return{pc,name,cls};
+  return{pc,name:'Легендарная',cls:4};
+}
+const medalPoints=p=>CAT.filter(a=>eligible(p,a)&&counts(a))
+  .reduce((s,a)=>s+(prog(p,a).tier?TIER_PTS[prog(p,a).tier]:0),0);
+function collection(p){
+  const list=CAT.filter(a=>eligible(p,a)&&counts(a));
+  const got=list.filter(a=>prog(p,a).tier>0).length;
+  return{got,total:list.length,pct:list.length?got/list.length*100:0};
+}
+const LEVELS=[0,40,100,180,290,430,610,830,1100,1430];
+function levelOf(pts){
+  let lv=1;LEVELS.forEach((th,i)=>{if(pts>=th)lv=i+1});
+  const cur=LEVELS[lv-1]??0,next=LEVELS[lv]??null;
+  return{lv,cur,next,pct:next?(pts-cur)/(next-cur):1};
+}
+
+const played=m=>m.hs!==undefined;
+const winnerOf=m=>played(m)?(m.hs>m.as?'home':'away'):null;
+// клубы берём из базы И из календаря: у команды может ещё не быть
+// ни одного внесённого протокола, но болеть за неё уже можно
+const CLUBS=[...new Set([...DB.map(p=>p.team),
+  ...MATCHES.flatMap(m=>[m.home,m.away])])].sort();
+
+// Постоянный короткий ключ игрока (для ссылок и уведомлений): FNV-1a от «имя|клуб».
+function pkey(name,team){let h=0x811c9dc5;const s=String(name)+'|'+String(team);
+  for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,0x01000193)>>>0;}return h.toString(36);}
+DB.forEach(p=>{p.key=pkey(p.name,p.team);});
+/*ENGINE:END*/
+/* ===== сохранение выбора (только в этом браузере) ===== */
+const store={
+  get(k,d){try{const v=localStorage.getItem('hb_'+k);return v?JSON.parse(v):d;}catch(e){return d;}},
+  set(k,v){try{localStorage.setItem('hb_'+k,JSON.stringify(v));}catch(e){}}
+};
+
+const S={tab:'rank',view:'rank',metric:'pts',posf:'all',q:'',pid:null,aid:null,team:null,mid:null,hist:[],sc:{},
+  role:store.get('role','player'), fav:store.get('fav',null), preds:store.get('preds',{})};
+let ME=null;
+(()=>{const m=store.get('me',null);if(!m)return;const p=DB.find(x=>x.name===m.name&&x.team===m.team);ME=p?p.id:null;})();
+function setMe(id){const p=findP(id);ME=p?p.id:null;store.set('me',p?{name:p.name,team:p.team}:null);}
+const k=()=>S.view+':'+(S.pid||'')+(S.aid||'');
+const $=s=>document.querySelector(s);
+// Значок: игровой номер (или буквы клуба, пока номер неизвестен) в цветах клуба.
+// [фон, цифры (только белые или чёрные), акцент-полоса] — по эмблемам клубов; поправить можно здесь.
+const W='#FFFFFF',K='#121417';
+const TEAM_COLORS={
+  'авиатор':['#141414',W,'#C8102E'], 'брест':['#0A2442',W,'#E0301E'],    'молодечно':['#F2F4F7',K,'#0B1F4A'],
+  'гомель':['#0E1630',W,'#F5C400'],  'химик':['#0B5CB0',W,'#F5C400'],    'лида':['#F5C400',K,'#C8102E'],
+  'локомотив':['#13348A',W,'#FF5A13'],'металлург':['#0B2A66',W,'#A7AEB8'],'могилев':['#4B0F68',W,'#F5C400'],
+  'неман':['#C8102E',W,'#0E1630'],   'шахтер':['#F26A1B',K,'#121417'],   'славутич':['#23418A',W,'#D7262B'],
+  'витебск':['#0A56B0',W,'#0A1F44'], 'юность':['#0B2F80',W,'#2E8BD0']};
+function teamColors(team){
+  const k=String(team).toLowerCase().replace(/ё/g,'е');
+  const key=Object.keys(TEAM_COLORS).find(n=>k.includes(n));
+  if(key)return TEAM_COLORS[key];
+  let h=0;for(const ch of k)h=(h*31+ch.charCodeAt(0))%360;
+  return [`hsl(${h} 55% 32%)`,W,'rgba(255,255,255,.35)'];
+}
+function crest(team,num){
+  const w=String(team).replace(/^ХК\s+/i,'').split(/[\s-]+/).filter(Boolean);
+  const ab=(w.length>1?w[0][0]+w[1][0]:w[0].slice(0,2)).toUpperCase();
+  const [bg,fg,ac]=teamColors(team);
+  return `<span class="crest${num?' num':''}" style="--cbg:${bg};--cfg:${fg};--cac:${ac}" aria-hidden="true">${esc(num||ab)}</span>`;
+}
+const MAIN=document.getElementById('main');
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const SK_METRICS=[
+ {id:'mp',n:'Очки медалей',s:'очк.',f:p=>medalPoints(p)},
+ {id:'pts',n:'Очки',s:'О',f:p=>p.pts},{id:'g',n:'Голы',s:'Г',f:p=>p.g},
+ {id:'a',n:'Передачи',s:'А',f:p=>p.a},{id:'gp',n:'Матчи',s:'И',f:p=>p.gp},
+ {id:'pm',n:'Полезность',s:'+/-',f:p=>p.pm,sign:1},
+ {id:'shots',n:'Броски',s:'Бр',f:p=>p.shots},
+ {id:'shotPct',n:'Реализация',s:'%',f:p=>p.shots>=30?p.shotPct:null},
+ {id:'pp',n:'Большинство',s:'О',f:p=>p.ppg+p.ppa},
+ {id:'sh',n:'Меньшинство',s:'О',f:p=>p.shg+p.sha},
+ {id:'disc',n:'Дисциплина',s:'штр',f:p=>p.pim,asc:true}];
+const GK_METRICS=[
+ {id:'mp',n:'Очки медалей',s:'очк.',f:p=>medalPoints(p)},
+ {id:'gaa',n:'Надёжность',s:'КН',f:p=>p.gaa,asc:true},
+ {id:'sv',n:'% отражённых',s:'%',f:p=>p.sv},
+ {id:'wins',n:'Победы',s:'В',f:p=>p.wins},
+ {id:'so',n:'Сухие матчи',s:'шт',f:p=>p.so},
+ {id:'gp',n:'Матчи',s:'И',f:p=>p.gp}];
+const metricsFor=pf=>pf==='Вратарь'?GK_METRICS:SK_METRICS;
+
+function drawHead(){
+  const p=S.pid?findP(S.pid):null,a=S.aid?ach(S.aid):null;
+  $('#ttl').textContent=S.view==='rank'?'Рейтинг':S.view==='league'?'Лига':S.view==='medals'?'Медали':S.view==='me'?'Профиль'
+    :S.view==='team'?(S.team||'Команда'):S.view==='match'?'Матч'
+    :S.view==='player'?(p?p.name:'Игрок'):(a?(a.secret&&p&&!prog(p,a).tier?'Скрытая медаль':a.n):'Медаль');
+  const canBack=S.hist.length>0;
+  // В Telegram — родная кнопка «Назад» в шапке, на странице своя не нужна.
+  let native=false;
+  if(IN_TG&&tg.BackButton&&tg.isVersionAtLeast&&tg.isVersionAtLeast('6.1')){
+    try{canBack?tg.BackButton.show():tg.BackButton.hide();native=true;}catch(e){}
+  }
+  $('#back').className='back'+(canBack&&!native?' on':'');
+  document.querySelectorAll('#tabs .tab').forEach(b=>b.setAttribute('aria-pressed',S.tab===b.dataset.tab));
+}
+function drawBody(){
+  $('#main').innerHTML=S.view==='rank'?vRank():S.view==='league'?vLeague():S.view==='medals'?vCat():S.view==='me'?vMe()
+    :S.view==='player'?vPlayer():S.view==='team'?vTeam():S.view==='match'?vMatch():vMedal();
+}
+// Перерисовка экрана. Содержимое — первым: если что-то в шапке или в связке с Telegram
+// сломается, экран всё равно сменится. Ошибки показываем внизу экрана, а не глотаем молча.
+function draw(){
+  try{drawBody()}catch(e){showErr(e)}
+  try{drawHead()}catch(e){showErr(e)}
+  // iOS иногда не перерисовывает прокручиваемый блок после замены содержимого — подталкиваем.
+  MAIN.style.display='none';void MAIN.offsetHeight;MAIN.style.display='';
+}
+function showErr(e){
+  let el=document.getElementById('err');
+  if(!el){el=document.createElement('div');el.id='err';el.className='err';document.body.appendChild(el);el.onclick=()=>el.remove();}
+  el.textContent='Ошибка: '+((e&&e.message)||e)+' — пришлите скриншот разработчику';
+}
+window.addEventListener('error',ev=>showErr(ev.error||ev.message));
+window.addEventListener('unhandledrejection',ev=>showErr(ev.reason));
+// Переходы запоминаются: «Назад» возвращает ровно туда, откуда пришли (и на ту же прокрутку).
+function go(v,o={}){
+  S.hist.push({view:S.view,pid:S.pid,aid:S.aid,team:S.team,mid:S.mid,y:MAIN.scrollTop});
+  Object.assign(S,{view:v},o);draw();(MAIN.scrollTop=0);
+}
+function back(){
+  const h=S.hist.pop();
+  if(!h){S.view=S.tab==='me'?'me':S.tab;draw();return;}
+  Object.assign(S,h);draw();requestAnimationFrame(()=>(MAIN.scrollTop=h.y||0));
+}
+// Места с учётом равенства: 1, 2, 2, 4… (одинаковое значение — одно место).
+function placesOf(arr,val){
+  const out=[];let prev,place=0;
+  arr.forEach((x,i)=>{const v=val(x);if(i===0||v!==prev){place=i+1;prev=v;}out.push(place);});
+  return out;
+}
+function rankList(){
+  const list=metricsFor(S.posf),m=list.find(x=>x.id===S.metric)||list[0],q=S.q.trim().toLowerCase();
+  const pool=(S.posf==='Вратарь'?goalies():S.posf==='all'?skaters():skaters().filter(p=>p.pos===S.posf))
+    .filter(p=>!q||p.name.toLowerCase().includes(q)||p.team.toLowerCase().includes(q))
+    .filter(p=>m.f(p)!==null).sort((x,y)=>m.asc?m.f(x)-m.f(y):m.f(y)-m.f(x));
+  if(!pool.length)return `<div class="note">Никто не подошёл под фильтр.</div>`;
+  const pl=placesOf(pool,m.f);
+  return `<div class="list">${pool.map((p,i)=>{
+    const v=m.f(p),sg=m.sign&&v>0?'+':'',c=collection(p),n=pl[i];
+    return `<button class="r${p.id===ME?' me':''}" data-p="${p.id}"><span class="pos${n<=3?' p'+n:''}">${n}</span>${crest(p.team,p.num)}
+      <span class="who"><b>${esc(p.name)}</b><span>${esc(p.team)} · 🏅 ${c.got}/${c.total} · ${medalPoints(p)} очк.</span></span>
+      <span class="val n">${sg}${v}<em>${m.s}</em></span></button>`;}).join('')}</div>`;
+}
+function vRank(){
+  const list=metricsFor(S.posf);
+  return `<input class="srch" id="q" placeholder="Найти игрока или команду" value="${esc(S.q)}">
+  <div class="chips sub2" style="margin-bottom:10px">${[['all','Все'],['Нападающий','Нападающие'],['Защитник','Защитники'],['Вратарь','Вратари']]
+    .map(([v,n])=>`<button class="chip" aria-pressed="${S.posf===v}" data-pf="${v}">${n}</button>`).join('')}</div>
+  <div class="chips" id="mchips" style="margin-bottom:12px">${list.map(x=>`<button class="chip" aria-pressed="${x.id===S.metric}" data-m="${x.id}">${x.n}</button>`).join('')}</div>
+  <div id="rl">${rankList()}</div>`;
+}
+function vPlayer(){const p=findP(S.pid);return p?card(p):`<div class="note">Игрок не найден.</div>`}
+function card(p,extra){
+  const c=collection(p),mp=medalPoints(p),lv=levelOf(mp),plat=c.got===c.total;
+  const quick=p.pos==='Вратарь'
+    ?[['Матчи',p.gp],['Победы',p.wins],['% ОБ',p.sv===null?'—':p.sv+(p.est?'*':'')],['КН',p.gaa]]
+    :[['Матчи',p.gp],['Голы',p.g],['Передачи',p.a],['Очки',p.pts]];
+  const rest=p.pos==='Вратарь'
+    ?[['Сухие матчи',p.so],...(p.year?[['Год рождения',p.year]]:[])]
+    :[['+/-',(p.pm>0?'+':'')+p.pm],['Штраф',p.pim],['Броски',p.shots],['Реализация',p.shots&&p.shots>=p.g?p.shotPct+'%':'—'],
+      ['Больш. (О)',p.ppg+p.ppa],['Меньш. (О)',p.shg+p.sha],...(p.year?[['Год рождения',p.year]]:[])];
+  return `<div class="split"><div>
+    <div class="hero">${logoOf(p.team)?`<span class="hlogo"><img src="${esc(logoOf(p.team))}" alt=""></span>`:''}<span class="ghost n">${p.pos==='Вратарь'?'🥅':(p.pts||'🏒')}</span>
+      <h1>${esc(p.name)}</h1><p>${esc(p.team)} · ${p.pos}</p>
+      <div class="lvl"><div class="lvlbadge"><b class="n">${lv.lv}</b><span>УР.</span></div>
+        <div class="lvlbar"><div class="t"><span>${mp} очков медалей</span>
+          <span>${lv.next?('до ур. '+(lv.lv+1)+': '+(lv.next-mp)):'максимум'}</span></div>
+          <div class="track"><i style="width:${Math.round(lv.pct*100)}%"></i></div></div></div></div>
+    <div class="platinum${plat?'':' locked'}"><span class="pi">${plat?'💎':'🔒'}</span>
+      <span><b>${plat?'Платина получена':'Платина'}</b>
+      <span>${plat?'Собраны все доступные медали':'Собрать все '+c.total+'. Сейчас '+c.got+' — '+Math.round(c.pct)+'%'}</span></span></div>
+    <div class="grid4">${quick.map(([n,v])=>`<div class="box"><b class="n">${v}</b><span>${n}</span></div>`).join('')}</div>
+    <div class="tbl">${rest.map(([n,v])=>`<div><b class="n">${v}</b><span>${n}</span></div>`).join('')}</div>
+    ${p.pos==='Вратарь'&&p.est?`<p class="muted" style="margin-top:8px">* В ${p.est} матч${p.est===1?'е':'ах'} была замена вратаря внутри периода — броски и голы того периода разделены пропорционально времени на льду, а не взяты из протокола напрямую.</p>`:''}
+    ${extra||''}</div>
+   <div><div class="h">Альбом · ${c.got} из ${c.total}</div>
+    <div class="wall">${CAT.filter(a=>eligible(p,a)&&!finalMedal(a)).map(a=>tile(p,a)).join('')}</div>
+    ${CAT.some(a=>eligible(p,a)&&finalMedal(a))?`<div class="h">По итогам сезона</div>
+    <div class="wall">${CAT.filter(a=>eligible(p,a)&&finalMedal(a)).map(a=>tile(p,a)).join('')}</div>`:''}</div></div>`;
+}
+// Номер места в альбоме и небольшой наклон наклейки — постоянные для каждой медали.
+const slotNo=a=>'№ '+String(CAT.indexOf(a)+1).padStart(2,'0');
+const rot=a=>{let h=0;for(const ch of a.id)h=(h*33+ch.charCodeAt(0))%97;return (h%9)-4;};
+function tile(p,a){
+  const pr=prog(p,a),rar=rarityOf(a.id);
+  if(pr.na)return `<button class="med na" data-a="${a.id}" data-owner="${p.id}" style="--rot:${rot(a)}deg">
+    <span class="slot">${slotNo(a)}</span><span class="disc">${a.i}</span><span class="mn">${esc(a.n)}</span>
+    <span class="mt">нет данных</span></button>`;
+  const hidden=a.secret&&!pr.tier;
+  const t=pr.tier?a.t.find(x=>x[0]===pr.tier):null;
+  const val=pr.rank?(pr.v?'#'+pr.v:'—'):(pr.v??'—');
+  const sub=pr.tier?'★'.repeat(pr.tier)
+    :pr.pending?val
+    :pr.nx?(pr.rank?val:pr.v+' / '+pr.nx[1]):'—';
+  const foot=hidden?''
+    :pr.pending?`<span class="rar rc0">по итогам сезона</span>`
+    :rar?`<span class="rar rc${rar.cls}">${rar.name} · ${rar.pc.toFixed(1)}%</span>`:'';
+  return `<button class="med${pr.tier?'':' off'}" data-a="${a.id}" data-owner="${p.id}" style="--rot:${rot(a)}deg">
+   <span class="slot">${slotNo(a)}</span><span class="pts">${pr.tier?TIER_PTS[pr.tier]:''}</span>${hidden?'<span class="lock">🔒</span>':pr.pending?'<span class="lock">⏳</span>':''}
+   <span class="disc${pr.tier?' d'+pr.tier:''}">${hidden?'❓':a.i}</span>
+   <span class="mn">${hidden?'Скрытая медаль':esc(t?t[2]:a.n)}</span>
+   <span class="mt${pr.tier?' on':''}">${hidden?'':sub}</span>
+   ${foot}</button>`;
+}
+function vMe(){
+  const p=findP(ME);
+  if(!p)return vPick();
+  const near=CAT.filter(a=>eligible(p,a)&&counts(a)&&!a.secret).map(a=>({a,pr:prog(p,a)}))
+    .filter(o=>o.pr.nx&&o.a.m!=='rank'&&!o.pr.pending).sort((x,y)=>y.pr.pct-x.pr.pct).slice(0,3);
+  const goals=near.length?`<div class="h">Ближайшие цели</div><div class="list">${near.map(o=>{
+    const t=o.pr.nx;
+    return `<div class="step"><span class="sd">${o.a.i}</span><span class="sx"><b>${esc(t[2])}</b>
+      <span>${o.pr.v} из ${t[1]} — осталось ${Math.round((t[1]-o.pr.v)*10)/10} ${esc(o.a.u)} · +${TIER_PTS[t[0]]} очков</span>
+      <span class="bar"><i style="width:${Math.round(o.pr.pct*100)}%"></i></span></span></div>`;}).join('')}</div>`:'';
+  const sub=store.get('notif',null)===p.key;
+  const acts=`<div class="acts">
+    <button class="cta${sub?' done':''}" data-notify="${p.id}">${sub?'✓ Уведомления о медалях включены':'🔔 Получать уведомления о новых медалях'}</button>
+    <button class="cta ghost" data-share="p" data-who="${p.id}">${ICON_SHARE} Поделиться альбомом</button></div>`;
+  return card(p,acts+goals+`<p style="margin-top:14px"><button class="chip" data-unme="1">Это не я — выбрать другого игрока</button></p>`);
+}
+/* выбор «кто я» */
+function pickList(){
+  const q=(S.pq||'').trim().toLowerCase();
+  const pool=DB.filter(p=>!q||p.name.toLowerCase().includes(q)||p.team.toLowerCase().includes(q))
+    .sort((a,b)=>a.name.localeCompare(b.name,'ru')).slice(0,q?60:25);
+  return pool.length?`<div class="list">${pool.map(p=>`<button class="r" data-pick="${p.id}">${crest(p.team,p.num)}
+    <span class="who"><b>${esc(p.name)}</b><span>${esc(p.team)} · ${p.pos}</span></span><span class="val n">›</span></button>`).join('')}</div>`
+    :`<div class="note">Никого не нашли. Проверьте написание фамилии.</div>`;
+}
+function vPick(){
+  return `<div class="note"><b>Найдите себя в списке игроков Экстралиги.</b> После этого «Профиль» будет показывать ваш альбом медалей, а в рейтинге вы будете подсвечены.</div>
+    <input class="srch" id="pq" placeholder="Ваша фамилия или клуб" value="${esc(S.pq||'')}" autocomplete="off">
+    <div id="pl">${pickList()}</div>`;
+}
+
+function vMedal(){
+  const a=ach(S.aid),p=S.pid?findP(S.pid):null,rar=rarityOf(a.id);
+  if(a.needsProto)return `<div class="note warn"><b>${esc(a.d)}.</b><br>
+    Эта медаль считается по протоколам матчей. В таблице «Бомбардиры» только суммы за сезон,
+    поэтому здесь данных нет — она появится, когда подключим разбор протоколов.</div>`;
+  const pr=p?prog(p,a):null, hidden=a.secret&&pr&&!pr.tier;
+  let out=`<div class="note">${hidden?'<b>Условие скрыто.</b> Медаль откроется сама, когда выполнится.'
+      :'<b>'+esc(a.d)+'.</b>'}
+    ${rar?`<span class="rtag rb${rar.cls}">${rar.name} · ${rar.pc.toFixed(1)}%</span>`
+        :'<span class="rtag rb0">подводится по итогам сезона</span>'}</div>
+   <details class="disclose"><summary>Как считается</summary>
+    <div class="howto">${esc(MODE[a.m])} Медаль остаётся навсегда, даже если показатель потом упадёт.
+     Очки за уровни: ${a.t.map(t=>TIER_PTS[t[0]]).join(' / ')}.</div></details>`;
+  if(p&&pr&&pr.tier){
+    const t=a.t.find(x=>x[0]===pr.tier);
+    out+=`<button class="cta" data-share="m" data-who="${p.id}" data-ach="${a.id}">${ICON_SHARE} Поделиться медалью</button>`;
+  }
+  if(p&&!hidden){
+    out+=`<div class="h">${esc(p.name)}</div><div class="list">${a.t.map(t=>{
+      const done=pr.tier>=t[0],nx=pr.nx&&pr.nx[0]===t[0];
+      return `<div class="step${done?' done':''}"><span class="sd${done?' d'+t[0]:''}">${done?'✓':t[0]}</span>
+        <span class="sx"><b>${esc(t[2])}</b><span>${a.m==='rank'?'место '+t[1]+' или выше'
+          :(a.inv?'не выше ':'нужно ')+t[1]+' '+esc(a.u)} · +${TIER_PTS[t[0]]} очков</span>
+          ${done?earnedLine(p,a,t):''}
+        ${nx?`<span class="bar"><i style="width:${Math.round(pr.pct*100)}%"></i></span>`:''}</span>
+        <span class="val n">${a.m==='rank'?(pr.v?'#'+pr.v:'—'):pr.v}</span></div>`;}).join('')}</div>`;
+  }
+  const hs=DB.filter(x=>eligible(x,a)).map(x=>({p:x,pr:prog(x,a)})).filter(o=>o.pr.tier)
+    .sort((x,y)=>y.pr.tier-x.pr.tier||(a.m==='rank'?x.pr.v-y.pr.v:(a.inv?x.pr.v-y.pr.v:y.pr.v-x.pr.v))).slice(0,15);
+  out+=`<div class="h">Кто получил</div>`;
+  const hpl=placesOf(hs,o=>o.pr.tier*100000+(a.m==='rank'||a.inv?-o.pr.v:o.pr.v));
+  out+=hs.length?`<div class="list">${hs.map((o,i)=>
+    `<button class="r${o.p.id===ME?' me':''}" data-p="${o.p.id}"><span class="pos">${hpl[i]}</span>${crest(o.p.team,o.p.num)}
+      <span class="who"><b>${esc(o.p.name)}</b><span>${esc(o.p.team)} · ${'★'.repeat(o.pr.tier)}</span></span>
+      <span class="val n">${a.m==='rank'?'#'+o.pr.v:o.pr.v}</span></button>`).join('')}</div>`
+   :`<div class="note">Эту медаль пока никто не получил.</div>`;
+  return out;
+}
+function vLeague(){
+  const me=findP(ME), myTeam=me?me.team:null;
+  const tbl=standings();
+  const myRow=tbl.findIndex(r=>r.team===myTeam)+1;
+
+  const head=myTeam?`<div class="note">Ваш клуб <b>${esc(myTeam)}</b> — ${myRow} место из ${tbl.length}.
+    Сыграно ${SEASON.rounds} из ${SEASON.total} матчей регулярки.</div>`
+   :`<div class="note">Сыграно ${SEASON.rounds} из ${SEASON.total} матчей регулярки.</div>`;
+
+  const table=`<div class="h">Турнирная таблица</div>
+   <div class="list"><div class="r" style="font-size:11px;color:var(--ink3);cursor:default">
+     <span class="pos" style="background:transparent">#</span><span style="flex:0 0 34px"></span>
+     <span class="who"><b style="font-weight:600;font-size:11px">Команда</b></span>
+     <span style="display:flex;gap:10px;font-family:var(--font-display);font-size:12px">
+       <span style="width:22px;text-align:right">И</span>
+       <span style="width:50px;text-align:right">Ш</span>
+       <span style="width:28px;text-align:right">О</span></span></div>
+   ${tbl.map((r,i)=>`<button class="r${r.team===myTeam?' me':''}" data-team="${esc(r.team)}">
+     <span class="pos${i<6?' po':''}">${i+1}</span>${teamBadge(r.team)}
+     <span class="who"><b>${esc(r.team)}</b>
+       <span>${r.w} побед · ${r.wo+r.wb} в ОТ/бул · ${r.lo+r.lb} пораж. в ОТ/бул · ${r.l} пораж.</span></span>
+     <span style="display:flex;gap:10px;align-items:center;font-family:var(--font-display);font-weight:700">
+       <span style="width:22px;text-align:right;color:var(--ink3);font-size:12px">${r.gp}</span>
+       <span style="width:50px;text-align:right;color:var(--ink3);font-size:12px;white-space:nowrap">${r.gf}:${r.ga}</span>
+       <span style="width:28px;text-align:right;font-size:16px">${r.pts}</span></span></button>`).join('')}</div>
+   <p class="muted" style="margin-top:8px">Двухочковая система: победа — 2 очка, поражение в овертайме или по буллитам — 1.
+     Первые шесть мест дают прямой выход в четвертьфинал.</p>`;
+
+  // матчи по дням, свежие сверху; матчи своего клуба выделены
+  const byDay={};
+  MATCHES.filter(m=>m.hs!==undefined).forEach(m=>(byDay[m.d]=byDay[m.d]||[]).push(m));
+  const days=Object.keys(byDay).reverse();
+  const matches=`<div class="h">Матчи</div>${days.map(d=>`
+    <div class="muted" style="margin:14px 0 6px;font-weight:600">${esc(d)}</div>
+    <div class="list">${byDay[d].map(m=>{
+      const mine=m.home===myTeam||m.away===myTeam;
+      const hw=m.hs>m.as;
+      const mark=m.ot==='so'?'<span class="rtag rb1">бул</span>':m.ot==='ot'?'<span class="rtag rb2">ОТ</span>':'';
+      const det=HB&&HB.games&&HB.games[m.id];
+      return `<button class="r${mine?' me':''}" data-match="${esc(m.id||'')}">
+        <span class="who"><b>${esc(m.home)} — ${esc(m.away)}${mark}</b>
+          <span>${det?'протокол матча':'&nbsp;'}</span></span>
+        <span class="val n" style="min-width:64px">
+          <span style="${hw?'':'color:var(--ink3)'}">${m.hs}</span>:<span style="${hw?'color:var(--ink3)':''}">${m.as}</span></span></button>`;
+    }).join('')}</div>`).join('')}`;
+
+  return head+table+matches;
+}
+function vCat(){
+  const me=findP(ME);
+  const rows=a=>{
+    const rar=rarityOf(a.id),mine=me&&eligible(me,a)?prog(me,a):null;
+    if(a.needsProto)return `<button class="r" data-a="${a.id}"><span class="av">${a.i}</span>
+      <span class="who"><b>${esc(a.n)}</b><span>Нужны протоколы матчей</span></span>
+      <span class="val n">—<em>нет данных</em></span></button>`;
+    const hidden=a.secret&&(!mine||!mine.tier);
+    const right=mine&&mine.tier?'★'.repeat(mine.tier)
+      :mine&&mine.nx&&!hidden?(a.m==='rank'?(mine.v?'#'+mine.v:'—'):mine.v+'/'+mine.nx[1]):'—';
+    return `<button class="r" data-a="${a.id}"><span class="av">${hidden?'❓':a.i}</span>
+     <span class="who"><b>${hidden?'Скрытая медаль':esc(a.n)}${rar?`<span class="rtag rb${rar.cls}">${rar.pc.toFixed(1)}%</span>`:'<span class="rtag rb0">итог сезона</span>'}</b>
+       <span>${hidden?'Откроется при выполнении':esc(a.short)}</span></span>
+     <span class="val n">${right}<em>${mine&&mine.tier?'у вас':'прогресс'}</em></span></button>`;
+  };
+  const fin=CAT.filter(a=>finalMedal(a)&&(!me||eligible(me,a)));
+  return `${GROUPS.map(g=>{
+     const items=CAT.filter(a=>a.group===g.id&&!finalMedal(a)&&(!me||eligible(me,a)));
+     if(!items.length)return '';
+     return `<div class="h">${esc(g.n)}</div><div class="list">${items.map(rows).join('')}</div>`;
+   }).join('')}
+   ${fin.length?`<div class="h">По итогам сезона</div><div class="list">${fin.map(rows).join('')}</div>`:''}
+   <p class="muted" style="margin-top:16px">Статистика: протоколы матчей${HB&&HB.official?' и hockey.by':''}${HB&&HB.updated?' · обновлено '+esc(HB.updated):''} · версия ${APP_VERSION}.</p>`;
+}
+const ICONS={
+ rank:'<path d="M5 20V11M12 20V5M19 20v-6"/>',
+ league:'<path d="M8 4h8v5a4 4 0 0 1-8 0V4ZM8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M8.5 20h7"/>',
+ medals:'<path d="m8 3 4 6 4-6M7 3h3M14 3h3"/><circle cx="12" cy="15" r="5"/><path d="m12 13 .9 1.6 1.6.3-1.2 1.1.3 1.6-1.6-.8-1.6.8.3-1.6-1.2-1.1 1.6-.3Z"/>',
+ me:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>'};
+const svg=id=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[id]}</svg>`;
+$('#tabs').innerHTML=[['rank','Рейтинг'],['league','Лига'],['medals','Медали'],['me','Профиль']]
+  .map(([id,n])=>`<button class="tab" data-tab="${id}">${svg(id)}<span>${n}</span></button>`).join('');
+try{IN_TG&&tg.BackButton&&tg.BackButton.onClick(()=>back());}catch(e){}
+document.addEventListener('click',e=>{try{onTap(e)}catch(err){showErr(err)}});
+function onTap(e){
+  const el=e.target&&e.target.nodeType===1?e.target:e.target&&e.target.parentElement;
+  if(!el)return;
+  const t=el.closest('[data-m],[data-pf],[data-p],[data-a],[data-tab],[data-pick],[data-unme],[data-match],[data-team],[data-share],[data-notify],#back,#help');
+  if(!t)return;const d=t.dataset;
+  if(t.id==='back')return back();
+  if(t.id==='help')return openGuide(0);
+  if(d.pick){setMe(d.pick);S.pq='';S.pid=ME;haptic();draw();(MAIN.scrollTop=0);return;}
+  if(d.unme){setMe(null);draw();(MAIN.scrollTop=0);return;}
+  if(d.tab){if(d.tab===S.tab&&['rank','league','medals','me'].includes(S.view))return;haptic();
+    S.sc[k()]=MAIN.scrollTop;S.tab=d.tab;S.view=d.tab==='rank'?'rank':d.tab==='league'?'league':d.tab==='medals'?'medals':'me';
+    S.pid=(d.tab==='me'&&ME)?ME:null;S.hist=[];draw();(MAIN.scrollTop=0);return;}
+  if(d.m){if(d.m===S.metric)return;S.metric=d.m;
+    document.querySelectorAll('[data-m]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.m===S.metric));
+    $('#rl').innerHTML=rankList();return;}
+  if(d.pf){if(d.pf===S.posf)return;S.posf=d.pf;
+    const list=metricsFor(d.pf);
+    if(!list.find(x=>x.id===S.metric))S.metric=list[0].id;
+    document.querySelectorAll('[data-pf]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.pf===S.posf));
+    $('#mchips').innerHTML=list.map(x=>`<button class="chip" aria-pressed="${x.id===S.metric}" data-m="${x.id}">${x.n}</button>`).join('');
+    $('#rl').innerHTML=rankList();return;}
+  if(d.share)return share(d.share,d.who,d.ach);
+  if(d.notify)return subscribe(d.notify);
+  if(d.match!==undefined&&d.match)return go('match',{mid:d.match});
+  if(d.team)return go('team',{team:d.team});
+  if(d.p)return go('player',{pid:d.p});
+  if(d.a)return go('medal',{aid:d.a,pid:d.owner||S.pid||ME});
+}
+document.addEventListener('input',e=>{if(e.target.id==='q'){S.q=e.target.value;$('#rl').innerHTML=rankList()}
+  if(e.target.id==='pq'){S.pq=e.target.value;$('#pl').innerHTML=pickList()}});
+
+/* ===== ссылки, «Поделиться», уведомления ===== */
+const BOT=(HB&&HB.bot)||'HockeyMedalBOT';
+const ICON_SHARE='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7M16 6l-4-4-4 4M12 2v13"/></svg>';
+function openTg(url){
+  try{ if(IN_TG&&tg.openTelegramLink){tg.openTelegramLink(url);return;} }catch(e){}
+  window.open(url,'_blank');
+}
+function appLink(param){return `https://t.me/${BOT}?startapp=${param}`;}
+function share(kind,pid,aid){
+  const p=findP(pid);if(!p)return;
+  let text,param;
+  if(kind==='m'){const a=ach(aid),pr=prog(p,a),t=a.t.find(x=>x[0]===pr.tier);
+    text=`🏅 ${p.name} (${p.team}) получил медаль «${t?t[2]:a.n}» в альбоме Экстралиги`;param=`m_${p.key}_${a.id}`;}
+  else{const c=collection(p);text=`🏒 Альбом медалей: ${p.name} (${p.team}) — ${c.got} из ${c.total}`;param=`p_${p.key}`;}
+  haptic();
+  openTg(`https://t.me/share/url?url=${encodeURIComponent(appLink(param))}&text=${encodeURIComponent(text)}`);
+}
+function subscribe(pid){
+  const p=findP(pid);if(!p)return;
+  store.set('notif',p.key);haptic();
+  // Бот получит /start me_<ключ> и запомнит, кому слать уведомления.
+  openTg(`https://t.me/${BOT}?start=me_${p.key}`);
+  draw();
+}
+// Ссылка вида t.me/бот?startapp=p_<ключ> или m_<ключ>_<медаль> открывает сразу нужный экран.
+function openStartParam(){
+  let sp='';try{sp=(IN_TG&&tg.initDataUnsafe&&tg.initDataUnsafe.start_param)||'';}catch(e){}
+  if(!sp){try{sp=new URLSearchParams(location.search).get('open')||'';}catch(e){}}
+  const m=/^(p|m)_([a-z0-9]+)(?:_([a-zA-Z]+))?$/.exec(sp);if(!m)return false;
+  const p=DB.find(x=>x.key===m[2]);if(!p)return false;
+  S.view='player';S.pid=p.id;S.hist=[{view:'rank',pid:null,aid:null,team:null,mid:null,y:0}];
+  if(m[1]==='m'&&ach(m[3])){S.hist.push({view:'player',pid:p.id,aid:null,team:null,mid:null,y:0});S.view='medal';S.aid=m[3];}
+  return true;
+}
+
+/* ===== эмблемы клубов (если загружены) ===== */
+const LOGO_KEYS={'шахтер':'shakhter','витебск':'vitebsk','славутич':'slavutich','металлург':'metallurg','брест':'brest',
+  'молодечно':'dinamo','гомель':'gomel','лида':'lida','могилев':'mogilev','авиатор':'aviator','локомотив':'lokomotiv',
+  'неман':'neman','юность':'yunost','химик':'khimik'};
+function logoOf(team){
+  const k=String(team).toLowerCase().replace(/ё/g,'е');
+  const key=Object.keys(LOGO_KEYS).find(n=>k.includes(n));
+  const src=key&&HB&&HB.logos&&HB.logos[LOGO_KEYS[key]];
+  return src?SITE_ROOT+src:null;
+}
+// Предпросмотр лежит в /preview/, а эмблемы — в корне сайта.
+const IS_PREVIEW=/\/preview\//.test(location.pathname);
+const SITE_ROOT=IS_PREVIEW?'../':'';
+function teamBadge(team,big){
+  const src=logoOf(team);
+  if(src)return `<span class="crest logo${big?' big':''}" aria-hidden="true"><img src="${esc(src)}" alt="" loading="lazy"></span>`;
+  const c=crest(team);return big?c.replace('class="crest','class="crest big'):c;
+}
+
+/* ===== страница команды ===== */
+function vTeam(){
+  const team=S.team, tbl=standings(), pos=tbl.findIndex(r=>r.team===team)+1, r=tbl[pos-1];
+  const roster=DB.filter(p=>p.team===team);
+  const sk=roster.filter(p=>p.pos!=='Вратарь').sort((a,b)=>b.pts-a.pts||b.g-a.g);
+  const gk=roster.filter(p=>p.pos==='Вратарь').sort((a,b)=>b.gp-a.gp);
+  const lead=(f,n,u)=>{const b=sk.slice().sort((x,y)=>f(y)-f(x))[0];return b&&f(b)>0?`<div class="box"><b class="n">${f(b)}</b><span>${n}</span><em>${esc(b.name.split(' ')[0])}</em></div>`:''};
+  const medals=roster.reduce((s,p)=>s+collection(p).got,0);
+  const games=MATCHES.filter(m=>played(m)&&(m.home===team||m.away===team)).slice(-6).reverse();
+  return `<div class="thero">${teamBadge(team,true)}<div><h1>${esc(team)}</h1>
+      <p>${pos?pos+' место · '+r.pts+' очк. · '+r.gp+' игр':'нет сыгранных матчей'}</p></div></div>
+    ${r?`<div class="grid4"><div class="box"><b class="n">${r.w+r.wo+r.wb}</b><span>Победы</span></div>
+      <div class="box"><b class="n">${r.lo+r.lb}</b><span>ОТ/Бул</span></div><div class="box"><b class="n">${r.l}</b><span>Пораж.</span></div>
+      <div class="box"><b class="n">${r.gf}:${r.ga}</b><span>Шайбы</span></div></div>`:''}
+    <div class="h">Лидеры</div><div class="grid4 lead">${lead(p=>p.pts,'Очки')}${lead(p=>p.g,'Голы')}${lead(p=>p.a,'Передачи')}
+      <div class="box"><b class="n">${medals}</b><span>Медалей</span><em>у клуба</em></div></div>
+    ${games.length?`<div class="h">Последние матчи</div><div class="list">${games.map(matchRow).join('')}</div>`:''}
+    <div class="h">Состав</div><div class="list">${[...sk,...gk].map(p=>{const c=collection(p);
+      return `<button class="r${p.id===ME?' me':''}" data-p="${p.id}">${crest(p.team,p.num)}
+      <span class="who"><b>${esc(p.name)}</b><span>${p.pos} · 🏅 ${c.got}/${c.total}</span></span>
+      <span class="val n">${p.pos==='Вратарь'?(p.sv===null?'—':p.sv):p.pts}<em>${p.pos==='Вратарь'?'%ОБ':'О'}</em></span></button>`;}).join('')}</div>`;
+}
+function matchRow(m){
+  const hw=m.hs>m.as,mark=m.ot==='so'?'<span class="rtag rb1">бул</span>':m.ot==='ot'?'<span class="rtag rb2">ОТ</span>':'';
+  return `<button class="r" data-match="${esc(m.id||'')}"><span class="who"><b>${esc(m.home)} — ${esc(m.away)}${mark}</b><span>${esc(m.d)}</span></span>
+    <span class="val n" style="min-width:64px"><span style="${hw?'':'color:var(--ink3)'}">${m.hs}</span>:<span style="${hw?'color:var(--ink3)':''}">${m.as}</span></span></button>`;
+}
+
+/* ===== страница матча ===== */
+function vMatch(){
+  const m=MATCHES.find(x=>x.id===S.mid);if(!m)return `<div class="note">Матч не найден.</div>`;
+  const g=HB&&HB.games&&HB.games[m.id];
+  const ot=m.ot==='so'?'по буллитам':m.ot==='ot'?'в овертайме':'основное время';
+  let out=`<div class="score">
+    <button class="sc-team" data-team="${esc(m.home)}">${teamBadge(m.home,true)}<b>${esc(m.home)}</b></button>
+    <div class="sc-mid"><div class="sc-num n">${m.hs}<i>:</i>${m.as}</div><span>${esc(m.d)}${m.t?' · '+esc(m.t):''}</span><span>${ot}</span></div>
+    <button class="sc-team" data-team="${esc(m.away)}">${teamBadge(m.away,true)}<b>${esc(m.away)}</b></button></div>`;
+  if(!g)return out+`<div class="note">Подробности появятся, когда будет загружен протокол этого матча.</div>`;
+  const pl=n=>{const p=DB.find(x=>x.name===n.name&&x.team===n.team);return p?`data-p="${p.id}"`:''};
+  if(g.goals&&g.goals.length)out+=`<div class="h">Голы</div><div class="list">${g.goals.map(x=>`
+    <button class="r goal ${x.side}" ${pl(x)}><span class="gt n">${esc(x.t||'')}</span>
+      <span class="who"><b>${esc(x.name||'—')}</b><span>${x.as&&x.as.length?'передачи: '+x.as.map(esc).join(', '):'без передач'}${x.sit&&/^[+-]/.test(x.sit)?(x.sit[0]==='+'?' · в большинстве':' · в меньшинстве'):''}</span></span>
+      <span class="val n">${x.score}<em>${esc(x.side==='h'?m.home:m.away)}</em></span></button>`).join('')}</div>`;
+  if(g.top&&g.top.length)out+=`<div class="h">Лучшие в матче</div><div class="list">${g.top.map(x=>`
+    <button class="r" ${pl(x)}>${crest(x.team,x.num)}<span class="who"><b>${esc(x.name)}</b><span>${esc(x.team)}</span></span>
+      <span class="val n">${x.g}+${x.a}<em>г+п</em></span></button>`).join('')}</div>`;
+  if(g.gk&&g.gk.length)out+=`<div class="h">Вратари</div><div class="list">${g.gk.map(x=>`
+    <button class="r" ${pl(x)}>${crest(x.team,x.num)}<span class="who"><b>${esc(x.name)}</b><span>${esc(x.team)} · ${x.sv} сейвов</span></span>
+      <span class="val n">${x.sa?Math.round(x.sv/x.sa*1000)/10:'—'}<em>%ОБ</em></span></button>`).join('')}</div>`;
+  if(g.shots)out+=`<div class="h">Статистика</div><div class="tbl two">
+    <div><b>${g.shots[0]} : ${g.shots[1]}</b><span>броски в створ</span></div>
+    <div><b>${g.pim[0]} : ${g.pim[1]}</b><span>штрафные минуты</span></div></div>`;
+  return out;
+}
+
+/* ===== в каком матче получена медаль ===== */
+let histState=window.HB_HIST?'ok':'idle';
+function loadHist(){
+  if(histState!=='idle')return;histState='loading';
+  const s=document.createElement('script');s.src='hist.js?v='+Math.floor(Date.now()/60000);
+  s.onload=()=>{histState=window.HB_HIST?'ok':'none';if(S.view==='medal')draw();};
+  s.onerror=()=>{histState='none';if(S.view==='medal')draw();};
+  document.head.appendChild(s);
+}
+const SK_H=['gp','g','a','pm','pim','ppg','ppa','shg','sha','shots','gwg'], GK_H=['gp','wins','so'];
+function fmtBase(){const d=(HB&&HB.base)||'';return d?d.split('-').reverse().slice(0,2).join('.'):'';}
+// Для каждого уровня: 'base' (набран ещё в сводной статистике) или id матча, в котором порог был пройден.
+function earnedWhere(p,a){
+  if(a.m!=='cum')return null;
+  const rows=(window.HB_HIST&&window.HB_HIST[p.key])||[];
+  const keys=p.pos==='Вратарь'?GK_H:SK_H;
+  const q={...p};
+  for(const r of rows)keys.forEach((k,i)=>{q[k]-=r[i+1]||0;});
+  if(p.pos!=='Вратарь'){q.pts=q.g+q.a;q.hat=p.hat-rows.filter(r=>r[2]>=3).length;}
+  const res={};const thr=t=>a.f(q)>=t;
+  a.t.forEach(t=>{if(thr(t[1]))res[t[0]]='base';});
+  for(const r of rows){
+    keys.forEach((k,i)=>{q[k]+=r[i+1]||0;});
+    if(p.pos!=='Вратарь'){q.pts=q.g+q.a;if(r[2]>=3)q.hat++;}
+    a.t.forEach(t=>{if(!res[t[0]]&&thr(t[1]))res[t[0]]=r[0];});
+  }
+  return res;
+}
+function earnedLine(p,a,t){
+  if(a.m!=='cum')return '';
+  if(histState==='idle'){loadHist();return '<span class="mh">ищу матч…</span>';}
+  if(histState==='loading')return '<span class="mh">ищу матч…</span>';
+  const w=earnedWhere(p,a);const g=w&&w[t[0]];
+  if(!g)return '';
+  if(g==='base')return `<span class="mh">получена до ${fmtBase()||'начала учёта протоколов'} · по сводной статистике</span>`;
+  const m=MATCHES.find(x=>x.id===g);
+  return m?`<span class="mh">получена в матче <button data-match="${esc(m.id)}">${esc(m.d)} · ${esc(m.home)} — ${esc(m.away)} ${m.hs}:${m.as}</button></span>`:'';
+}
+
+/* ===== возврат свайпом вправо =====
+   Слушаем весь документ; направление решаем только после сдвига на 12 px,
+   чтобы первое «дрожание» пальца не отменяло жест. main разрешает браузеру только
+   вертикальную прокрутку (touch-action: pan-y) — горизонталь достаётся нам. */
+(function(){
+  let x0=null,y0=0,t0=0,mode=null;
+  const reset=()=>{MAIN.classList.add('swipe-back');MAIN.style.transform='';setTimeout(()=>MAIN.classList.remove('swipe-back'),220);};
+  document.addEventListener('touchstart',e=>{
+    x0=null;
+    if(!S.hist.length||e.touches.length!==1)return;
+    if(document.getElementById('guide')&&!document.getElementById('guide').hidden)return;
+    if(e.target.closest('.chips,input'))return;
+    x0=e.touches[0].clientX;y0=e.touches[0].clientY;t0=Date.now();mode=null;
+  },{passive:true});
+  document.addEventListener('touchmove',e=>{
+    if(x0===null)return;
+    const dx=e.touches[0].clientX-x0,dy=e.touches[0].clientY-y0;
+    if(!mode){if(Math.abs(dx)<12&&Math.abs(dy)<12)return;mode=(dx>0&&Math.abs(dx)>Math.abs(dy)*1.2)?'h':'v';}
+    if(mode==='h')MAIN.style.transform=`translateX(${Math.min(Math.max(dx,0)*.5,140)}px)`;
+  },{passive:true});
+  const end=e=>{
+    if(x0===null)return;
+    const t=e.changedTouches&&e.changedTouches[0];const dx=t?t.clientX-x0:0;const was=mode;x0=null;mode=null;
+    reset();
+    if(e.type==='touchend'&&was==='h'&&dx>70&&Date.now()-t0<1000){haptic();back();}
+  };
+  document.addEventListener('touchend',end,{passive:true});
+  document.addEventListener('touchcancel',end,{passive:true});
+})();
+
+/* ===== Обучение: показывается один раз при первом входе, потом — по кнопке «?» ===== */
+const GUIDE=[
+ {t:'Альбом медалей',h:'Добро пожаловать',
+  x:'Игроки Экстралиги получают <b>медали-наклейки</b> за настоящую статистику матчей: голы, передачи, победы, сухие матчи.',
+  v:()=>`<div class="g-vis"><div class="g-row">${[[1,'Бронза','🥅'],[2,'Серебро','🎯'],[3,'Золото','🏆'],[4,'Платина','💎']]
+    .map(([t,n,i])=>`<div><span class="disc d${t}" style="--rot:${t%2?-4:3}deg">${i}</span><span class="g-cap">${n}</span></div>`).join('')}</div></div>
+    <p class="g-note">Чем выше уровень медали, тем больше очков. Очки поднимают уровень игрока.</p>`},
+ {t:'Рейтинг',h:'Шаг 1',
+  x:'Найдите игрока или клуб через поиск. <b>Нажмите на фамилию</b> — откроется его альбом медалей.',
+  v:()=>{const p=skaters().slice().sort((a,b)=>b.pts-a.pts)[0];return p?`<div class="list g-tap"><div class="r"><span class="pos p1">1</span>${crest(p.team,p.num)}
+    <span class="who"><b>${esc(p.name)}</b><span>${esc(p.team)}</span></span><span class="val n">${p.pts}<em>о</em></span></div></div>`:''}},
+ {t:'Как читать альбом',h:'Шаг 2',
+  x:'Цветная наклейка — <b>медаль получена</b>. Пунктирный кружок — <b>ещё нет</b>, под ним видно, сколько осталось.',
+  v:()=>`<div class="g-vis"><div class="g-row">
+    <div><span class="disc d3" style="--rot:-3deg">🎯</span><span class="g-cap">получена</span></div>
+    <div class="med off" style="padding:0"><span class="disc">🥅</span><span class="g-cap">3 из 5</span></div>
+    <div class="med off" style="padding:0"><span class="disc">🏆</span><span class="g-cap">⏳ в конце сезона</span></div></div></div>
+    <p class="g-note">Процент под медалью — у скольких игроков лиги она уже есть. Меньше процент — реже медаль.</p>`},
+ {t:'Лига',h:'Шаг 3',
+  x:'Во вкладке <b>«Лига»</b> — турнирная таблица и результаты всех матчей. Статистика обновляется после каждого игрового дня.',
+  v:()=>`<div class="list">${standings().slice(0,3).map((r,i)=>`<div class="r"><span class="pos po">${i+1}</span>${crest(r.team)}
+    <span class="who"><b>${esc(r.team)}</b></span><span class="val n">${r.pts}<em>очк.</em></span></div>`).join('')}</div>`},
+ {t:'Ваш альбом',h:'Последний шаг',
+  x:'Играете в Экстралиге? Найдите себя — во вкладке <b>«Профиль»</b> будет ваш альбом, а бот пришлёт сообщение о каждой новой медали.',
+  v:()=>`<div class="g-choice">
+    <button class="g-pick" data-g="player"><span class="ic">🏒</span><span><b>Найти себя</b><span>Выбрать свою фамилию из списка игроков</span></span></button>
+    <button class="g-plain" data-g="look">Просто посмотреть</button></div>`}];
+let gi=0;
+function guideEl(){
+  let el=document.getElementById('guide');
+  if(!el){el=document.createElement('div');el.id='guide';el.className='guide';el.hidden=true;document.body.appendChild(el);
+    el.addEventListener('click',e=>{try{const b=e.target.closest('[data-g]');if(b)guideAct(b.dataset.g);}catch(err){showErr(err)}});
+    let x0=null;
+    el.addEventListener('touchstart',e=>{x0=e.touches[0].clientX},{passive:true});
+    el.addEventListener('touchend',e=>{if(x0===null)return;const dx=e.changedTouches[0].clientX-x0;x0=null;
+      if(dx<-60&&gi<GUIDE.length-1)guideGo(gi+1);else if(dx>60&&gi>0)guideGo(gi-1);},{passive:true});}
+  return el;
+}
+function guideGo(i){
+  gi=i;const g=GUIDE[i],last=i===GUIDE.length-1,el=guideEl();
+  el.innerHTML=`<div class="g-top"><div class="g-bar"><span class="g-step">${esc(g.h)}</span>
+      <button class="g-skip" data-g="close">${last?'Закрыть':'Пропустить'}</button></div>
+    <div class="g-title">${esc(g.t)}</div></div>
+   <div class="g-body"><p class="g-text">${g.x}</p>${g.v()}</div>
+   <div class="g-foot"><div class="g-dots">${GUIDE.map((_,k)=>`<i class="${k===i?'on':''}"></i>`).join('')}</div>
+     ${last?'':`<button class="g-next" data-g="next">Далее</button>`}</div>`;
+  el.hidden=false;
+}
+function openGuide(i){haptic();guideGo(i||0)}
+function closeGuide(){store.set('guided',1);guideEl().hidden=true}
+function guideAct(a){
+  if(a==='next'){haptic();return guideGo(gi+1)}
+  if(a==='close'||a==='look'){closeGuide();return}
+  if(a==='player'){
+    closeGuide();S.tab='me';S.view='me';S.pid=ME||null;draw();(MAIN.scrollTop=0);
+  }
+}
+
+const deep=openStartParam();
+if(IS_PREVIEW)document.getElementById('subttl').insertAdjacentHTML('afterend','<span class="pv-badge">ПРЕДПРОСМОТР</span>');
+draw();
+if(!deep&&!store.get('guided',0))guideGo(0);
+window.hbReady&&window.hbReady(Object.values((HB&&HB.logos)||{}).map(u=>SITE_ROOT+u));
+</script>
+<script>
+/* Загрузка: data.js (свежая статистика) подгружается в фоне, пока показана заставка.
+   Как только он пришёл (или через 8 секунд, если сеть совсем плохая), запускаем приложение;
+   без data.js приложение покажет встроенные данные. */
+(function(){
+  var started=false;
+  function boot(){
+    if(started)return;started=true;
+    var src=document.getElementById('hb-app'),n=document.createElement('script');
+    n.textContent=src.textContent;document.body.appendChild(n);
+  }
+  var d=document.createElement('script');
+  d.src='data.js?v='+Math.floor(Date.now()/60000);d.onload=boot;d.onerror=boot;
+  document.head.appendChild(d);setTimeout(boot,8000);
+})();
+</script>
+</body>
+</html>
