@@ -119,8 +119,10 @@ main>*{max-width:1148px;margin-left:auto;margin-right:auto}
 .pos.p1{background:var(--gold)}.pos.p2{background:#C9D1D8}.pos.p3{background:#D98B52}
 .pos.po{color:var(--red)}
 .crest{flex:0 0 34px;height:34px;border-radius:8px;display:grid;place-items:center;font:900 italic 12px var(--font-display);
-  color:var(--cfg,#fff);background-color:var(--cbg,#555);text-transform:uppercase;
-  background-image:linear-gradient(135deg,rgba(255,255,255,.18) 0 50%,transparent 50%)}
+  color:var(--cfg,#fff);background-color:var(--cbg,#555);text-transform:uppercase;position:relative;
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.14);
+  background-image:linear-gradient(135deg,transparent 0 76%,var(--cac,transparent) 76% 86%,transparent 86%),
+    linear-gradient(180deg,rgba(255,255,255,.14),transparent 55%)}
 .crest.num{font-size:15px;letter-spacing:-.02em}
 .av{flex:0 0 36px;height:36px;border-radius:8px;background:var(--sink);display:grid;place-items:center;font-size:18px;border:2px solid var(--ink)}
 .who{flex:1;min-width:0}
@@ -404,7 +406,7 @@ const haptic = () => { try { IN_TG && tg.HapticFeedback && tg.HapticFeedback.sel
 <script type="text/hb" id="hb-app">
 /*ENGINE:BEGIN — эта часть без DOM; бот запускает её у себя, чтобы знать, кто получил медаль*/
 // Номер версии приложения: по нему бот показывает архив версий и откат.
-const APP_VERSION='2026.10.07';
+const APP_VERSION='2026.10.08';
 const HB=window.HB_DATA||null;
 /* ============================================================
    РЕАЛЬНЫЕ ДАННЫЕ. Полевые игроки — таблица «Бомбардиры»
@@ -937,6 +939,7 @@ const MATCHES=HB?HB.matches:[
 // rounds = максимум сыгранных матчей среди команд, считается по календарю.
 const SEASON={
   get rounds(){
+    if(OFFICIAL_TABLE)return Math.max(0,...OFFICIAL_TABLE.map(r=>+r.gp||0));
     const c={};
     MATCHES.filter(m=>m.hs!==undefined).forEach(m=>{c[m.home]=(c[m.home]||0)+1;c[m.away]=(c[m.away]||0)+1;});
     return Math.max(0,...Object.values(c));
@@ -947,7 +950,11 @@ const SEASON={
 /* ===== турнирная таблица =====
    Двухочковая система (как в КХЛ/НХЛ): любая победа — 2 очка,
    поражение в овертайме или по буллитам — 1, поражение в основное — 0. */
+// Официальная таблица с hockey.by (бот сверяется с ней), иначе — считаем по известным матчам.
+const OFFICIAL_TABLE=HB&&Array.isArray(HB.table)&&HB.table.length>=10?HB.table:null;
 function standings(){
+  if(OFFICIAL_TABLE)return OFFICIAL_TABLE.map(r=>({team:r.team,gp:+r.gp||0,w:+r.w||0,wo:+r.wo||0,wb:+r.wb||0,l:+r.l||0,lo:+r.lo||0,lb:+r.lb||0,gf:+r.gf||0,ga:+r.ga||0,pts:+r.pts||0}))
+    .sort((a,b)=>b.pts-a.pts||(b.gf-b.ga)-(a.gf-a.ga)||b.gf-a.gf||a.team.localeCompare(b.team));
   const t={};
   const row=n=>t[n]||(t[n]={team:n,gp:0,w:0,wo:0,wb:0,l:0,lo:0,lb:0,gf:0,ga:0,pts:0});
   MATCHES.filter(m=>m.hs!==undefined).forEach(m=>{
@@ -1063,26 +1070,27 @@ let ME=null;
 function setMe(id){const p=findP(id);ME=p?p.id:null;store.set('me',p?{name:p.name,team:p.team}:null);}
 const k=()=>S.view+':'+(S.pid||'')+(S.aid||'');
 const $=s=>document.querySelector(s);
-// Значок: игровой номер (или буквы клуба, пока номер неизвестен) на цветах команды.
-// Цвета клубов — [фон, цвет цифр]; поправить можно здесь.
+// Значок: игровой номер (или буквы клуба, пока номер неизвестен) в цветах клуба.
+// [фон, цифры (только белые или чёрные), акцент-полоса] — по эмблемам клубов; поправить можно здесь.
+const W='#FFFFFF',K='#121417';
 const TEAM_COLORS={
-  'шахтер':['#F47B20','#111111'],  'витебск':['#1F4E9C','#FFFFFF'], 'славутич':['#0E2A5C','#E2231A'],
-  'металлург':['#0B4EA2','#F58220'],'брест':['#D7141A','#FFFFFF'],   'молодечно':['#123C8C','#FFFFFF'],
-  'гомель':['#C8102E','#FFD200'],   'лида':['#00843D','#FFFFFF'],     'могилев':['#00563F','#F2C500'],
-  'авиатор':['#2E86DE','#FFFFFF'],  'локомотив':['#9B111E','#FFFFFF'],'неман':['#C8102E','#FFFFFF'],
-  'юность':['#1B3F8B','#E31E24'],   'химик':['#0072BC','#FFD100']};
+  'авиатор':['#141414',W,'#C8102E'], 'брест':['#0A2442',W,'#E0301E'],    'молодечно':['#F2F4F7',K,'#0B1F4A'],
+  'гомель':['#0E1630',W,'#F5C400'],  'химик':['#0B5CB0',W,'#F5C400'],    'лида':['#F5C400',K,'#C8102E'],
+  'локомотив':['#13348A',W,'#FF5A13'],'металлург':['#0B2A66',W,'#A7AEB8'],'могилев':['#4B0F68',W,'#F5C400'],
+  'неман':['#C8102E',W,'#0E1630'],   'шахтер':['#F26A1B',K,'#121417'],   'славутич':['#23418A',W,'#D7262B'],
+  'витебск':['#0A56B0',W,'#0A1F44'], 'юность':['#0B2F80',W,'#2E8BD0']};
 function teamColors(team){
   const k=String(team).toLowerCase().replace(/ё/g,'е');
   const key=Object.keys(TEAM_COLORS).find(n=>k.includes(n));
   if(key)return TEAM_COLORS[key];
   let h=0;for(const ch of k)h=(h*31+ch.charCodeAt(0))%360;
-  return [`hsl(${h} 55% 38%)`,'#FFFFFF'];
+  return [`hsl(${h} 55% 32%)`,W,'rgba(255,255,255,.35)'];
 }
 function crest(team,num){
   const w=String(team).replace(/^ХК\s+/i,'').split(/[\s-]+/).filter(Boolean);
   const ab=(w.length>1?w[0][0]+w[1][0]:w[0].slice(0,2)).toUpperCase();
-  const [bg,fg]=teamColors(team);
-  return `<span class="crest${num?' num':''}" style="--cbg:${bg};--cfg:${fg}" aria-hidden="true">${esc(num||ab)}</span>`;
+  const [bg,fg,ac]=teamColors(team);
+  return `<span class="crest${num?' num':''}" style="--cbg:${bg};--cfg:${fg};--cac:${ac}" aria-hidden="true">${esc(num||ab)}</span>`;
 }
 const MAIN=document.getElementById('main');
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -1367,7 +1375,7 @@ function vCat(){
      return `<div class="h">${esc(g.n)}</div><div class="list">${items.map(rows).join('')}</div>`;
    }).join('')}
    ${fin.length?`<div class="h">По итогам сезона</div><div class="list">${fin.map(rows).join('')}</div>`:''}
-   <p class="muted" style="margin-top:16px">Статистика обновляется по протоколам матчей${HB&&HB.updated?' · обновлено '+esc(HB.updated):''} · версия ${APP_VERSION}.</p>`;
+   <p class="muted" style="margin-top:16px">Статистика: протоколы матчей${HB&&HB.official?' и hockey.by':''}${HB&&HB.updated?' · обновлено '+esc(HB.updated):''} · версия ${APP_VERSION}.</p>`;
 }
 const ICONS={
  rank:'<path d="M5 20V11M12 20V5M19 20v-6"/>',
