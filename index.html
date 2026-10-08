@@ -138,7 +138,8 @@ main>*{max-width:1148px;margin-left:auto;margin-right:auto}
 .hero::before{content:"";position:absolute;inset:0;pointer-events:none;
   background-image:radial-gradient(var(--dots) 1.4px,transparent 1.7px);background-size:8px 8px;
   -webkit-mask-image:radial-gradient(120% 90% at 100% 0%,#000 0%,transparent 70%);mask-image:radial-gradient(120% 90% at 100% 0%,#000 0%,transparent 70%)}
-.hero .ghost{position:absolute;right:10px;top:-6px;font-size:110px;line-height:1;color:rgba(0,0,0,.16);pointer-events:none}
+.hero .ghost{position:absolute;right:12px;top:-8px;font:900 italic 110px/1 var(--font-display);color:rgba(0,0,0,.2);pointer-events:none;letter-spacing:-.04em}
+.hero .ghost.wl{right:84px}
 .hero h1{margin:0;font-family:var(--font-display);font-size:27px;font-weight:900;font-style:italic;text-transform:uppercase;
   line-height:.98;letter-spacing:-.01em;position:relative;max-width:85%}
 .hero p{margin:8px 0 0;font:700 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.85);position:relative}
@@ -163,8 +164,13 @@ main>*{max-width:1148px;margin-left:auto;margin-right:auto}
 .album b{display:block;font:800 italic 15px var(--font-display);text-transform:uppercase}
 .album .at>span{display:block;font-size:12.5px;color:var(--ink2)}
 .album .asteps{display:flex!important;gap:6px;margin-top:8px}
-.album .asteps i{flex:1;height:8px;border-radius:2px;background:var(--sink);border:1.5px solid var(--ink)}
-.album .asteps i.s1{background:var(--bronze)}.album .asteps i.s2{background:var(--silver)}.album .asteps i.s3{background:var(--gold)}.album .asteps i.s4{background:var(--print)}
+.album .aseg{flex:1;min-width:0}
+.album .aseg i{display:block;height:8px;border-radius:2px;background:var(--sink);border:1.5px solid var(--ink);overflow:hidden}
+.album .aseg i b{display:block;height:100%}
+.album .aseg i.s1 b{background:var(--bronze)}.album .aseg i.s2 b{background:var(--silver)}
+.album .aseg i.s3 b{background:var(--gold)}.album .aseg i.s4 b{background:var(--plat)}
+.album .aseg.locked i{opacity:.35;border-style:dashed}
+.album .aseg em{display:block;font:700 10.5px var(--font-body);font-style:normal;color:var(--ink3);margin-top:4px;text-align:center;white-space:nowrap}
 .album.t4{background:var(--plat);color:#06232A;box-shadow:4px 4px 0 var(--print)}
 .album.t4 .at>span{color:#06232A}
 .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px}
@@ -418,7 +424,7 @@ const haptic = () => { try { IN_TG && tg.HapticFeedback && tg.HapticFeedback.sel
 <script type="text/hb" id="hb-app">
 /*ENGINE:BEGIN — эта часть без DOM; бот запускает её у себя, чтобы знать, кто получил медаль*/
 // Номер версии приложения: по нему бот показывает архив версий и откат.
-const APP_VERSION='2026.10.09';
+const APP_VERSION='2026.10.12';
 const HB=window.HB_DATA||null;
 /* ============================================================
    РЕАЛЬНЫЕ ДАННЫЕ. Полевые игроки — таблица «Бомбардиры»
@@ -787,6 +793,12 @@ const RAW_GK=HB?HB.gk.join('\n'):`Роман Бобарико|1993|Витебс�
 Владислав Окоряк|0|Витебск|2|1|1|51|4|123.48|0
 Вячеслав Липский|0|Динамо-Молодечно|1|0|0|5|0|27.35|0`;
 
+// Счётчики из протоколов (порядок — как в server/site/buildData.js): матчи с дублем, с 3+ очками,
+// с 3+ передачами, первые голы матча, голы в овертайме, матчи с +3, покер, «хет-трик Горди Хоу»,
+// блоки, силовые, выигранные вбрасывания, матчи с 20+ минутами, сколько матчей игрока есть в протоколах.
+const X_SK=['dbl','big','ast3','opener','otg','pm3','poker','gordie','blk','hit','fow','toi20','prot'];
+const X_GK=['sv35','win95','prot'];
+function xParse(keys,s){const v=String(s||'').split(',');const o={};keys.forEach((k,i)=>o[k]=+v[i]||0);return o;}
 const DB=[];
 RAW_SK.trim().split('\n').forEach((line,i)=>{
   const c=line.split('|');
@@ -795,13 +807,15 @@ RAW_SK.trim().split('\n').forEach((line,i)=>{
     gp:+c[4],g,a:+c[6],pts:+c[7],pm:+c[8],pim:+c[9],
     ppg:+c[10],ppa:+c[11],shg:+c[12],sha:+c[13],shots,
     hat:+c[15]||0, streak:+c[16]||0, gwg:+c[17]||0, num:c[18]||'',
+    x:xParse(X_SK,c[19]),
     shotPct:shots?Math.round(g/shots*1000)/10:0});
 });
 RAW_GK.trim().split('\n').forEach((line,i)=>{
   const c=line.split('|');
   const sf=+c[6],ga=+c[7],toi=+c[8],est=+c[9]||0;
   DB.push({id:'g'+i,name:c[0],year:+c[1],team:c[2],pos:'Вратарь',
-    gp:+c[3],wins:+c[4],so:+c[5],est,num:c[10]||'',saves:Math.max(0,sf-ga),
+    gp:+c[3],wins:+c[4],so:+c[5],est,num:c[10]||'',saves:Math.max(0,sf-ga),sa:sf,ga,
+    x:xParse(X_GK,c[11]),
     // sf=0 при сыгранных матчах = разбивка бросков по вратарям неизвестна вовсе
     sv: sf?Math.round((sf-ga)/sf*1000)/10:null,
     gaa: toi?Math.round(ga*60/toi*100)/100:0});
@@ -812,52 +826,58 @@ const skaters=()=>DB.filter(p=>p.pos!=='Вратарь');
 const goalies=()=>DB.filter(p=>p.pos==='Вратарь');
 
 /* ============ каталог медалей ============
-   У каждой медали четыре уровня: бронза → серебро → золото → платина.
-   Копятся по ходу сезона («cum»/«peak») — пороги в t. У защитников свои, более низкие
-   пороги атакующих медалей (td): им честно труднее набирать очки.
-   Награды сезона («rank») — по месту в лиге после последнего тура:
-   топ-10 — бронза, топ-5 — серебро, топ-3 — золото, лучший — платина.
-   Нападающие соревнуются с нападающими, защитники — с защитниками. */
+   Медали за сезон копятся по ходу сезона (как раньше: I, II, III…).
+   У защитников свои, более низкие пороги атакующих медалей (td) — так они тоже
+   могут собрать весь альбом. Награды сезона («rank») — по месту в лиге после
+   последнего тура: топ-10 — бронза, топ-5 — серебро, топ-3 — золото, №1 — платина;
+   нападающие соревнуются с нападающими, защитники — с защитниками. */
 const TIER_PTS=[0,15,30,60,120];
 const TIER_N=['','Бронза','Серебро','Золото','Платина'];
 const TIER_I=['','🥉','🥈','🥇','💎'];
-const TIER_G=['','бронзы','серебра','золота','платины'];
-const TIER_A=['','бронзу','серебро','золото','платину'];
 const ALBUM_G=['','бронзового','серебряного','золотого','платинового'];
-// Пороги уровней: L('Снайпер',[5,10,18,28]) → [[1,5,'Снайпер · Бронза'],…]
-const L=(n,v)=>v.map((x,i)=>[i+1,x,n+' · '+TIER_N[i+1]]);
+const R=['I','II','III','IV'];
+// L('Снайпер',[5,10,15,20]) → [[1,5,'Снайпер I'],[2,10,'Снайпер II'],…]
+const L=(n,v)=>v.map((x,i)=>[i+1,x,n+' '+R[i]]);
 const AW=n=>[[1,10,n+' · Топ-10'],[2,5,n+' · Топ-5'],[3,3,n+' · Топ-3'],[4,1,n+' · №1']];
 const CAT=[
- {id:'points',i:'🎯',n:'Бомбардир',role:'sk',group:'scoring',m:'cum',f:p=>p.pts,u:'очк.',
+ {id:'points',i:'🎯',n:'Клуб очков',role:'sk',group:'scoring',m:'cum',f:p=>p.pts,u:'очк.',
   d:'Голы плюс передачи за сезон',short:'Сумма голов и передач',
-  t:L('Бомбардир',[10,25,40,60]),td:L('Бомбардир',[6,15,25,35])},
+  t:[[1,10,'Клуб 10 очков'],[2,20,'Клуб 20 очков'],[3,35,'Клуб 35 очков'],[4,50,'Клуб 50 очков']],
+  td:[[1,6,'Клуб 6 очков'],[2,12,'Клуб 12 очков'],[3,20,'Клуб 20 очков'],[4,30,'Клуб 30 очков']]},
  {id:'goals',i:'🥅',n:'Снайпер',role:'sk',group:'scoring',m:'cum',f:p=>p.g,u:'гол.',
   d:'Заброшенные шайбы за сезон',short:'Заброшенные шайбы',
-  t:L('Снайпер',[5,10,18,28]),td:L('Снайпер',[2,5,8,12])},
+  t:L('Снайпер',[5,10,15,20]),td:L('Снайпер',[2,5,8,12])},
  {id:'assists',i:'🧊',n:'Диспетчер',role:'sk',group:'scoring',m:'cum',f:p=>p.a,u:'пас.',
   d:'Голевые передачи за сезон',short:'Голевые передачи',
-  t:L('Диспетчер',[5,12,22,35]),td:L('Диспетчер',[4,10,18,26])},
+  t:L('Диспетчер',[5,12,20,30]),td:L('Диспетчер',[4,8,14,20])},
  {id:'shots',i:'💥',n:'Обстрел',role:'sk',group:'scoring',m:'cum',f:p=>p.shots,u:'брос.',
   d:'Броски в створ за сезон',short:'Броски в створ',
-  t:L('Обстрел',[30,70,110,150]),td:L('Обстрел',[25,50,80,110])},
+  t:L('Обстрел',[40,70,110]),td:L('Обстрел',[25,50,80])},
  {id:'pp',i:'⚡',n:'Спецбригада',role:'sk',group:'scoring',m:'cum',f:p=>p.ppg+p.ppa,u:'очк.',
   d:'Очки, набранные в большинстве',short:'Очки в большинстве',
-  t:L('Спецбригада',[3,7,12,18]),td:L('Спецбригада',[2,5,9,14])},
+  t:L('Спецбригада',[3,8,15]),td:L('Спецбригада',[2,5,9])},
  {id:'sh',i:'🛡️',n:'Меньшинство',role:'sk',group:'scoring',m:'cum',f:p=>p.shg+p.sha,u:'очк.',
   d:'Очки, набранные в меньшинстве',short:'Очки в меньшинстве',
-  t:L('Меньшинство',[1,2,3,5])},
+  t:L('Меньшинство',[1,2,3])},
+ {id:'plus',i:'➕',n:'В плюсе',role:'sk',group:'stability',m:'cum',f:p=>p.pm,u:'',sign:1,
+  d:'Показатель плюс-минус за сезон',short:'Плюс-минус',
+  t:[[1,5,'В плюсе +5'],[2,10,'В плюсе +10'],[3,18,'В плюсе +18']]},
  {id:'iron',i:'🔩',n:'Железный человек',role:'sk',group:'stability',m:'cum',f:p=>p.gp,u:'матч.',
   d:'Сыгранные матчи за сезон',short:'Сыгранные матчи',
-  t:L('Железный человек',[13,26,39,52])},
+  t:L('Железный человек',[20,35,48])},
+ {id:'clean',i:'😇',n:'Джентльмен',role:'sk',group:'stability',m:'cum',f:p=>p.pim<=4?p.gp:0,u:'матч.',
+  d:'Сыгранные матчи, пока у игрока за сезон не больше 4 минут штрафа (два малых удаления)',short:'Матчи почти без удалений',
+  t:L('Джентльмен',[15,30,45])},
  {id:'hat',i:'🎩',n:'Хет-трик',role:'sk',group:'moments',m:'cum',f:p=>p.hat,u:'раз',game:1,
   d:'Матчи, в которых заброшено три и более шайб',short:'Три шайбы за матч',
-  t:L('Хет-трик',[1,2,3,5])},
+  t:[[1,1,'Хет-трик'],[2,3,'Хет-трик ×3'],[3,5,'Хет-трик ×5']]},
  {id:'streak',i:'🔥',n:'Серия',role:'sk',group:'moments',m:'peak',f:p=>p.streak,u:'матч.',game:1,
   d:'Матчи подряд с набранным очком',short:'Матчи подряд с очком',
-  t:L('Серия',[3,5,7,10])},
+  t:[[1,3,'Серия 3 матча'],[2,5,'Серия 5 матчей'],[3,8,'Серия 8 матчей']],
+  td:[[1,2,'Серия 2 матча'],[2,4,'Серия 4 матча'],[3,6,'Серия 6 матчей']]},
  {id:'gwg',i:'🏁',n:'Автор победных',role:'sk',group:'moments',m:'cum',f:p=>p.gwg,u:'шайб.',game:1,
   d:'Победные шайбы — гол, после которого команда уже не упускала победу',short:'Победные шайбы',
-  t:L('Автор победных',[1,3,5,8])},
+  t:L('Автор победных',[2,5,10]),td:L('Автор победных',[1,3,5])},
  {id:'complete',i:'🃏',n:'Полный комплект',role:'sk',group:'secret',m:'cum',secret:1,
   f:p=>(p.ppg+p.ppa>0&&p.shg+p.sha>0)?1:0,u:'',
   d:'Очко в большинстве и очко в меньшинстве в одном сезоне',short:'Скрытая медаль',
@@ -866,18 +886,61 @@ const CAT=[
   f:p=>(p.pos==='Защитник'?(p.g>=6&&p.a>=12):(p.g>=12&&p.a>=20))?1:0,u:'',
   d:'Много голов и много передач в одном сезоне (12+20, у защитников 6+12)',short:'Скрытая медаль',
   t:[[3,1,'Обе стороны льда']]},
+ // события матча — по протоколам
+ {id:'dbl',i:'✌️',n:'Дубль',role:'sk',group:'moments',m:'cum',nh:1,proto:1,f:p=>p.x.dbl,u:'матч.',
+  d:'Матчи, в которых заброшено две и более шайбы',short:'Две шайбы за матч',
+  t:[[1,1,'Дубль'],[2,3,'Дубль ×3'],[3,6,'Дубль ×6']],td:[[1,1,'Дубль'],[2,2,'Дубль ×2'],[3,3,'Дубль ×3']]},
+ {id:'big',i:'🌟',n:'Большой вечер',role:'sk',group:'moments',m:'cum',nh:1,proto:1,f:p=>p.x.big,u:'матч.',
+  d:'Матчи, в которых набрано 3 и более очка',short:'3+ очка за матч',
+  t:[[1,1,'Большой вечер'],[2,3,'Большой вечер ×3'],[3,6,'Большой вечер ×6']],td:[[1,1,'Большой вечер'],[2,2,'Большой вечер ×2'],[3,4,'Большой вечер ×4']]},
+ {id:'ast3',i:'🎁',n:'Щедрый вечер',role:'sk',group:'moments',m:'cum',nh:1,proto:1,f:p=>p.x.ast3,u:'матч.',
+  d:'Матчи, в которых отдано 3 и более голевые передачи',short:'3+ передачи за матч',
+  t:[[1,1,'Щедрый вечер'],[2,2,'Щедрый вечер ×2'],[3,4,'Щедрый вечер ×4']]},
+ {id:'opener',i:'🚦',n:'Открыл счёт',role:'sk',group:'moments',m:'cum',nh:1,proto:1,f:p=>p.x.opener,u:'раз',
+  d:'Первая шайба матча',short:'Первый гол в матче',
+  t:[[1,1,'Открыл счёт'],[2,3,'Открыл счёт ×3'],[3,6,'Открыл счёт ×6']],td:[[1,1,'Открыл счёт'],[2,2,'Открыл счёт ×2'],[3,3,'Открыл счёт ×3']]},
+ {id:'otg',i:'⏱️',n:'Золотая шайба',role:'sk',group:'moments',m:'cum',nh:1,proto:1,f:p=>p.x.otg,u:'гол.',
+  d:'Победный гол в овертайме',short:'Гол в овертайме',
+  t:[[1,1,'Золотая шайба'],[2,2,'Золотая шайба ×2'],[3,3,'Золотая шайба ×3']]},
+ {id:'pm3',i:'⚖️',n:'Хозяин площадки',role:'sk',group:'moments',m:'cum',nh:1,proto:1,f:p=>p.x.pm3,u:'матч.',
+  d:'Матчи с показателем +3 и лучше',short:'+3 за матч',
+  t:[[1,1,'Хозяин площадки'],[2,3,'Хозяин площадки ×3'],[3,5,'Хозяин площадки ×5']]},
+ // протокольная статистика, которой нет на hockey.by
+ {id:'blk',i:'🧍',n:'Живой щит',role:'sk',group:'work',m:'cum',nh:1,proto:1,f:p=>p.x.blk,u:'блок.',
+  d:'Заблокированные броски соперника',short:'Блокированные броски',
+  t:L('Живой щит',[10,25,45]),td:L('Живой щит',[20,45,80])},
+ {id:'hit',i:'💪',n:'Таран',role:'sk',group:'work',m:'cum',nh:1,proto:1,f:p=>p.x.hit,u:'сил.',
+  d:'Силовые приёмы',short:'Силовые приёмы',
+  t:L('Таран',[15,40,80])},
+ {id:'fow',i:'🎲',n:'Мастер вбрасываний',role:'sk',group:'work',m:'cum',nh:1,proto:1,only:'Нападающий',f:p=>p.x.fow,u:'вбр.',
+  d:'Выигранные вбрасывания',short:'Выигранные вбрасывания',
+  t:L('Мастер вбрасываний',[50,150,300])},
+ {id:'toi20',i:'🐎',n:'Рабочая лошадка',role:'sk',group:'work',m:'cum',nh:1,proto:1,f:p=>p.x.toi20,u:'матч.',
+  d:'Матчи, проведённые на льду 20 минут и больше',short:'Матчи с 20+ минутами',
+  t:L('Рабочая лошадка',[3,8,15]),td:L('Рабочая лошадка',[10,20,35])},
+ {id:'poker',i:'4️⃣',n:'Покер',role:'sk',group:'secret',m:'cum',nh:1,proto:1,secret:1,f:p=>p.x.poker?1:0,u:'',
+  d:'Четыре шайбы в одном матче',short:'Скрытая медаль',t:[[3,1,'Покер']]},
+ {id:'gordie',i:'🥊',n:'Хет-трик Горди Хоу',role:'sk',group:'secret',m:'cum',nh:1,proto:1,secret:1,f:p=>p.x.gordie?1:0,u:'',
+  d:'Гол, передача и штраф в одном матче',short:'Скрытая медаль',t:[[3,1,'Хет-трик Горди Хоу']]},
  // вратари
  {id:'shutout',i:'🥇',n:'Сухая игра',role:'gk',group:'goalie',m:'cum',f:p=>p.so,u:'матч.',
   d:'Матчи, сыгранные на ноль',short:'Матчи на ноль',
-  t:L('Сухая игра',[1,2,4,6])},
+  t:[[1,1,'Сухая игра'],[2,3,'Сухая игра ×3'],[3,5,'Сухая игра ×5']]},
  {id:'gwins',i:'🛡️',n:'Победная стена',role:'gk',group:'goalie',m:'cum',f:p=>p.wins,u:'побед',
   d:'Победы, одержанные в воротах',short:'Победы в воротах',
-  t:L('Победная стена',[5,10,16,22])},
+  t:L('Победная стена',[8,13,18])},
  {id:'gkgp',i:'🧤',n:'Основной вратарь',role:'gk',group:'goalie',m:'cum',f:p=>p.gp,u:'матч.',
   d:'Матчи, сыгранные в воротах',short:'Матчи в воротах',
-  t:L('Основной вратарь',[8,16,26,36])}, {id:'saves',i:'🧱',n:'Стена',role:'gk',group:'goalie',m:'cum',nh:1,f:p=>p.saves,u:'сейв.',
+  t:L('Основной вратарь',[10,20,30])},
+ {id:'saves',i:'🧱',n:'Стена',role:'gk',group:'goalie',m:'cum',f:p=>p.saves,u:'сейв.',
   d:'Отражённые броски за сезон',short:'Отражённые броски',
-  t:L('Стена',[100,300,550,800])},
+  t:L('Стена',[150,400,700])},
+ {id:'sv35',i:'🧲',n:'Стальные нервы',role:'gk',group:'goalie',m:'cum',nh:1,proto:1,f:p=>p.x.sv35,u:'матч.',
+  d:'Матчи, в которых отражено 35 и больше бросков',short:'35+ сейвов за матч',
+  t:[[1,1,'Стальные нервы'],[2,3,'Стальные нервы ×3'],[3,6,'Стальные нервы ×6']]},
+ {id:'win95',i:'✨',n:'Идеальная игра',role:'gk',group:'goalie',m:'cum',nh:1,proto:1,f:p=>p.x.win95,u:'матч.',
+  d:'Победы с 95% отражённых и больше (от 20 бросков)',short:'Победа с 95%+ отражённых',
+  t:[[1,1,'Идеальная игра'],[2,3,'Идеальная игра ×3'],[3,6,'Идеальная игра ×6']]},
  {id:'gkhero',i:'🦸',n:'Герой ворот',role:'gk',group:'secret',m:'cum',secret:1,
   f:p=>(p.wins>=10&&p.so>=3)?1:0,u:'',
   d:'10 побед и 3 сухих матча в одном сезоне',short:'Скрытая медаль',
@@ -902,7 +965,7 @@ const CAT=[
   d:'Место по коэффициенту надёжности (меньше — лучше)',short:'Место по КН',t:AW('Надёжность')},
  {id:'topW',i:'👑',n:'Первый номер',role:'gk',group:'awards',m:'rank',f:p=>p.wins,u:'побед',
   d:'Место по победам в воротах',short:'Место по победам',t:AW('Первый номер')}];
-const GROUPS=[{id:'scoring',n:'Результативность'},{id:'stability',n:'Стабильность'},
+const GROUPS=[{id:'scoring',n:'Результативность'},{id:'work',n:'Чёрная работа'},{id:'stability',n:'Стабильность'},
  {id:'moments',n:'Особые матчи'},{id:'goalie',n:'Вратари'},{id:'secret',n:'Скрытые'},
  {id:'awards',n:'Награды сезона'}];
 const ach=id=>CAT.find(a=>a.id===id);
@@ -1228,7 +1291,7 @@ function card(p,extra){
       ['Больш. (О)',p.ppg+p.ppa],['Меньш. (О)',p.shg+p.sha],...(p.year?[['Год рождения',p.year]]:[])];
   const inSeason=CAT.filter(a=>eligible(p,a)&&!finalMedal(a)),awards=CAT.filter(a=>eligible(p,a)&&finalMedal(a));
   return `<div class="split"><div>
-    <div class="hero">${logoOf(p.team)?`<span class="hlogo"><img src="${esc(logoOf(p.team))}" alt=""></span>`:''}<span class="ghost n">${p.pos==='Вратарь'?'🥅':(p.pts||'🏒')}</span>
+    <div class="hero">${logoOf(p.team)?`<span class="hlogo"><img src="${esc(logoOf(p.team))}" alt=""></span>`:''}${p.num?`<span class="ghost n${logoOf(p.team)?' wl':''}">${esc(p.num)}</span>`:''}
       <h1>${esc(p.name)}</h1><p>${esc(p.team)} · ${p.pos}</p>
       <div class="lvl"><div class="lvlbadge"><b class="n">${lv.lv}</b><span>УР.</span></div>
         <div class="lvlbar"><div class="t"><span>${mp} очков медалей</span>
@@ -1242,19 +1305,25 @@ function card(p,extra){
    <div><div class="h">Альбом · ${al.got} из ${al.total}</div>
     <div class="wall">${inSeason.map(a=>tile(p,a)).join('')}</div>
     ${awards.length?`<div class="h">Награды сезона</div>
-    <p class="muted" style="margin:-4px 0 10px">${seasonOver()?'Итоги сезона подведены.':'Вручаются после последнего тура по месту в лиге '+peerName(p)+'. Пока видно, какую награду игрок получил бы сейчас.'}</p>
+    <p class="muted" style="margin:-4px 0 10px">${seasonOver()?'Итоги сезона подведены.':'Вручаются после последнего тура по месту в лиге '+peerName(p)+'.'}</p>
     <div class="wall">${awards.map(a=>tile(p,a)).join('')}</div>`:''}</div></div>`;
 }
 // Уровень альбома: бронзовый → серебряный → золотой → платиновый.
+// Четыре отрезка — четыре уровня; под каждым — сколько медалей для него нужно.
 function albumBlock(al){
   const cur=al.cur,nx=al.nx;
   const left=nx?nx.need-al.got:0;
   const word=n=>n%10===1&&n%100!==11?'медаль':(n%10>=2&&n%10<=4&&(n%100<10||n%100>=20))?'медали':'медалей';
+  let prev=0;
+  const segs=al.steps.map(s=>{const f=Math.max(0,Math.min(1,(al.got-prev)/Math.max(1,s.need-prev)));prev=s.need;
+    // без спойлеров: уровни дальше следующего закрыты, их порог откроется, когда игрок дойдёт до следующего
+    const hide=nx&&s.t>nx.t;
+    return `<span class="aseg${hide?' locked':''}"><i class="s${s.t}"><b style="width:${Math.round(f*100)}%"></b></i><em>${hide?'🔒':TIER_I[s.t]+' '+s.need}</em></span>`;}).join('');
   return `<div class="album${cur?' t'+cur.t:''}">
     <span class="ai${cur?' d'+cur.t:''}">${cur?TIER_I[cur.t]:'📒'}</span>
-    <span class="at"><b>${cur?esc(cur.n):'Альбом пуст'}</b>
-      <span>${nx?`До ${ALBUM_G[nx.t]} альбома — ещё ${left} ${word(left)} (${al.got} из ${nx.need})`:'Собраны все медали сезона'}</span>
-      <span class="asteps">${al.steps.map(s=>`<i class="${al.got>=s.need?'on s'+s.t:''}" title="${esc(s.n)}"></i>`).join('')}</span></span></div>`;
+    <span class="at"><b>${cur?esc(cur.n):'Альбом · '+al.got+' из '+al.total}</b>
+      <span>${nx?`До ${ALBUM_G[nx.t]} альбома — ещё ${left} ${word(left)}`:'Собраны все медали сезона'}</span>
+      <span class="asteps">${segs}</span></span></div>`;
 }
 // Номер места в альбоме и небольшой наклон наклейки — постоянные для каждой медали.
 const slotNo=a=>'№ '+String(CAT.indexOf(a)+1).padStart(2,'0');
@@ -1267,52 +1336,33 @@ function tile(p,a){
     <span class="mt">нет данных</span></button>`;
   const hidden=a.secret&&!pr.tier;
   const t=pr.tier?T.find(x=>x[0]===pr.tier):null;
-  // Награда сезона, пока сезон идёт: цвет той награды, которую игрок получил бы сейчас, полупрозрачно.
-  if(pr.pending){
-    const pt=pr.prov?T.find(x=>x[0]===pr.prov):null;
-    return `<button class="med${pt?' prov':' off'}" data-a="${a.id}" data-owner="${p.id}" style="--rot:${rot(a)}deg">
+  // Награда сезона, пока сезон идёт: пустое место в альбоме и текущее место игрока.
+  if(pr.pending)return `<button class="med off" data-a="${a.id}" data-owner="${p.id}" style="--rot:${rot(a)}deg">
      <span class="slot">${slotNo(a)}</span><span class="lock">⏳</span>
-     <span class="disc${pt?' d'+pt[0]:''}">${a.i}</span>
-     <span class="mn">${esc(a.n)}</span>
-     <span class="mt">${pr.v?'сейчас №'+pr.v:pr.qualified?'вне топ-10':'не в зачёте'}</span>
-     <span class="rar rc0">${pt?'идёт на '+TIER_A[pt[0]]:'итог после сезона'}</span></button>`;
-  }
-  const sub=pr.tier?TIER_N[pr.tier]:pr.rank?(pr.v?'№'+pr.v:'—'):pr.nx?pr.v+' / '+pr.nx[1]:'—';
+     <span class="disc">${a.i}</span><span class="mn">${esc(a.n)}</span>
+     <span class="mt">${pr.v?'сейчас №'+pr.v:'—'}</span><span class="rar rc0">после сезона</span></button>`;
+  const sub=pr.tier?'★'.repeat(pr.tier):pr.rank?(pr.v?'№'+pr.v:'—'):pr.nx?pr.v+' / '+pr.nx[1]:'—';
   const foot=hidden?'':rar?`<span class="rar rc${rar.cls}">${rar.none?rar.name:rar.name+' · '+rar.pc.toFixed(1)+'%'}</span>`:'';
   return `<button class="med${pr.tier?'':' off'}" data-a="${a.id}" data-owner="${p.id}" style="--rot:${rot(a)}deg">
    <span class="slot">${slotNo(a)}</span><span class="pts">${pr.tier?TIER_PTS[pr.tier]:''}</span>${hidden?'<span class="lock">🔒</span>':''}
    <span class="disc${pr.tier?' d'+pr.tier:''}">${hidden?'❓':a.i}</span>
-   <span class="mn">${hidden?'Скрытая медаль':esc(a.n)}</span>
+   <span class="mn">${hidden?'Скрытая медаль':esc(t?t[2]:a.n)}</span>
    <span class="mt${pr.tier?' on':''}">${hidden?'':sub}</span>
    ${foot}</button>`;
-}
-// Где игрок сейчас в борьбе за награды сезона (только если он в топ-15).
-function raceLines(p){
-  return CAT.filter(a=>eligible(p,a)&&finalMedal(a)&&counts(a)).map(a=>({a,pr:prog(p,a)}))
-    .filter(o=>o.pr.v&&o.pr.v<=15).sort((x,y)=>x.pr.v-y.pr.v).slice(0,4);
 }
 function vMe(){
   const p=findP(ME);
   if(!p)return vPick();
   const near=CAT.filter(a=>eligible(p,a)&&counts(a)&&!a.secret&&!finalMedal(a)).map(a=>({a,pr:prog(p,a)}))
     .filter(o=>o.pr.nx).sort((x,y)=>y.pr.pct-x.pr.pct).slice(0,3);
-  const goals=near.length?`<div class="h">Ближайшие медали</div><div class="list">${near.map(o=>{
+  const goals=near.length?`<div class="h">Ближайшие цели</div><div class="list">${near.map(o=>{
     const t=o.pr.nx,left=Math.round((t[1]-o.pr.v)*10)/10;
     return `<button class="step" data-a="${o.a.id}" data-owner="${p.id}"><span class="sd d${t[0]}">${o.a.i}</span><span class="sx"><b>${esc(t[2])}</b>
       <span>${o.pr.v} из ${t[1]} — осталось ${left} ${esc(o.a.u)} · +${TIER_PTS[t[0]]} очков</span>
       <span class="bar"><i style="width:${Math.round(o.pr.pct*100)}%"></i></span></span></button>`;}).join('')}</div>`:'';
-  const race=raceLines(p);
-  const races=race.length&&!seasonOver()?`<div class="h">Борьба за награды сезона</div><div class="list">${race.map(o=>{
-    const T=tiersOf(p,o.a),pt=o.pr.prov?T.find(x=>x[0]===o.pr.prov):null,up=T.find(x=>x[0]>(o.pr.prov||0));
-    return `<button class="step" data-a="${o.a.id}" data-owner="${p.id}"><span class="sd${pt?' d'+pt[0]:''}">${o.a.i}</span>
-      <span class="sx"><b>${esc(o.a.n)} — №${o.pr.v} ${peerName(p)}</b>
-      <span>${pt?'Сейчас идёт на '+TIER_A[pt[0]]:'Пока вне наград'}${up?' · для '+TIER_G[up[0]]+' — '+(up[1]===1?'стать №1':'войти в топ-'+up[1]):''}</span></span>
-      <span class="val n">${fmtV(o.a,o.pr.val)}<em>${esc(o.a.u||'+/-')}</em></span></button>`;}).join('')}</div>`:'';
   const sub=store.get('notif',null)===p.key;
-  const acts=`<div class="acts">
-    <button class="cta${sub?' done':''}" data-notify="${p.id}">${sub?'✓ Уведомления о медалях включены':'🔔 Получать уведомления о новых медалях'}</button>
-    <button class="cta ghost" data-share="p" data-who="${p.id}">${ICON_SHARE} Поделиться альбомом</button></div>`;
-  return card(p,acts+goals+races+`<p style="margin-top:14px"><button class="chip" data-unme="1">Это не я — выбрать другого игрока</button></p>`);
+
+  return card(p,goals+`<p style="margin-top:14px"><button class="chip" data-unme="1">Это не я — выбрать другого игрока</button></p>`);
 }
 /* выбор «кто я» */
 function pickList(){
@@ -1337,16 +1387,16 @@ function vMedal(){
   const isAw=finalMedal(a);
   let out=`<div class="note">${hidden?'<b>Условие скрыто.</b> Медаль откроется сама, когда выполнится.':'<b>'+esc(a.d)+'.</b>'}
     ${isAw?`<br>${a.role==='gk'?'Соревнуются вратари':'Нападающие соревнуются с нападающими, защитники — с защитниками'}${a.qn?' · в зачёте '+esc(a.qn):''}.`
-      :(p&&p.pos==='Защитник'&&a.td?'<br>Для защитников пороги ниже, чем для нападающих.':'')}
+      :(p&&p.pos==='Защитник'&&a.td?'<br>Для защитников пороги свои.':'')}
+
     ${rar?`<span class="rtag rb${rar.cls}">${rar.none?rar.name:rar.name+' · '+rar.pc.toFixed(1)+'%'}</span>`:`<span class="rtag rb0">${seasonOver()?'итоги сезона':'вручается после сезона'}</span>`}</div>`;
-  if(p&&pr&&pr.tier)out+=`<button class="cta" data-share="m" data-who="${p.id}" data-ach="${a.id}">${ICON_SHARE} Поделиться медалью</button>`;
   if(p&&pr&&!hidden){
     const cur=pr.tier||pr.prov||0;
     out+=`<div class="h">${esc(p.name)}${isAw&&pr.v?` · №${pr.v} ${peerName(p)}`:''}</div><div class="list">${T.map(t=>{
       const done=pr.tier>=t[0],now=!done&&pr.pending&&pr.prov>=t[0],nx=!isAw&&pr.nx&&pr.nx[0]===t[0];
-      return `<div class="step${done?' done':''}"><span class="sd${done||now?' d'+t[0]:''}${now?' ghosted':''}">${done?'✓':TIER_I[t[0]]}</span>
+      return `<div class="step${done?' done':''}"><span class="sd${done||now?' d'+t[0]:''}${now?' ghosted':''}">${done?'✓':isAw?TIER_I[t[0]]:t[0]}</span>
         <span class="sx"><b>${esc(t[2])}</b><span>${isAw?(t[1]===1?'1-е место':'место в топ-'+t[1]):'нужно '+t[1]+' '+esc(a.u)} · +${TIER_PTS[t[0]]} очков</span>
-          ${done?earnedLine(p,a,t):now?'<span class="mh">сейчас на этом уровне — вручим, если удержит место</span>':''}
+          ${done?earnedLine(p,a,t):now?'<span class="mh">сейчас на этом месте — вручим после сезона, если удержит</span>':''}
         ${nx?`<span class="bar"><i style="width:${Math.round(pr.pct*100)}%"></i></span>`:''}</span>
         ${!isAw&&nx?`<span class="val n">${pr.v}</span>`:''}</div>`;}).join('')}</div>`;
   }
@@ -1370,7 +1420,7 @@ function vMedal(){
   const hpl=placesOf(hs,o=>o.pr.tier*100000+o.pr.v);
   out+=hs.length?`<div class="list">${hs.map((o,i)=>
     `<button class="r${o.p.id===ME?' me':''}" data-p="${o.p.id}"><span class="pos">${hpl[i]}</span>${crest(o.p.team,o.p.num)}
-      <span class="who"><b>${esc(o.p.name)}</b><span>${esc(o.p.team)} · ${TIER_I[o.pr.tier]||'★'} ${TIER_N[o.pr.tier]?TIER_N[o.pr.tier].toLowerCase():''}</span></span>
+      <span class="who"><b>${esc(o.p.name)}</b><span>${esc(o.p.team)} · ${'★'.repeat(o.pr.tier)}</span></span>
       <span class="val n">${o.pr.v}</span></button>`).join('')}</div>`
    :`<div class="note">Эту медаль пока никто не получил — можно стать первым.</div>`;
   return out;
@@ -1428,12 +1478,12 @@ function vCat(){
   const rows=a=>{
     const rar=rarityOf(a.id),mine=me&&eligible(me,a)?prog(me,a):null;
     const hidden=a.secret&&(!mine||!mine.tier);
-    const right=mine&&mine.tier?TIER_I[mine.tier]
+    const right=mine&&mine.tier?'★'.repeat(mine.tier)
       :mine&&mine.pending?(mine.v?'№'+mine.v:'—')
       :mine&&mine.nx&&!hidden?mine.v+'/'+mine.nx[1]:'—';
-    const em=mine&&mine.tier?TIER_N[mine.tier].toLowerCase():mine&&mine.pending?'сейчас':'прогресс';
+    const em=mine&&mine.tier?'у вас':mine&&mine.pending?'сейчас':'прогресс';
     return `<button class="r" data-a="${a.id}"><span class="av">${hidden?'❓':a.i}</span>
-     <span class="who"><b>${hidden?'Скрытая медаль':esc(a.n)}${rar&&!rar.none?`<span class="rtag rb${rar.cls}">${rar.pc.toFixed(1)}%</span>`:''}</b>
+     <span class="who"><b>${hidden?'Скрытая медаль':esc(a.n)}</b>
        <span>${hidden?'Откроется при выполнении':esc(a.short)}</span></span>
      <span class="val n">${right}<em>${em}</em></span></button>`;
   };
@@ -1442,7 +1492,7 @@ function vCat(){
      if(!items.length)return '';
      return `<div class="h">${esc(g.n)}</div>${g.id==='awards'?`<p class="muted" style="margin:-4px 0 10px">${seasonOver()?'Итоги сезона подведены.':'Вручаются после последнего тура: топ-10 — бронза, топ-5 — серебро, топ-3 — золото, №1 — платина.'}</p>`:''}<div class="list">${items.map(rows).join('')}</div>`;
    }).join('')}
-   <p class="muted" style="margin-top:16px">Статистика: протоколы матчей${HB&&HB.official?' и hockey.by':''}${HB&&HB.updated?' · обновлено '+esc(HB.updated):''} · версия ${APP_VERSION}.</p>`;
+`;
 }
 const ICONS={
  rank:'<path d="M5 20V11M12 20V5M19 20v-6"/>',
@@ -1450,7 +1500,7 @@ const ICONS={
  medals:'<path d="m8 3 4 6 4-6M7 3h3M14 3h3"/><circle cx="12" cy="15" r="5"/><path d="m12 13 .9 1.6 1.6.3-1.2 1.1.3 1.6-1.6-.8-1.6.8.3-1.6-1.2-1.1 1.6-.3Z"/>',
  me:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>'};
 const svg=id=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[id]}</svg>`;
-$('#tabs').innerHTML=[['rank','Рейтинг'],['league','Лига'],['medals','Медали'],['me','Профиль']]
+$('#tabs').innerHTML=[['rank','Рейтинг'],['medals','Медали'],['me','Профиль']]
   .map(([id,n])=>`<button class="tab" data-tab="${id}">${svg(id)}<span>${n}</span></button>`).join('');
 try{IN_TG&&tg.BackButton&&tg.BackButton.onClick(()=>back());}catch(e){}
 document.addEventListener('click',e=>{try{onTap(e)}catch(err){showErr(err)}});
@@ -1603,35 +1653,51 @@ function loadHist(){
   s.onerror=()=>{histState='none';if(S.view==='medal')draw();};
   document.head.appendChild(s);
 }
-const SK_H=['gp','g','a','pm','pim','ppg','ppa','shg','sha','shots','gwg'], GK_H=['gp','wins','so'];
-function fmtBase(){const d=(HB&&HB.base)||'';return d?d.split('-').reverse().slice(0,2).join('.'):'';}
-// Для каждого уровня: 'base' (набран ещё в сводной статистике) или id матча, в котором порог был пройден.
+const SK_H=['gp','g','a','pm','pim','ppg','ppa','shg','sha','shots','gwg'], GK_H=['gp','wins','so','sa','ga'];
+// Для каждого уровня: 'base' (набран по сводной статистике, матч неизвестен) или id матча, в котором порог был пройден.
 function earnedWhere(p,a){
-  if(a.m!=='cum'||a.nh)return null;
-  const rows=(window.HB_HIST&&window.HB_HIST[p.key])||[];
+  const T=tiersOf(p,a),res={};
+  const H=window.HB_HIST||{};
+  // медали по протоколам: события по матчам лежат в hist.js под ключом «x:<игрок>»
+  if(a.proto){
+    const ev=((H['x:'+p.key]||{})[a.id])||[];let sum=0;
+    for(const [gid,v] of ev){sum+=v;T.forEach(t=>{if(!res[t[0]]&&sum>=t[1])res[t[0]]=gid;});}
+    return res;
+  }
+  const rows=H[p.key]||[];
+  // серия: считаем подряд идущие матчи с очками по протоколам
+  if(a.m==='peak'){
+    let run=0;
+    for(const r of rows){run=(r[2]||0)+(r[3]||0)>0?run+1:0;T.forEach(t=>{if(!res[t[0]]&&run>=t[1])res[t[0]]=r[0];});}
+    T.forEach(t=>{if(!res[t[0]]&&a.f(p)>=t[1])res[t[0]]='base';});
+    return res;
+  }
+  if(a.m!=='cum')return null;
   const keys=p.pos==='Вратарь'?GK_H:SK_H;
   const q={...p};
+  const fix=()=>{if(p.pos!=='Вратарь')q.pts=q.g+q.a;else q.saves=Math.max(0,q.sa-q.ga);};
   for(const r of rows)keys.forEach((k,i)=>{q[k]-=r[i+1]||0;});
-  if(p.pos!=='Вратарь'){q.pts=q.g+q.a;q.hat=p.hat-rows.filter(r=>r[2]>=3).length;}
-  const res={};const thr=t=>a.f(q)>=t;
-  const T=tiersOf(p,a);
+  if(p.pos!=='Вратарь')q.hat=p.hat-rows.filter(r=>r[2]>=3).length;
+  fix();
+  const thr=t=>a.f(q)>=t;
   T.forEach(t=>{if(thr(t[1]))res[t[0]]='base';});
   for(const r of rows){
     keys.forEach((k,i)=>{q[k]+=r[i+1]||0;});
-    if(p.pos!=='Вратарь'){q.pts=q.g+q.a;if(r[2]>=3)q.hat++;}
+    if(p.pos!=='Вратарь'&&r[2]>=3)q.hat++;
+    fix();
     T.forEach(t=>{if(!res[t[0]]&&thr(t[1]))res[t[0]]=r[0];});
   }
   return res;
 }
 function earnedLine(p,a,t){
-  if(a.m!=='cum'||a.nh)return '';
+  if(finalMedal(a))return '<span class="mh">получена по итогам сезона</span>';
   if(histState==='idle'){loadHist();return '<span class="mh">ищу матч…</span>';}
   if(histState==='loading')return '<span class="mh">ищу матч…</span>';
   const w=earnedWhere(p,a);const g=w&&w[t[0]];
-  if(!g)return '';
-  if(g==='base')return `<span class="mh">получена до ${fmtBase()||'начала учёта протоколов'} · по сводной статистике</span>`;
+  if(!g||g==='base')return '<span class="mh">получена по сводной статистике hockey.by</span>';
   const m=MATCHES.find(x=>x.id===g);
-  return m?`<span class="mh">получена в матче <button data-match="${esc(m.id)}">${esc(m.d)} · ${esc(m.home)} — ${esc(m.away)} ${m.hs}:${m.as}</button></span>`:'';
+  return m?`<span class="mh">получена в матче <button data-match="${esc(m.id)}">${esc(m.d)} · ${esc(m.home)} — ${esc(m.away)} ${m.hs}:${m.as}</button></span>`
+    :'<span class="mh">получена по протоколу матча</span>';
 }
 
 /* ===== возврат свайпом вправо =====
@@ -1682,10 +1748,6 @@ const GUIDE=[
     <div class="med off" style="padding:0"><span class="disc">🥅</span><span class="g-cap">3 из 5</span></div>
     <div class="med prov" style="padding:0"><span class="disc d3">🏆</span><span class="g-cap">⏳ награда сезона</span></div></div></div>
     <p class="g-note">Каждая медаль растёт: бронза → серебро → золото → платина. Награды сезона вручаются после последнего тура по месту в лиге.</p>`},
- {t:'Лига',h:'Шаг 3',
-  x:'Во вкладке <b>«Лига»</b> — турнирная таблица и результаты всех матчей. Статистика обновляется после каждого игрового дня.',
-  v:()=>`<div class="list">${standings().slice(0,3).map((r,i)=>`<div class="r"><span class="pos po">${i+1}</span>${crest(r.team)}
-    <span class="who"><b>${esc(r.team)}</b></span><span class="val n">${r.pts}<em>очк.</em></span></div>`).join('')}</div>`},
  {t:'Ваш альбом',h:'Последний шаг',
   x:'Играете в Экстралиге? Найдите себя — во вкладке <b>«Профиль»</b> будет ваш альбом, а бот пришлёт сообщение о каждой новой медали.',
   v:()=>`<div class="g-choice">
@@ -1723,7 +1785,7 @@ function guideAct(a){
 }
 
 const deep=openStartParam();
-if(IS_PREVIEW)document.getElementById('subttl').insertAdjacentHTML('afterend','<span class="pv-badge">ПРЕДПРОСМОТР</span>');
+if(IS_PREVIEW)document.getElementById('subttl').insertAdjacentHTML('afterend','<span class="pv-badge">ПРЕДПРОСМОТР · '+APP_VERSION+'</span>');
 draw();
 if(!deep&&!store.get('guided',0))guideGo(0);
 window.hbReady&&window.hbReady(Object.values((HB&&HB.logos)||{}).map(u=>SITE_ROOT+u));
