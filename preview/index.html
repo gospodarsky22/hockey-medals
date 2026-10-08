@@ -169,6 +169,7 @@ main>*{max-width:1148px;margin-left:auto;margin-right:auto}
 .album .aseg i b{display:block;height:100%}
 .album .aseg i.s1 b{background:var(--bronze)}.album .aseg i.s2 b{background:var(--silver)}
 .album .aseg i.s3 b{background:var(--gold)}.album .aseg i.s4 b{background:var(--plat)}
+.album .aseg.locked i{opacity:.35;border-style:dashed}
 .album .aseg em{display:block;font:700 10.5px var(--font-body);font-style:normal;color:var(--ink3);margin-top:4px;text-align:center;white-space:nowrap}
 .album.t4{background:var(--plat);color:#06232A;box-shadow:4px 4px 0 var(--print)}
 .album.t4 .at>span{color:#06232A}
@@ -423,7 +424,7 @@ const haptic = () => { try { IN_TG && tg.HapticFeedback && tg.HapticFeedback.sel
 <script type="text/hb" id="hb-app">
 /*ENGINE:BEGIN — эта часть без DOM; бот запускает её у себя, чтобы знать, кто получил медаль*/
 // Номер версии приложения: по нему бот показывает архив версий и откат.
-const APP_VERSION='2026.10.11';
+const APP_VERSION='2026.10.12';
 const HB=window.HB_DATA||null;
 /* ============================================================
    РЕАЛЬНЫЕ ДАННЫЕ. Полевые игроки — таблица «Бомбардиры»
@@ -813,7 +814,7 @@ RAW_GK.trim().split('\n').forEach((line,i)=>{
   const c=line.split('|');
   const sf=+c[6],ga=+c[7],toi=+c[8],est=+c[9]||0;
   DB.push({id:'g'+i,name:c[0],year:+c[1],team:c[2],pos:'Вратарь',
-    gp:+c[3],wins:+c[4],so:+c[5],est,num:c[10]||'',saves:Math.max(0,sf-ga),
+    gp:+c[3],wins:+c[4],so:+c[5],est,num:c[10]||'',saves:Math.max(0,sf-ga),sa:sf,ga,
     x:xParse(X_GK,c[11]),
     // sf=0 при сыгранных матчах = разбивка бросков по вратарям неизвестна вовсе
     sv: sf?Math.round((sf-ga)/sf*1000)/10:null,
@@ -864,8 +865,8 @@ const CAT=[
  {id:'iron',i:'🔩',n:'Железный человек',role:'sk',group:'stability',m:'cum',f:p=>p.gp,u:'матч.',
   d:'Сыгранные матчи за сезон',short:'Сыгранные матчи',
   t:L('Железный человек',[20,35,48])},
- {id:'clean',i:'😇',n:'Джентльмен',role:'sk',group:'stability',m:'cum',f:p=>p.pim<=p.gp*0.4?p.gp:0,u:'матч.',
-  d:'Сыгранные матчи, если штрафа в среднем не больше 4 минут за 10 игр',short:'Матчи почти без штрафа',
+ {id:'clean',i:'😇',n:'Джентльмен',role:'sk',group:'stability',m:'cum',f:p=>p.pim<=4?p.gp:0,u:'матч.',
+  d:'Сыгранные матчи, пока у игрока за сезон не больше 4 минут штрафа (два малых удаления)',short:'Матчи почти без удалений',
   t:L('Джентльмен',[15,30,45])},
  {id:'hat',i:'🎩',n:'Хет-трик',role:'sk',group:'moments',m:'cum',f:p=>p.hat,u:'раз',game:1,
   d:'Матчи, в которых заброшено три и более шайб',short:'Три шайбы за матч',
@@ -931,7 +932,7 @@ const CAT=[
  {id:'gkgp',i:'🧤',n:'Основной вратарь',role:'gk',group:'goalie',m:'cum',f:p=>p.gp,u:'матч.',
   d:'Матчи, сыгранные в воротах',short:'Матчи в воротах',
   t:L('Основной вратарь',[10,20,30])},
- {id:'saves',i:'🧱',n:'Стена',role:'gk',group:'goalie',m:'cum',nh:1,f:p=>p.saves,u:'сейв.',
+ {id:'saves',i:'🧱',n:'Стена',role:'gk',group:'goalie',m:'cum',f:p=>p.saves,u:'сейв.',
   d:'Отражённые броски за сезон',short:'Отражённые броски',
   t:L('Стена',[150,400,700])},
  {id:'sv35',i:'🧲',n:'Стальные нервы',role:'gk',group:'goalie',m:'cum',nh:1,proto:1,f:p=>p.x.sv35,u:'матч.',
@@ -1315,7 +1316,9 @@ function albumBlock(al){
   const word=n=>n%10===1&&n%100!==11?'медаль':(n%10>=2&&n%10<=4&&(n%100<10||n%100>=20))?'медали':'медалей';
   let prev=0;
   const segs=al.steps.map(s=>{const f=Math.max(0,Math.min(1,(al.got-prev)/Math.max(1,s.need-prev)));prev=s.need;
-    return `<span class="aseg"><i class="s${s.t}"><b style="width:${Math.round(f*100)}%"></b></i><em>${TIER_I[s.t]} ${s.need}</em></span>`;}).join('');
+    // без спойлеров: уровни дальше следующего закрыты, их порог откроется, когда игрок дойдёт до следующего
+    const hide=nx&&s.t>nx.t;
+    return `<span class="aseg${hide?' locked':''}"><i class="s${s.t}"><b style="width:${Math.round(f*100)}%"></b></i><em>${hide?'🔒':TIER_I[s.t]+' '+s.need}</em></span>`;}).join('');
   return `<div class="album${cur?' t'+cur.t:''}">
     <span class="ai${cur?' d'+cur.t:''}">${cur?TIER_I[cur.t]:'📒'}</span>
     <span class="at"><b>${cur?esc(cur.n):'Альбом · '+al.got+' из '+al.total}</b>
@@ -1358,10 +1361,8 @@ function vMe(){
       <span>${o.pr.v} из ${t[1]} — осталось ${left} ${esc(o.a.u)} · +${TIER_PTS[t[0]]} очков</span>
       <span class="bar"><i style="width:${Math.round(o.pr.pct*100)}%"></i></span></span></button>`;}).join('')}</div>`:'';
   const sub=store.get('notif',null)===p.key;
-  const acts=`<div class="acts">
-    <button class="cta${sub?' done':''}" data-notify="${p.id}">${sub?'✓ Уведомления о медалях включены':'🔔 Получать уведомления о новых медалях'}</button>
-    <button class="cta ghost" data-share="p" data-who="${p.id}">${ICON_SHARE} Поделиться альбомом</button></div>`;
-  return card(p,acts+goals+`<p style="margin-top:14px"><button class="chip" data-unme="1">Это не я — выбрать другого игрока</button></p>`);
+
+  return card(p,goals+`<p style="margin-top:14px"><button class="chip" data-unme="1">Это не я — выбрать другого игрока</button></p>`);
 }
 /* выбор «кто я» */
 function pickList(){
@@ -1387,9 +1388,8 @@ function vMedal(){
   let out=`<div class="note">${hidden?'<b>Условие скрыто.</b> Медаль откроется сама, когда выполнится.':'<b>'+esc(a.d)+'.</b>'}
     ${isAw?`<br>${a.role==='gk'?'Соревнуются вратари':'Нападающие соревнуются с нападающими, защитники — с защитниками'}${a.qn?' · в зачёте '+esc(a.qn):''}.`
       :(p&&p.pos==='Защитник'&&a.td?'<br>Для защитников пороги свои.':'')}
-    ${a.proto&&p?`<br>Считается по протоколам матчей: загружено ${p.x.prot} из ${p.gp} матчей игрока.`:a.proto?'<br>Считается по протоколам матчей.':''}
+
     ${rar?`<span class="rtag rb${rar.cls}">${rar.none?rar.name:rar.name+' · '+rar.pc.toFixed(1)+'%'}</span>`:`<span class="rtag rb0">${seasonOver()?'итоги сезона':'вручается после сезона'}</span>`}</div>`;
-  if(p&&pr&&pr.tier)out+=`<button class="cta" data-share="m" data-who="${p.id}" data-ach="${a.id}">${ICON_SHARE} Поделиться медалью</button>`;
   if(p&&pr&&!hidden){
     const cur=pr.tier||pr.prov||0;
     out+=`<div class="h">${esc(p.name)}${isAw&&pr.v?` · №${pr.v} ${peerName(p)}`:''}</div><div class="list">${T.map(t=>{
@@ -1483,7 +1483,7 @@ function vCat(){
       :mine&&mine.nx&&!hidden?mine.v+'/'+mine.nx[1]:'—';
     const em=mine&&mine.tier?'у вас':mine&&mine.pending?'сейчас':'прогресс';
     return `<button class="r" data-a="${a.id}"><span class="av">${hidden?'❓':a.i}</span>
-     <span class="who"><b>${hidden?'Скрытая медаль':esc(a.n)}${rar&&!rar.none?`<span class="rtag rb${rar.cls}">${rar.pc.toFixed(1)}%</span>`:''}</b>
+     <span class="who"><b>${hidden?'Скрытая медаль':esc(a.n)}</b>
        <span>${hidden?'Откроется при выполнении':esc(a.short)}</span></span>
      <span class="val n">${right}<em>${em}</em></span></button>`;
   };
@@ -1492,7 +1492,7 @@ function vCat(){
      if(!items.length)return '';
      return `<div class="h">${esc(g.n)}</div>${g.id==='awards'?`<p class="muted" style="margin:-4px 0 10px">${seasonOver()?'Итоги сезона подведены.':'Вручаются после последнего тура: топ-10 — бронза, топ-5 — серебро, топ-3 — золото, №1 — платина.'}</p>`:''}<div class="list">${items.map(rows).join('')}</div>`;
    }).join('')}
-   <p class="muted" style="margin-top:16px">Статистика: протоколы матчей${HB&&HB.official?' и hockey.by':''}${HB&&HB.updated?' · обновлено '+esc(HB.updated):''} · версия ${APP_VERSION}.</p>`;
+`;
 }
 const ICONS={
  rank:'<path d="M5 20V11M12 20V5M19 20v-6"/>',
@@ -1653,35 +1653,51 @@ function loadHist(){
   s.onerror=()=>{histState='none';if(S.view==='medal')draw();};
   document.head.appendChild(s);
 }
-const SK_H=['gp','g','a','pm','pim','ppg','ppa','shg','sha','shots','gwg'], GK_H=['gp','wins','so'];
-function fmtBase(){const d=(HB&&HB.base)||'';return d?d.split('-').reverse().slice(0,2).join('.'):'';}
-// Для каждого уровня: 'base' (набран ещё в сводной статистике) или id матча, в котором порог был пройден.
+const SK_H=['gp','g','a','pm','pim','ppg','ppa','shg','sha','shots','gwg'], GK_H=['gp','wins','so','sa','ga'];
+// Для каждого уровня: 'base' (набран по сводной статистике, матч неизвестен) или id матча, в котором порог был пройден.
 function earnedWhere(p,a){
-  if(a.m!=='cum'||a.nh)return null;
-  const rows=(window.HB_HIST&&window.HB_HIST[p.key])||[];
+  const T=tiersOf(p,a),res={};
+  const H=window.HB_HIST||{};
+  // медали по протоколам: события по матчам лежат в hist.js под ключом «x:<игрок>»
+  if(a.proto){
+    const ev=((H['x:'+p.key]||{})[a.id])||[];let sum=0;
+    for(const [gid,v] of ev){sum+=v;T.forEach(t=>{if(!res[t[0]]&&sum>=t[1])res[t[0]]=gid;});}
+    return res;
+  }
+  const rows=H[p.key]||[];
+  // серия: считаем подряд идущие матчи с очками по протоколам
+  if(a.m==='peak'){
+    let run=0;
+    for(const r of rows){run=(r[2]||0)+(r[3]||0)>0?run+1:0;T.forEach(t=>{if(!res[t[0]]&&run>=t[1])res[t[0]]=r[0];});}
+    T.forEach(t=>{if(!res[t[0]]&&a.f(p)>=t[1])res[t[0]]='base';});
+    return res;
+  }
+  if(a.m!=='cum')return null;
   const keys=p.pos==='Вратарь'?GK_H:SK_H;
   const q={...p};
+  const fix=()=>{if(p.pos!=='Вратарь')q.pts=q.g+q.a;else q.saves=Math.max(0,q.sa-q.ga);};
   for(const r of rows)keys.forEach((k,i)=>{q[k]-=r[i+1]||0;});
-  if(p.pos!=='Вратарь'){q.pts=q.g+q.a;q.hat=p.hat-rows.filter(r=>r[2]>=3).length;}
-  const res={};const thr=t=>a.f(q)>=t;
-  const T=tiersOf(p,a);
+  if(p.pos!=='Вратарь')q.hat=p.hat-rows.filter(r=>r[2]>=3).length;
+  fix();
+  const thr=t=>a.f(q)>=t;
   T.forEach(t=>{if(thr(t[1]))res[t[0]]='base';});
   for(const r of rows){
     keys.forEach((k,i)=>{q[k]+=r[i+1]||0;});
-    if(p.pos!=='Вратарь'){q.pts=q.g+q.a;if(r[2]>=3)q.hat++;}
+    if(p.pos!=='Вратарь'&&r[2]>=3)q.hat++;
+    fix();
     T.forEach(t=>{if(!res[t[0]]&&thr(t[1]))res[t[0]]=r[0];});
   }
   return res;
 }
 function earnedLine(p,a,t){
-  if(a.m!=='cum'||a.nh)return '';
+  if(finalMedal(a))return '<span class="mh">получена по итогам сезона</span>';
   if(histState==='idle'){loadHist();return '<span class="mh">ищу матч…</span>';}
   if(histState==='loading')return '<span class="mh">ищу матч…</span>';
   const w=earnedWhere(p,a);const g=w&&w[t[0]];
-  if(!g)return '';
-  if(g==='base')return `<span class="mh">получена до ${fmtBase()||'начала учёта протоколов'} · по сводной статистике</span>`;
+  if(!g||g==='base')return '<span class="mh">получена по сводной статистике hockey.by</span>';
   const m=MATCHES.find(x=>x.id===g);
-  return m?`<span class="mh">получена в матче <button data-match="${esc(m.id)}">${esc(m.d)} · ${esc(m.home)} — ${esc(m.away)} ${m.hs}:${m.as}</button></span>`:'';
+  return m?`<span class="mh">получена в матче <button data-match="${esc(m.id)}">${esc(m.d)} · ${esc(m.home)} — ${esc(m.away)} ${m.hs}:${m.as}</button></span>`
+    :'<span class="mh">получена по протоколу матча</span>';
 }
 
 /* ===== возврат свайпом вправо =====
@@ -1769,7 +1785,7 @@ function guideAct(a){
 }
 
 const deep=openStartParam();
-if(IS_PREVIEW)document.getElementById('subttl').insertAdjacentHTML('afterend','<span class="pv-badge">ПРЕДПРОСМОТР</span>');
+if(IS_PREVIEW)document.getElementById('subttl').insertAdjacentHTML('afterend','<span class="pv-badge">ПРЕДПРОСМОТР · '+APP_VERSION+'</span>');
 draw();
 if(!deep&&!store.get('guided',0))guideGo(0);
 window.hbReady&&window.hbReady(Object.values((HB&&HB.logos)||{}).map(u=>SITE_ROOT+u));
