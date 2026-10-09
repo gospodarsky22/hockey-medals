@@ -424,7 +424,7 @@ const haptic = () => { try { IN_TG && tg.HapticFeedback && tg.HapticFeedback.sel
 <script type="text/hb" id="hb-app">
 /*ENGINE:BEGIN — эта часть без DOM; бот запускает её у себя, чтобы знать, кто получил медаль*/
 // Номер версии приложения: по нему бот показывает архив версий и откат.
-const APP_VERSION='2026.10.12';
+const APP_VERSION='2026.10.13';
 const HB=window.HB_DATA||null;
 /* ============================================================
    РЕАЛЬНЫЕ ДАННЫЕ. Полевые игроки — таблица «Бомбардиры»
@@ -1169,7 +1169,17 @@ const S={tab:'rank',view:'rank',metric:'pts',posf:'all',q:'',pid:null,aid:null,t
   role:store.get('role','player'), fav:store.get('fav',null), preds:store.get('preds',{})};
 let ME=null;
 (()=>{const m=store.get('me',null);if(!m)return;const p=DB.find(x=>x.name===m.name&&x.team===m.team);ME=p?p.id:null;})();
-function setMe(id){const p=findP(id);ME=p?p.id:null;store.set('me',p?{name:p.name,team:p.team}:null);}
+function setMe(id){const p=findP(id);ME=p?p.id:null;store.set('me',p?{name:p.name,team:p.team}:null);linkProfile();}
+// Кто выбран в «Профиле» — о том бот и пишет этому человеку в Telegram (перед туром и после).
+// Приложение тихо сообщает боту выбор; подпись Telegram проверяет сам бот. Ошибки молча пропускаем.
+function linkProfile(){
+  try{
+    const api=HB&&HB.api;if(!api||!IN_TG||!tg.initData)return;
+    const p=ME?findP(ME):null;
+    fetch(api.replace(/\/$/,'')+'/me',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({initData:tg.initData,key:p?p.key:null})}).catch(()=>{});
+  }catch(e){}
+}
 const k=()=>S.view+':'+(S.pid||'')+(S.aid||'');
 const $=s=>document.querySelector(s);
 // Значок: игровой номер (или буквы клуба, пока номер неизвестен) в цветах клуба.
@@ -1785,6 +1795,7 @@ function guideAct(a){
 }
 
 const deep=openStartParam();
+if(ME)setTimeout(linkProfile,1500); // при каждом открытии — на случай, если бот в прошлый раз был недоступен
 if(IS_PREVIEW)document.getElementById('subttl').insertAdjacentHTML('afterend','<span class="pv-badge">ПРЕДПРОСМОТР · '+APP_VERSION+'</span>');
 draw();
 if(!deep&&!store.get('guided',0))guideGo(0);
