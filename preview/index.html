@@ -424,7 +424,7 @@ const haptic = () => { try { IN_TG && tg.HapticFeedback && tg.HapticFeedback.sel
 <script type="text/hb" id="hb-app">
 /*ENGINE:BEGIN — эта часть без DOM; бот запускает её у себя, чтобы знать, кто получил медаль*/
 // Номер версии приложения: по нему бот показывает архив версий и откат.
-const APP_VERSION='2026.10.13';
+const APP_VERSION='2026.10.14';
 const HB=window.HB_DATA||null;
 /* ============================================================
    РЕАЛЬНЫЕ ДАННЫЕ. Полевые игроки — таблица «Бомбардиры»
@@ -1165,7 +1165,7 @@ const store={
   set(k,v){try{localStorage.setItem('hb_'+k,JSON.stringify(v));}catch(e){}}
 };
 
-const S={tab:'rank',view:'rank',metric:'pts',posf:'all',q:'',pid:null,aid:null,team:null,mid:null,hist:[],sc:{},
+const S={tab:'rank',view:'rank',metric:'mp',posf:'all',q:'',pid:null,aid:null,team:null,mid:null,hist:[],sc:{},
   role:store.get('role','player'), fav:store.get('fav',null), preds:store.get('preds',{})};
 let ME=null;
 (()=>{const m=store.get('me',null);if(!m)return;const p=DB.find(x=>x.name===m.name&&x.team===m.team);ME=p?p.id:null;})();
@@ -1174,10 +1174,12 @@ function setMe(id){const p=findP(id);ME=p?p.id:null;store.set('me',p?{name:p.nam
 // Приложение тихо сообщает боту выбор; подпись Telegram проверяет сам бот. Ошибки молча пропускаем.
 function linkProfile(){
   try{
-    const api=HB&&HB.api;if(!api||!IN_TG||!tg.initData)return;
+    if(!HB||!IN_TG||!tg.initData)return;
     const p=ME?findP(ME):null;
-    fetch(api.replace(/\/$/,'')+'/me',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({initData:tg.initData,key:p?p.key:null})}).catch(()=>{});
+    const body=JSON.stringify({initData:tg.initData,key:p?p.key:null});
+    // два пути: туннель на компьютер с ботом и «почтовый ящик» ntfy.sh — хватит любого
+    if(HB.api)fetch(HB.api.replace(/\/$/,'')+'/me',{method:'POST',headers:{'Content-Type':'application/json'},body}).catch(()=>{});
+    if(HB.relay)fetch(HB.relay,{method:'POST',body}).catch(()=>{});
   }catch(e){}
 }
 const k=()=>S.view+':'+(S.pid||'')+(S.aid||'');
@@ -1298,7 +1300,7 @@ function card(p,extra){
   const rest=p.pos==='Вратарь'
     ?[['Сухие матчи',p.so],...(p.year?[['Год рождения',p.year]]:[])]
     :[['+/-',(p.pm>0?'+':'')+p.pm],['Штраф',p.pim],['Броски',p.shots],['Реализация',p.shots&&p.shots>=p.g?p.shotPct+'%':'—'],
-      ['Больш. (О)',p.ppg+p.ppa],['Меньш. (О)',p.shg+p.sha],...(p.year?[['Год рождения',p.year]]:[])];
+      ['Больш. (Г+П)',p.ppg+p.ppa],['Меньш. (Г+П)',p.shg+p.sha],...(p.year?[['Год рождения',p.year]]:[])];
   const inSeason=CAT.filter(a=>eligible(p,a)&&!finalMedal(a)),awards=CAT.filter(a=>eligible(p,a)&&finalMedal(a));
   return `<div class="split"><div>
     <div class="hero">${logoOf(p.team)?`<span class="hlogo"><img src="${esc(logoOf(p.team))}" alt=""></span>`:''}${p.num?`<span class="ghost n${logoOf(p.team)?' wl':''}">${esc(p.num)}</span>`:''}
