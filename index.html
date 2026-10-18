@@ -425,7 +425,7 @@ const haptic = () => { try { IN_TG && tg.HapticFeedback && tg.HapticFeedback.sel
 <script type="text/hb" id="hb-app">
 /*ENGINE:BEGIN — эта часть без DOM; бот запускает её у себя, чтобы знать, кто получил медаль*/
 // Номер версии приложения: по нему бот показывает архив версий и откат.
-const APP_VERSION='2026.10.17';
+const APP_VERSION='2026.10.18';
 const HB=window.HB_DATA||null;
 /* ============================================================
    РЕАЛЬНЫЕ ДАННЫЕ. Полевые игроки — таблица «Бомбардиры»
@@ -959,10 +959,10 @@ const CAT=[
   q:p=>p.shots>=(p.pos==='Защитник'?25:40),qn:'от 40 бросков в створ (у защитников от 25)',
   d:'Место по проценту реализации бросков',short:'Место по реализации',t:AW('Точность')},
  {id:'topSV',i:'🧊',n:'Крепость',role:'gk',group:'awards',m:'rank',f:p=>p.sv||0,u:'%',
-  q:p=>gkQualified(p),qn:'вратари, сыгравшие не меньше трети матчей команды',
+  q:p=>gkQualified(p)&&p.gp>=GK_MIN_GP,qn:'вратари, сыгравшие не меньше 5 матчей и трети матчей команды',
   d:'Место по проценту отражённых бросков',short:'Место по % отражённых',t:AW('Крепость')},
  {id:'topGAA',i:'🎚️',n:'Надёжность',role:'gk',group:'awards',m:'rank',f:p=>p.gaa,inv:1,u:'КН',
-  q:p=>gkQualified(p)&&p.gaa>0,qn:'вратари, сыгравшие не меньше трети матчей команды',
+  q:p=>gkQualified(p)&&p.gp>=GK_MIN_GP&&p.gaa>0,qn:'вратари, сыгравшие не меньше 5 матчей и трети матчей команды',
   d:'Место по коэффициенту надёжности (меньше — лучше)',short:'Место по КН',t:AW('Надёжность')},
  {id:'topW',i:'👑',n:'Первый номер',role:'gk',group:'awards',m:'rank',f:p=>p.wins,u:'побед',
   d:'Место по победам в воротах',short:'Место по победам',t:AW('Первый номер')}];
@@ -1068,6 +1068,8 @@ function standings(){
 }
 const seasonOver=()=>SEASON.rounds>=SEASON.total;
 // вратарский ценз ФХБ: не менее трети матчей команды (до конца сезона — трети сыгранных)
+// КН и % отражённых — только у вратарей с 5+ матчами: после одной-двух игр цифры случайные.
+const GK_MIN_GP=5;
 const gkQualified=p=>p.gp>=Math.max(1,Math.ceil((seasonOver()?SEASON.total:SEASON.rounds)/3));
 // Награды сезона выдаются после последнего тура; до этого видно текущее место.
 const finalMedal=a=>a.m==='rank';
@@ -1221,8 +1223,8 @@ const SK_METRICS=[
  {id:'disc',n:'Дисциплина',s:'штр',f:p=>p.pim,asc:true}];
 const GK_METRICS=[
  {id:'mp',n:'Очки медалей',s:'очк.',f:p=>medalPoints(p)},
- {id:'gaa',n:'Надёжность',s:'КН',f:p=>p.gaa,asc:true},
- {id:'sv',n:'% отражённых',s:'%',f:p=>p.sv},
+ {id:'gaa',n:'Надёжность',s:'КН',f:p=>p.gp>=GK_MIN_GP&&p.gaa>0?p.gaa:null,asc:true,min:1},
+ {id:'sv',n:'% отражённых',s:'%',f:p=>p.gp>=GK_MIN_GP&&p.sv!==null?p.sv:null,min:1},
  {id:'wins',n:'Победы',s:'В',f:p=>p.wins},
  {id:'so',n:'Сухие матчи',s:'шт',f:p=>p.so},
  {id:'gp',n:'Матчи',s:'И',f:p=>p.gp}];
@@ -1278,7 +1280,7 @@ function rankList(){
     .filter(p=>m.f(p)!==null).sort((x,y)=>m.asc?m.f(x)-m.f(y):m.f(y)-m.f(x));
   if(!pool.length)return `<div class="note">Никто не подошёл под фильтр.</div>`;
   const pl=placesOf(pool,m.f);
-  return `<div class="list">${pool.map((p,i)=>{
+  return `${m.min?`<div class="note" style="margin-bottom:10px">В зачёте вратари, сыгравшие не меньше ${GK_MIN_GP} матчей.</div>`:''}<div class="list">${pool.map((p,i)=>{
     const v=m.f(p),sg=m.sign&&v>0?'+':'',c=collection(p),n=pl[i];
     return `<button class="r${p.id===ME?' me':''}" data-p="${p.id}"><span class="pos${n<=3?' p'+n:''}">${n}</span>${crest(p.team,p.num)}
       <span class="who"><b>${esc(p.name)}</b><span>${esc(p.team)} · 🏅 ${c.got}/${c.total} · ${medalPoints(p)} очк.</span></span>
