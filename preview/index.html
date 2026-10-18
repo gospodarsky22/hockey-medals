@@ -256,6 +256,7 @@ button.step:active{background:var(--sink)}
 .help{appearance:none;flex:0 0 auto;width:34px;height:34px;border-radius:50%;border:2px solid #fff;background:transparent;color:#fff;
   font:900 italic 17px var(--font-display);cursor:pointer;padding:0;display:grid;place-items:center}
 .help:active{background:rgba(255,255,255,.2)}
+.help.ig{text-decoration:none;margin-right:-2px}
 .guide{position:fixed;inset:0;z-index:80;background:var(--bg);display:flex;flex-direction:column}
 .guide[hidden]{display:none}
 .g-top{position:relative;background:var(--red);color:#fff;padding:14px 16px 16px;overflow:hidden;flex:0 0 auto}
@@ -375,7 +376,7 @@ button.step:active{background:var(--sink)}
 </div>
 <div class="app">
   <header class="top"><div class="top-in">
-    <div class="trow"><button class="back" id="back" aria-label="Назад">‹</button><div class="ttl" id="ttl"></div><button class="help" id="help" aria-label="Как пользоваться">?</button></div>
+    <div class="trow"><button class="back" id="back" aria-label="Назад">‹</button><div class="ttl" id="ttl"></div><a class="help ig" id="ig" href="https://www.instagram.com/hockey_medal/" target="_blank" rel="noopener" aria-label="Instagram @hockey_medal"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg></a><button class="help" id="help" aria-label="Как пользоваться">?</button></div>
     <div class="sub" id="subttl">Экстралига · альбом 26/27</div>
   </div></header>
   <main id="main"></main>
@@ -424,7 +425,7 @@ const haptic = () => { try { IN_TG && tg.HapticFeedback && tg.HapticFeedback.sel
 <script type="text/hb" id="hb-app">
 /*ENGINE:BEGIN — эта часть без DOM; бот запускает её у себя, чтобы знать, кто получил медаль*/
 // Номер версии приложения: по нему бот показывает архив версий и откат.
-const APP_VERSION='2026.10.16';
+const APP_VERSION='2026.10.17';
 const HB=window.HB_DATA||null;
 /* ============================================================
    РЕАЛЬНЫЕ ДАННЫЕ. Полевые игроки — таблица «Бомбардиры»
@@ -1706,11 +1707,16 @@ function earnedLine(p,a,t){
   if(histState==='idle'){loadHist();return '<span class="mh">ищу матч…</span>';}
   if(histState==='loading')return '<span class="mh">ищу матч…</span>';
   const w=earnedWhere(p,a);const g=w&&w[t[0]];
-  if(!g||g==='base')return '<span class="mh">получена по сводной статистике hockey.by</span>';
+  if(!g||g==='base')return '';
   const m=MATCHES.find(x=>x.id===g);
   return m?`<span class="mh">получена в матче <button data-match="${esc(m.id)}">${esc(m.d)} · ${esc(m.home)} — ${esc(m.away)} ${m.hs}:${m.as}</button></span>`
     :'<span class="mh">получена по протоколу матча</span>';
 }
+
+/* Instagram @hockey_medal: в Telegram открываем через openLink (обычная ссылка там может не сработать) */
+document.getElementById('ig').addEventListener('click',e=>{
+  if(tg&&tg.openLink&&tg.platform&&tg.platform!=='unknown'){e.preventDefault();tg.openLink(e.currentTarget.href);}
+});
 
 /* ===== возврат свайпом вправо =====
    Слушаем весь документ; направление решаем только после сдвига на 12 px,
