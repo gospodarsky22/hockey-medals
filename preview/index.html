@@ -1293,7 +1293,6 @@ function vRank(){
   <div class="chips sub2" style="margin-bottom:10px">${[['all','Все'],['Нападающий','Нападающие'],['Защитник','Защитники'],['Вратарь','Вратари']]
     .map(([v,n])=>`<button class="chip" aria-pressed="${S.posf===v}" data-pf="${v}">${n}</button>`).join('')}</div>
   <div class="chips" id="mchips" style="margin-bottom:12px">${list.map(x=>`<button class="chip" aria-pressed="${x.id===S.metric}" data-m="${x.id}">${x.n}</button>`).join('')}</div>
-  <div class="muted" style="margin:-4px 2px 10px">${HB&&HB.updated?`Данные на ${esc(HB.updated)} · сыграно матчей: ${MATCHES.filter(played).length}`:''}</div>
   <div id="rl">${rankList()}</div>`;
 }
 function vPlayer(){const p=findP(S.pid);return p?card(p):`<div class="note">Игрок не найден.</div>`}
