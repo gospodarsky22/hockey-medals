@@ -425,7 +425,7 @@ const haptic = () => { try { IN_TG && tg.HapticFeedback && tg.HapticFeedback.sel
 <script type="text/hb" id="hb-app">
 /*ENGINE:BEGIN — эта часть без DOM; бот запускает её у себя, чтобы знать, кто получил медаль*/
 // Номер версии приложения: по нему бот показывает архив версий и откат.
-const APP_VERSION='2026.10.19';
+const APP_VERSION='2026.10.20';
 const HB=window.HB_DATA||null;
 /* ============================================================
    РЕАЛЬНЫЕ ДАННЫЕ. Полевые игроки — таблица «Бомбардиры»
@@ -1293,6 +1293,7 @@ function vRank(){
   <div class="chips sub2" style="margin-bottom:10px">${[['all','Все'],['Нападающий','Нападающие'],['Защитник','Защитники'],['Вратарь','Вратари']]
     .map(([v,n])=>`<button class="chip" aria-pressed="${S.posf===v}" data-pf="${v}">${n}</button>`).join('')}</div>
   <div class="chips" id="mchips" style="margin-bottom:12px">${list.map(x=>`<button class="chip" aria-pressed="${x.id===S.metric}" data-m="${x.id}">${x.n}</button>`).join('')}</div>
+  <div class="muted" style="margin:-4px 2px 10px">${HB&&HB.updated?`Данные на ${esc(HB.updated)} · сыграно матчей: ${MATCHES.filter(played).length}`:''}</div>
   <div id="rl">${rankList()}</div>`;
 }
 function vPlayer(){const p=findP(S.pid);return p?card(p):`<div class="note">Игрок не найден.</div>`}
