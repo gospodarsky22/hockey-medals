@@ -321,7 +321,7 @@ button.step:active{background:var(--sink)}
 .sc-num{font-size:34px;line-height:1}.sc-num i{font-style:normal;color:var(--ink3);margin:0 2px}
 .sc-mid span{font:700 10.5px var(--font-body);letter-spacing:.06em;text-transform:uppercase;color:var(--ink3)}
 .goal .gt{flex:0 0 46px;font-size:13px;color:var(--ink3)}
-.goal.h{box-shadow:inset 4px 0 0 var(--red)}.goal.a{box-shadow:inset 4px 0 0 var(--blue)}
+.goal.side-h{box-shadow:inset 4px 0 0 var(--red)}.goal.side-a{box-shadow:inset 4px 0 0 var(--blue)}
 .tbl.two{grid-template-columns:1fr 1fr}
 
 /* ---------- заставка ---------- */
@@ -425,7 +425,7 @@ const haptic = () => { try { IN_TG && tg.HapticFeedback && tg.HapticFeedback.sel
 <script type="text/hb" id="hb-app">
 /*ENGINE:BEGIN — эта часть без DOM; бот запускает её у себя, чтобы знать, кто получил медаль*/
 // Номер версии приложения: по нему бот показывает архив версий и откат.
-const APP_VERSION='2026.10.20';
+const APP_VERSION='2026.10.22';
 const HB=window.HB_DATA||null;
 /* ============================================================
    РЕАЛЬНЫЕ ДАННЫЕ. Полевые игроки — таблица «Бомбардиры»
@@ -966,7 +966,7 @@ const CAT=[
   d:'Место по коэффициенту надёжности (меньше — лучше)',short:'Место по КН',t:AW('Надёжность')},
  {id:'topW',i:'👑',n:'Первый номер',role:'gk',group:'awards',m:'rank',f:p=>p.wins,u:'побед',
   d:'Место по победам в воротах',short:'Место по победам',t:AW('Первый номер')}];
-const GROUPS=[{id:'scoring',n:'Результативность'},{id:'work',n:'Чёрная работа'},{id:'stability',n:'Стабильность'},
+const GROUPS=[{id:'scoring',n:'Результативность'},{id:'work',n:'Черновая работа'},{id:'stability',n:'Стабильность'},
  {id:'moments',n:'Особые матчи'},{id:'goalie',n:'Вратари'},{id:'secret',n:'Скрытые'},
  {id:'awards',n:'Награды сезона'}];
 const ach=id=>CAT.find(a=>a.id===id);
@@ -1186,6 +1186,16 @@ function linkProfile(){
     if(HB.relay)fetch(HB.relay,{method:'POST',body}).catch(()=>{});
   }catch(e){}
 }
+// Открытие приложения — тихо сообщаем боту (для статистики посещений в /users). Один раз за запуск, ошибки молча пропускаем.
+function pingOpen(){
+  try{
+    if(!HB||!IN_TG||!tg.initData)return;
+    const body=JSON.stringify({initData:tg.initData,open:1});
+    if(HB.api)fetch(HB.api.replace(/\/$/,'')+'/me',{method:'POST',headers:{'Content-Type':'application/json'},body}).catch(()=>{});
+    else if(HB.relay)fetch(HB.relay,{method:'POST',body}).catch(()=>{});
+  }catch(e){}
+}
+setTimeout(pingOpen,1500);
 const k=()=>S.view+':'+(S.pid||'')+(S.aid||'');
 const $=s=>document.querySelector(s);
 // Значок: игровой номер (или буквы клуба, пока номер неизвестен) в цветах клуба.
@@ -1645,7 +1655,7 @@ function vMatch(){
   if(!g)return out+`<div class="note">Подробности появятся, когда будет загружен протокол этого матча.</div>`;
   const pl=n=>{const p=DB.find(x=>x.name===n.name&&x.team===n.team);return p?`data-p="${p.id}"`:''};
   if(g.goals&&g.goals.length)out+=`<div class="h">Голы</div><div class="list">${g.goals.map(x=>`
-    <button class="r goal ${x.side}" ${pl(x)}><span class="gt n">${esc(x.t||'')}</span>
+    <button class="r goal side-${x.side}" ${pl(x)}><span class="gt n">${esc(x.t||'')}</span>
       <span class="who"><b>${esc(x.name||'—')}</b><span>${x.as&&x.as.length?'передачи: '+x.as.map(esc).join(', '):'без передач'}${x.sit&&/^[+-]/.test(x.sit)?(x.sit[0]==='+'?' · в большинстве':' · в меньшинстве'):''}</span></span>
       <span class="val n">${x.score}<em>${esc(x.side==='h'?m.home:m.away)}</em></span></button>`).join('')}</div>`;
   if(g.top&&g.top.length)out+=`<div class="h">Лучшие в матче</div><div class="list">${g.top.map(x=>`
